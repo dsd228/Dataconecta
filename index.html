@@ -94,6 +94,28 @@
       border: 1px solid #30363d !important;
       transition: background 0.3s, color 0.3s, border-color 0.3s;
     }
+    /* HERO con imagen de fondo - integrado correctamente */
+    .hero-bg {
+      background-image: url('assets/img/hero-bg.jpg'); /* Cambia la ruta si tu imagen está en otro lugar */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+    .hero-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(13,17,23, 0.70); /* Oscurece para mejor legibilidad */
+      z-index: 1;
+    }
+    html.light-mode .hero-bg::before {
+      background: rgba(255,255,255, 0.70); /* Aclara en modo claro */
+    }
+    .hero-bg .container {
+      position: relative;
+      z-index: 2;
+    }
     /* ----- Modo claro ----- */
     html.light-mode body {
       background-color: #fff;
@@ -176,14 +198,14 @@
     </div>
   </nav>
 
-  <!-- Hero -->
-   <section id="hero" class="d-flex align-items-center hero-bg" style="min-height:100vh;">
+  <!-- Hero con imagen de fondo -->
+  <section id="hero" class="d-flex align-items-center hero-bg" style="min-height:100vh;">
     <div class="container text-center py-5">
-     <h1 class="display-4 fw-bold text-white">Conectando Ciencia de Datos e Inteligencia Visual</h1>
-     <p class="lead mb-4 text-white-50">Proyectos que transforman datos en decisiones.</p>
-     <a href="#proyectos" class="btn btn-primary btn-lg shadow">Explorar Proyectos</a>
+      <h1 class="display-4 fw-bold text-white">Conectando Ciencia de Datos e Inteligencia Visual</h1>
+      <p class="lead mb-4 text-white-50">Proyectos que transforman datos en decisiones.</p>
+      <a href="#proyectos" class="btn btn-primary btn-lg shadow">Explorar Proyectos</a>
     </div>
-   </section>
+  </section>
 
   <!-- Proyectos -->
   <section id="proyectos" class="py-5 section-light">
