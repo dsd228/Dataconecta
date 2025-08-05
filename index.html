@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dataconecta — Ciencia de Datos & Visualizaciones</title>
+  <meta name="description" content="Dataconecta: proyectos de ciencia de datos, visualización y machine learning.">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter&display=swap" rel="stylesheet">
   <!-- Optimización de carga: aplicar tema antes de renderizar -->
@@ -42,9 +43,15 @@
       font-weight: bold;
       transition: background 0.3s, color 0.3s;
     }
+    .btn-primary:focus, .btn-outline-primary:focus, .theme-toggle:focus, a:focus, button:focus, .card:focus {
+      outline: 3px solid #00fff1;
+      outline-offset: 2px;
+    }
     .btn-primary:hover {
       background-color: #00cccc;
       color: #0d1117;
+      transform: scale(1.05);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
     }
     .btn-outline-primary {
       border-color: #00fff1;
@@ -55,6 +62,8 @@
       background-color: #00fff1;
       color: #0d1117;
       border-color: #00cccc;
+      transform: scale(1.05);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
     }
     .theme-toggle {
       border: 1px solid #00cccc;
@@ -68,6 +77,7 @@
       align-items: center;
       justify-content: center;
       transition: background 0.3s, color 0.3s, border-color 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
     }
     .section-light, .card, footer {
       background-color: #161b22;
@@ -76,17 +86,36 @@
     }
     .card {
       border: none;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 32px rgba(0,0,0,0.20);
     }
     .card img {
       height: 160px;
       object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
     }
     footer {
       background-color: #161b22;
       color: #c9d1d9;
     }
+    .logo-footer {
+      width: 120px;
+      max-width: 100%;
+      margin-bottom: 1rem;
+    }
     a.text-white:hover {
       color: #00fff1 !important;
+      text-decoration: underline;
     }
     textarea, input {
       background-color: #0d1117 !important;
@@ -96,7 +125,7 @@
     }
     /* HERO con imagen de fondo - integrado correctamente */
     .hero-bg {
-      background-image: url('assets/img/hero-bg.jpg'); /* Cambia la ruta si tu imagen está en otro lugar */
+      background-image: url('assets/img/hero-bg.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -106,11 +135,11 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: rgba(13,17,23, 0.70); /* Oscurece para mejor legibilidad */
+      background: rgba(13,17,23, 0.70);
       z-index: 1;
     }
     html.light-mode .hero-bg::before {
-      background: rgba(255,255,255, 0.70); /* Aclara en modo claro */
+      background: rgba(255,255,255, 0.70);
     }
     .hero-bg .container {
       position: relative;
@@ -169,6 +198,29 @@
       color: #222 !important;
       border: 1px solid #e1e4e8 !important;
     }
+
+    /* Sección Blog y Certificaciones */
+    .blog-article {
+      background: #161b22;
+      color: #c9d1d9;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 1rem 1.5rem;
+      margin-bottom: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .blog-article:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    }
+    .badges img {
+      width: 80px;
+      margin: 0 10px;
+      transition: transform 0.3s;
+    }
+    .badges img:hover {
+      transform: scale(1.08);
+    }
   </style>
 </head>
 
@@ -177,7 +229,7 @@
   <nav class="navbar navbar-expand-lg fixed-top shadow">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center" href="#">
-        <img src="assets/img/logo.png" alt="Logo Dataconecta" width="36" class="me-2">
+        <img src="assets/img/logo.png" alt="Logo Dataconecta" class="logo-footer me-2">
         <span class="fw-bold fs-4">Dataconecta</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -188,6 +240,8 @@
           <li class="nav-item"><a class="nav-link" href="#hero">Inicio</a></li>
           <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
           <li class="nav-item"><a class="nav-link" href="#tecnologias">Tecnologías</a></li>
+          <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
+          <li class="nav-item"><a class="nav-link" href="#certificaciones">Certificaciones</a></li>
           <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
         </ul>
         <!-- Botón modo claro/oscuro -->
@@ -214,8 +268,8 @@
       <div class="row g-4">
         <!-- Proyecto 1 -->
         <div class="col-md-4">
-          <div class="card h-100 text-center">
-            <img src="assets/img/proyecto1.png" class="card-img-top" alt="Fraude con tarjetas">
+          <div class="card h-100 text-center" tabindex="0">
+            <img src="assets/img/fraude-dashboard.webp" class="card-img-top" alt="Dashboard futurista de detección de fraude con tarjetas de crédito">
             <div class="card-body">
               <h5 class="card-title">Fraude con Tarjetas</h5>
               <p class="card-text">Modelo de detección de fraude con ML y dashboards.</p>
@@ -225,8 +279,8 @@
         </div>
         <!-- Proyecto 2 -->
         <div class="col-md-4">
-          <div class="card h-100 text-center">
-            <img src="assets/img/proyecto2.png" class="card-img-top" alt="Ventas Retail">
+          <div class="card h-100 text-center" tabindex="0">
+            <img src="assets/img/ventas-retail-dashboard.webp" class="card-img-top" alt="Dashboard de ventas retail con gráficas interactivas">
             <div class="card-body">
               <h5 class="card-title">Ventas Retail</h5>
               <p class="card-text">Análisis de ventas y segmentación con dashboards.</p>
@@ -236,8 +290,8 @@
         </div>
         <!-- Proyecto 3 -->
         <div class="col-md-4">
-          <div class="card h-100 text-center">
-            <img src="assets/img/proyecto3.png" class="card-img-top" alt="Predicción de demanda">
+          <div class="card h-100 text-center" tabindex="0">
+            <img src="assets/img/demanda-forecast.webp" class="card-img-top" alt="Predicción de demanda con dashboard moderno de series temporales">
             <div class="card-body">
               <h5 class="card-title">Predicción de Demanda</h5>
               <p class="card-text">Forecasting para logística y stock con series temporales.</p>
@@ -263,16 +317,46 @@
     </div>
   </section>
 
-  <!-- Contacto -->
+  <!-- Blog / Artículos -->
+  <section id="blog" class="py-5 section-light">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Blog y Artículos</h2>
+      <div class="blog-article">
+        <h4>Cómo crear dashboards efectivos en ciencia de datos</h4>
+        <p>Descubre técnicas para visualización y comunicación de resultados en proyectos reales de machine learning.</p>
+        <a href="#" class="btn btn-outline-primary">Leer más</a>
+      </div>
+      <div class="blog-article">
+        <h4>Introducción a la predicción de demanda con series temporales</h4>
+        <p>Guía paso a paso para implementar forecasting en proyectos de logística y retail.</p>
+        <a href="#" class="btn btn-outline-primary">Leer más</a>
+      </div>
+      <!-- Añade más artículos aquí -->
+    </div>
+  </section>
+
+  <!-- Certificaciones / Logros -->
+  <section id="certificaciones" class="py-5 section-light">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Certificaciones y Logros</h2>
+      <div class="d-flex justify-content-center badges">
+        <img src="assets/img/mslearn-badge1.png" alt="Microsoft Learn: Data Scientist Associate">
+        <img src="assets/img/mslearn-badge2.png" alt="Microsoft Learn: Machine Learning Fundamentals">
+        <!-- Añade más badges aquí -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto con Formspree -->
   <section id="contacto" class="py-5 section-light">
     <div class="container">
       <h2 class="text-center mb-4 text-white">Contacto</h2>
-      <form class="mx-auto" style="max-width:400px;">
+      <form class="mx-auto" style="max-width:400px;" action="https://formspree.io/f/{tu-id}" method="POST">
         <div class="mb-3">
-          <input type="email" class="form-control" placeholder="Tu email" required>
+          <input type="email" class="form-control" placeholder="Tu email" name="email" required>
         </div>
         <div class="mb-3">
-          <textarea class="form-control" rows="4" placeholder="Tu mensaje"></textarea>
+          <textarea class="form-control" rows="4" placeholder="Tu mensaje" name="mensaje" required></textarea>
         </div>
         <button type="submit" class="btn btn-primary w-100">Enviar</button>
       </form>
@@ -284,7 +368,7 @@
     <div>
       <a href="https://github.com/dsd228" target="_blank" class="text-white me-3"><img src="assets/img/icono_github.png" alt="GitHub" width="18"> GitHub</a>
       <a href="mailto:dsd228.dd@ies21.onmicrosoft.com" class="text-white me-3"><img src="assets/img/icono_email.png" alt="Email" width="18"> Email</a>
-      <a href="https://linkedin.com" target="_blank" class="text-white"><img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="18"> LinkedIn</a>
+      <a href="https://www.linkedin.com/in/dsd228/" target="_blank" class="text-white"><img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="18"> LinkedIn</a>
     </div>
     <div class="mt-2">© 2025 Dataconecta</div>
     <div class="mt-2 text-white-50" style="font-size:0.95em;">
@@ -307,7 +391,6 @@
       return localStorage.getItem('theme') || 
              (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     }
-    // Inicialización
     document.addEventListener('DOMContentLoaded', function() {
       setTheme(getTheme());
       document.getElementById('theme-toggle-btn').addEventListener('click', function() {
@@ -319,8 +402,6 @@
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
 
   <!-- Google Analytics (reemplaza G-XXXXXXX por tu ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
