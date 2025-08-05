@@ -3,125 +3,324 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dataconecta | Consultoría de Datos</title>
-  <meta name="description" content="Impulsamos tu negocio con soluciones de datos inteligentes. Consultoría especializada en análisis, gestión y visualización de datos.">
-  <link href="https://fonts.googleapis.com/css?family=Inter:400,700|Montserrat:700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <title>Dataconecta — Ciencia de Datos & Visualizaciones</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter&display=swap" rel="stylesheet">
+  <!-- Optimización de carga: aplicar tema antes de renderizar -->
+  <script>
+    (function() {
+      let theme = localStorage.getItem('theme');
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        localStorage.setItem('theme', theme);
+      }
+      if (theme === 'light') document.documentElement.classList.add('light-mode');
+    })();
+  </script>
+  <style>
+    html, body, .navbar, .card, .btn, .section-light, footer {
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: 'Montserrat', 'Inter', 'Segoe UI', sans-serif;
+    }
+    .navbar {
+      background-color: #161b22 !important;
+    }
+    .navbar-brand, .nav-link, .navbar-toggler-icon {
+      color: #ffffff !important;
+    }
+    .nav-link:hover, .theme-toggle:hover {
+      color: #00fff1 !important;
+    }
+    .btn-primary, .theme-toggle {
+      background-color: #00fff1;
+      border: none;
+      color: #0d1117;
+      font-weight: bold;
+      transition: background 0.3s, color 0.3s;
+    }
+    .btn-primary:hover {
+      background-color: #00cccc;
+      color: #0d1117;
+    }
+    .btn-outline-primary {
+      border-color: #00fff1;
+      color: #00fff1;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .btn-outline-primary:hover {
+      background-color: #00fff1;
+      color: #0d1117;
+      border-color: #00cccc;
+    }
+    .theme-toggle {
+      border: 1px solid #00cccc;
+      padding: 0.4em 0.8em;
+      border-radius: 8px;
+      margin-left: 1em;
+      font-size: 1.3em;
+      background: #00fff1;
+      color: #0d1117;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .section-light, .card, footer {
+      background-color: #161b22;
+      color: #c9d1d9;
+      border-color: #30363d;
+    }
+    .card {
+      border: none;
+    }
+    .card img {
+      height: 160px;
+      object-fit: cover;
+    }
+    footer {
+      background-color: #161b22;
+      color: #c9d1d9;
+    }
+    a.text-white:hover {
+      color: #00fff1 !important;
+    }
+    textarea, input {
+      background-color: #0d1117 !important;
+      color: white !important;
+      border: 1px solid #30363d !important;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    /* HERO con imagen de fondo - integrado correctamente */
+    .hero-bg {
+      background-image: url('assets/img/hero-bg.jpg'); /* Cambia la ruta si tu imagen está en otro lugar */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+    .hero-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(13,17,23, 0.70); /* Oscurece para mejor legibilidad */
+      z-index: 1;
+    }
+    html.light-mode .hero-bg::before {
+      background: rgba(255,255,255, 0.70); /* Aclara en modo claro */
+    }
+    .hero-bg .container {
+      position: relative;
+      z-index: 2;
+    }
+    /* ----- Modo claro ----- */
+    html.light-mode body {
+      background-color: #fff;
+      color: #222;
+    }
+    html.light-mode .navbar,
+    html.light-mode .section-light,
+    html.light-mode .card,
+    html.light-mode footer {
+      background-color: #f5f5f5 !important;
+      color: #222 !important;
+      border-color: #e1e4e8 !important;
+    }
+    html.light-mode .navbar-brand,
+    html.light-mode .nav-link,
+    html.light-mode .navbar-toggler-icon {
+      color: #222 !important;
+    }
+    html.light-mode .nav-link:hover {
+      color: #0077b6 !important;
+    }
+    html.light-mode .btn-primary {
+      background-color: #0077b6;
+      color: #fff;
+    }
+    html.light-mode .btn-primary:hover {
+      background-color: #00fff1;
+      color: #222;
+    }
+    html.light-mode .btn-outline-primary {
+      border-color: #0077b6;
+      color: #0077b6;
+    }
+    html.light-mode .btn-outline-primary:hover {
+      background-color: #0077b6;
+      color: #fff;
+      border-color: #00fff1;
+    }
+    html.light-mode .theme-toggle {
+      background: #161b22;
+      color: #00fff1;
+      border-color: #00cccc;
+    }
+    html.light-mode .theme-toggle:hover {
+      background: #00cccc;
+      color: #161b22;
+    }
+    html.light-mode textarea,
+    html.light-mode input {
+      background-color: #fff !important;
+      color: #222 !important;
+      border: 1px solid #e1e4e8 !important;
+    }
+  </style>
 </head>
+
 <body>
-  <!-- Hero Section -->
-  <section class="hero-bg">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg fixed-top shadow">
     <div class="container">
-      <h1>Impulsamos tu negocio con soluciones de datos inteligentes</h1>
-      <p>Consultoría especializada en análisis, gestión y visualización de datos para empresas.</p>
-      <a href="#contacto" class="btn btn-primary">Solicita una demo</a>
-      <img src="assets/img/hero-image.webp" alt="Equipo de consultores Dataconecta">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="assets/img/logo.png" alt="Logo Dataconecta" width="36" class="me-2">
+        <span class="fw-bold fs-4">Dataconecta</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#hero">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#tecnologias">Tecnologías</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+        </ul>
+        <!-- Botón modo claro/oscuro -->
+        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Cambiar tema" title="Cambiar tema">
+          <span id="theme-toggle-icon" aria-hidden="true">🌙</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero con imagen de fondo -->
+  <section id="hero" class="d-flex align-items-center hero-bg" style="min-height:100vh;">
+    <div class="container text-center py-5">
+      <h1 class="display-4 fw-bold text-white">Conectando Ciencia de Datos e Inteligencia Visual</h1>
+      <p class="lead mb-4 text-white-50">Proyectos que transforman datos en decisiones.</p>
+      <a href="#proyectos" class="btn btn-primary btn-lg shadow">Explorar Proyectos</a>
     </div>
   </section>
 
-  <!-- Proyectos/Demos -->
-  <main>
-    <section id="proyectos">
-      <h2>Proyectos y Demos</h2>
-      <div class="cards">
-        <div class="card">
-          <img src="assets/img/proyecto1.webp" alt="Dashboard financiero">
-          <h3>Dashboard financiero</h3>
-          <p>Visualiza datos clave para tomar mejores decisiones empresariales.</p>
-          <a href="https://github.com/dsd228/Dataconecta" class="btn">Ver GitHub</a>
+  <!-- Proyectos -->
+  <section id="proyectos" class="py-5 section-light">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Proyectos Destacados</h2>
+      <div class="row g-4">
+        <!-- Proyecto 1 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center">
+            <img src="assets/img/proyecto1.png" class="card-img-top" alt="Fraude con tarjetas">
+            <div class="card-body">
+              <h5 class="card-title">Fraude con Tarjetas</h5>
+              <p class="card-text">Modelo de detección de fraude con ML y dashboards.</p>
+              <a href="https://github.com/dsd228/credit-card-fraud-detection" target="_blank" class="btn btn-outline-primary">Ver GitHub</a>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <img src="assets/img/proyecto2.webp" alt="Análisis de ventas">
-          <h3>Análisis de ventas</h3>
-          <p>Descubre tendencias y oportunidades ocultas en tus ventas.</p>
-          <a href="#" class="btn">Probar demo</a>
+        <!-- Proyecto 2 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center">
+            <img src="assets/img/proyecto2.png" class="card-img-top" alt="Ventas Retail">
+            <div class="card-body">
+              <h5 class="card-title">Ventas Retail</h5>
+              <p class="card-text">Análisis de ventas y segmentación con dashboards.</p>
+              <a href="#" target="_blank" class="btn btn-outline-primary">Demo Interactiva</a>
+            </div>
+          </div>
         </div>
-        <!-- Más cards según tus proyectos -->
-      </div>
-    </section>
-
-    <!-- Servicios -->
-    <section id="servicios">
-      <h2>Servicios</h2>
-      <div class="servicios-lista">
-        <div class="servicio">
-          <img src="assets/icons/analisis.svg" alt="Análisis de datos" class="icono-servicio">
-          <h3>Análisis de datos</h3>
-          <p>Transforma datos en información de valor para tu negocio.</p>
-        </div>
-        <div class="servicio">
-          <img src="assets/icons/gestion.svg" alt="Gestión de datos" class="icono-servicio">
-          <h3>Gestión de datos</h3>
-          <p>Optimiza la organización y acceso a tus datos empresariales.</p>
-        </div>
-        <div class="servicio">
-          <img src="assets/icons/visualizacion.svg" alt="Visualización de datos" class="icono-servicio">
-          <h3>Visualización de datos</h3>
-          <p>Presenta la información de manera clara y atractiva.</p>
+        <!-- Proyecto 3 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center">
+            <img src="assets/img/proyecto3.png" class="card-img-top" alt="Predicción de demanda">
+            <div class="card-body">
+              <h5 class="card-title">Predicción de Demanda</h5>
+              <p class="card-text">Forecasting para logística y stock con series temporales.</p>
+              <a href="#" target="_blank" class="btn btn-outline-primary">Demo Interactiva</a>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Sobre Nosotros -->
-    <section id="nosotros">
-      <h2>Sobre Nosotros</h2>
-      <div class="equipo">
-        <img src="assets/img/equipo.webp" alt="Equipo Dataconecta" class="equipo-foto">
-        <div>
-          <p><strong>Nuestra misión:</strong> Ayudar a las empresas a tomar decisiones basadas en datos.</p>
-          <p><strong>Valores:</strong> Transparencia, innovación y compromiso.</p>
-          <p>Con más de 5 años de experiencia en consultoría y análisis de datos.</p>
-        </div>
+  <!-- Tecnologías -->
+  <section id="tecnologias" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Tecnologías Usadas</h2>
+      <div class="row text-center justify-content-center">
+        <div class="col-4 col-md-2"><img src="assets/img/icono_python.png" alt="Python" width="40"><p>Python</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_pandas.png" alt="Pandas" width="40"><p>Pandas</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_Scikit-learn.png" alt="Scikit-learn" width="40"><p>Scikit-learn</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_plotly.png" alt="Plotly" width="40"><p>Plotly</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_github.png" alt="GitHub" width="40"><p>GitHub</p></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Contacto -->
-    <section id="contacto">
-      <h2>Contacto</h2>
-      <form action="mailto:info@dataconecta.com" method="post" enctype="text/plain">
-        <input type="text" name="nombre" placeholder="Tu nombre" required>
-        <input type="email" name="email" placeholder="Tu email" required>
-        <textarea name="mensaje" placeholder="Escribe tu consulta" required></textarea>
-        <button type="submit" class="btn btn-primary">Enviar consulta</button>
+  <!-- Contacto -->
+  <section id="contacto" class="py-5 section-light">
+    <div class="container">
+      <h2 class="text-center mb-4 text-white">Contacto</h2>
+      <form class="mx-auto" style="max-width:400px;">
+        <div class="mb-3">
+          <input type="email" class="form-control" placeholder="Tu email" required>
+        </div>
+        <div class="mb-3">
+          <textarea class="form-control" rows="4" placeholder="Tu mensaje"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Enviar</button>
       </form>
-      <div class="contact-info">
-        <p>Email: <a href="mailto:info@dataconecta.com">info@dataconecta.com</a></p>
-        <p>LinkedIn: <a href="https://linkedin.com/company/dataconecta" target="_blank">Dataconecta</a></p>
-        <p>GitHub: <a href="https://github.com/dsd228/Dataconecta" target="_blank">Dataconecta</a></p>
-      </div>
-    </section>
-
-    <!-- Blog o Novedades -->
-    <section id="blog">
-      <h2>Novedades</h2>
-      <article>
-        <h3>Nuevo dashboard lanzado</h3>
-        <p>Descubre nuestro último dashboard para el sector financiero.</p>
-        <a href="#">Leer más</a>
-      </article>
-    </section>
-
-    <!-- Testimonios -->
-    <section id="testimonios">
-      <h2>Testimonios</h2>
-      <blockquote>
-        <p>“Dataconecta nos ayudó a visualizar datos clave y mejorar nuestras ventas.”</p>
-        <footer>– Cliente destacado</footer>
-      </blockquote>
-    </section>
-  </main>
+    </div>
+  </section>
 
   <!-- Footer -->
-  <footer>
-    <img src="assets/img/logo-small.webp" alt="Logo Dataconecta" class="logo-footer">
-    <p>© 2025 Dataconecta. Todos los derechos reservados.</p>
-    <div class="footer-links">
-      <a href="https://linkedin.com/company/dataconecta" target="_blank">LinkedIn</a> |
-      <a href="https://github.com/dsd228/Dataconecta" target="_blank">GitHub</a> |
-      <a href="#privacidad">Privacidad</a>
+  <footer class="text-center py-4 mt-5">
+    <div>
+      <a href="https://github.com/dsd228" target="_blank" class="text-white me-3"><img src="assets/img/icono_github.png" alt="GitHub" width="18"> GitHub</a>
+      <a href="mailto:dsd228.dd@ies21.onmicrosoft.com" class="text-white me-3"><img src="assets/img/icono_email.png" alt="Email" width="18"> Email</a>
+      <a href="https://linkedin.com" target="_blank" class="text-white"><img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="18"> LinkedIn</a>
     </div>
-    <small>Hecho con <a href="https://pages.github.com/" target="_blank">GitHub Pages</a></small>
+    <div class="mt-2">© 2025 Dataconecta</div>
+    <div class="mt-2 text-white-50" style="font-size:0.95em;">
+      <span>💡 Podés cambiar entre modo claro y oscuro con el botón <span style="font-size:1.2em;">🌙/🌞</span> para adaptar la visualización a tu preferencia.</span>
+    </div>
   </footer>
+
+  <!-- Script avanzado para tema -->
+  <script>
+    function setTheme(mode) {
+      if (mode === 'light') {
+        document.documentElement.classList.add('light-mode');
+        document.getElementById('theme-toggle-icon').textContent = '🌞';
+      } else {
+        document.documentElement.classList.remove('light-mode');
+        document.getElementById('theme-toggle-icon').textContent = '🌙';
+      }
+    }
+    function getTheme() {
+      return localStorage.getItem('theme') || 
+             (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      setTheme(getTheme());
+      document.getElementById('theme-toggle-btn').addEventListener('click', function() {
+        const current = getTheme();
+        const next = current === 'light' ? 'dark' : 'light';
+        setTheme(next);
+        localStorage.setItem('theme', next);
+      });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
 
   <!-- Google Analytics (reemplaza G-XXXXXXX por tu ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
