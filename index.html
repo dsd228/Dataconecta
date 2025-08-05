@@ -6,40 +6,76 @@
   <title>Dataconecta — Ciencia de Datos & Visualizaciones</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter&display=swap" rel="stylesheet">
+  <!-- Optimización de carga: aplicar tema antes de renderizar -->
+  <script>
+    (function() {
+      let theme = localStorage.getItem('theme');
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        localStorage.setItem('theme', theme);
+      }
+      if (theme === 'light') document.documentElement.classList.add('light-mode');
+    })();
+  </script>
   <style>
+    html, body, .navbar, .card, .btn, .section-light, footer {
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
     body {
       background-color: #0d1117;
       color: #c9d1d9;
-      font-family: 'Segoe UI', sans-serif;
-      transition: background 0.3s, color 0.3s;
+      font-family: 'Montserrat', 'Inter', 'Segoe UI', sans-serif;
     }
     .navbar {
       background-color: #161b22 !important;
-      transition: background 0.3s;
     }
     .navbar-brand, .nav-link, .navbar-toggler-icon {
       color: #ffffff !important;
     }
-    .nav-link:hover {
+    .nav-link:hover, .theme-toggle:hover {
       color: #00fff1 !important;
     }
-    .btn-primary {
+    .btn-primary, .theme-toggle {
       background-color: #00fff1;
       border: none;
       color: #0d1117;
       font-weight: bold;
+      transition: background 0.3s, color 0.3s;
     }
     .btn-primary:hover {
       background-color: #00cccc;
       color: #0d1117;
     }
-    .section-light {
+    .btn-outline-primary {
+      border-color: #00fff1;
+      color: #00fff1;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .btn-outline-primary:hover {
+      background-color: #00fff1;
+      color: #0d1117;
+      border-color: #00cccc;
+    }
+    .theme-toggle {
+      border: 1px solid #00cccc;
+      padding: 0.4em 0.8em;
+      border-radius: 8px;
+      margin-left: 1em;
+      font-size: 1.3em;
+      background: #00fff1;
+      color: #0d1117;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .section-light, .card, footer {
       background-color: #161b22;
+      color: #c9d1d9;
+      border-color: #30363d;
     }
     .card {
-      background-color: #161b22;
       border: none;
-      color: #c9d1d9;
     }
     .card img {
       height: 160px;
@@ -56,48 +92,57 @@
       background-color: #0d1117 !important;
       color: white !important;
       border: 1px solid #30363d !important;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
     }
-    .theme-toggle {
-      background: #00fff1;
-      color: #0d1117;
-      border: 1px solid #00cccc;
-      padding: 0.5em 1em;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-left: 1em;
-      transition: background 0.3s, color 0.3s;
-      font-size: 1em;
-    }
-    body.light-mode {
+    /* ----- Modo claro ----- */
+    html.light-mode body {
       background-color: #fff;
       color: #222;
     }
-    body.light-mode .navbar, body.light-mode .section-light, body.light-mode .card, body.light-mode footer {
+    html.light-mode .navbar,
+    html.light-mode .section-light,
+    html.light-mode .card,
+    html.light-mode footer {
       background-color: #f5f5f5 !important;
       color: #222 !important;
       border-color: #e1e4e8 !important;
     }
-    body.light-mode .btn-primary {
+    html.light-mode .navbar-brand,
+    html.light-mode .nav-link,
+    html.light-mode .navbar-toggler-icon {
+      color: #222 !important;
+    }
+    html.light-mode .nav-link:hover {
+      color: #0077b6 !important;
+    }
+    html.light-mode .btn-primary {
       background-color: #0077b6;
       color: #fff;
     }
-    body.light-mode .btn-primary:hover {
+    html.light-mode .btn-primary:hover {
       background-color: #00fff1;
       color: #222;
     }
-    body.light-mode .nav-link:hover {
-      color: #0077b6 !important;
+    html.light-mode .btn-outline-primary {
+      border-color: #0077b6;
+      color: #0077b6;
     }
-    body.light-mode .theme-toggle {
+    html.light-mode .btn-outline-primary:hover {
+      background-color: #0077b6;
+      color: #fff;
+      border-color: #00fff1;
+    }
+    html.light-mode .theme-toggle {
       background: #161b22;
       color: #00fff1;
       border-color: #00cccc;
     }
-    body.light-mode .theme-toggle:hover {
+    html.light-mode .theme-toggle:hover {
       background: #00cccc;
       color: #161b22;
     }
-    body.light-mode textarea, body.light-mode input {
+    html.light-mode textarea,
+    html.light-mode input {
       background-color: #fff !important;
       color: #222 !important;
       border: 1px solid #e1e4e8 !important;
@@ -123,7 +168,10 @@
           <li class="nav-item"><a class="nav-link" href="#tecnologias">Tecnologías</a></li>
           <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
         </ul>
-        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Cambiar tema">🌙/🌞</button>
+        <!-- Botón modo claro/oscuro -->
+        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Cambiar tema" title="Cambiar tema">
+          <span id="theme-toggle-icon" aria-hidden="true">🌙</span>
+        </button>
       </div>
     </div>
   </nav>
@@ -217,29 +265,35 @@
       <a href="https://linkedin.com" target="_blank" class="text-white"><img src="assets/img/linkedin.svg" alt="LinkedIn" width="18"> LinkedIn</a>
     </div>
     <div class="mt-2">© 2025 Dataconecta</div>
+    <div class="mt-2 text-white-50" style="font-size:0.95em;">
+      <span>💡 Podés cambiar entre modo claro y oscuro con el botón <span style="font-size:1.2em;">🌙/🌞</span> para adaptar la visualización a tu preferencia.</span>
+    </div>
   </footer>
 
+  <!-- Script avanzado para tema -->
   <script>
-    // Tema preferido
     function setTheme(mode) {
       if (mode === 'light') {
-        document.body.classList.add('light-mode');
+        document.documentElement.classList.add('light-mode');
+        document.getElementById('theme-toggle-icon').textContent = '🌞';
       } else {
-        document.body.classList.remove('light-mode');
+        document.documentElement.classList.remove('light-mode');
+        document.getElementById('theme-toggle-icon').textContent = '🌙';
       }
     }
-    // Inicialización según preferencia guardada
-    if (localStorage.getItem('theme') === 'light') {
-      setTheme('light');
+    function getTheme() {
+      return localStorage.getItem('theme') || 
+             (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     }
-    document.getElementById('theme-toggle-btn').addEventListener('click', function() {
-      if (document.body.classList.contains('light-mode')) {
-        setTheme('dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        setTheme('light');
-        localStorage.setItem('theme', 'light');
-      }
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+      setTheme(getTheme());
+      document.getElementById('theme-toggle-btn').addEventListener('click', function() {
+        const current = getTheme();
+        const next = current === 'light' ? 'dark' : 'light';
+        setTheme(next);
+        localStorage.setItem('theme', next);
+      });
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
