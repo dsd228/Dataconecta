@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DataConecta - Sistema de análisis y visualización de datos para prevención de fraude en tarjetas de crédito utilizando machine learning">
+    <meta name="keywords" content="análisis de datos, machine learning, prevención de fraude, tarjetas de crédito, visualización de datos, Python">
+    <meta name="author" content="DataConecta">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="DataConecta - Análisis y Visualización de Datos">
+    <meta property="og:description" content="Sistema de análisis y visualización de datos para prevención de fraude en tarjetas de crédito">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DataConecta - Análisis y Visualización de Datos">
+    <meta name="twitter:description" content="Sistema de análisis y visualización de datos para prevención de fraude en tarjetas de crédito">
+    
+    <title>DataConecta - Análisis y Visualización de Datos</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Dark/Light mode script -->
+    <script>
+        (() => {
+            'use strict'
+            const getStoredTheme = () => localStorage.getItem('theme')
+            const setStoredTheme = theme => localStorage.setItem('theme', theme)
+            const getPreferredTheme = () => {
+                const storedTheme = getStoredTheme()
+                if (storedTheme) {
+                    return storedTheme
+                }
+                return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+            }
+            const setTheme = theme => {
+                if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-bs-theme', 'dark')
+                } else {
+                    document.documentElement.setAttribute('data-bs-theme', theme)
+                }
+            }
+            setTheme(getPreferredTheme())
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                const storedTheme = getStoredTheme()
+                if (storedTheme !== 'light' && storedTheme !== 'dark') {
+                    setTheme(getPreferredTheme())
+                }
+            })
+        })()
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#inicio">
+                <i class="bi bi-graph-up-arrow me-2"></i>DataConecta
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sobre-proyecto">Sobre el Proyecto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#visualizaciones">Visualizaciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#codigo">Código</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contacto">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="display-3 fw-bold mb-4">
+                            <span class="text-primary">Data</span>Conecta
+                        </h1>
+                        <p class="lead mb-4">
+                            Sistema inteligente de análisis y visualización de datos para la 
+                            <strong>prevención de fraude en tarjetas de crédito</strong> 
+                            utilizando técnicas avanzadas de machine learning.
+                        </p>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="https://github.com/dsd228/Dataconecta" class="btn btn-primary btn-lg" target="_blank">
+                                <i class="bi bi-github me-2"></i>Ver en GitHub
+                            </a>
+                            <a href="#sobre-proyecto" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-arrow-down me-2"></i>Conocer más
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-visual">
+                        <div class="abstract-bg">
+                            <div class="floating-card">
+                                <i class="bi bi-shield-check display-1 text-success"></i>
+                                <h5 class="mt-3">Detección de Fraude</h5>
+                            </div>
+                            <div class="floating-card">
+                                <i class="bi bi-graph-up display-1 text-primary"></i>
+                                <h5 class="mt-3">Análisis Predictivo</h5>
+                            </div>
+                            <div class="floating-card">
+                                <i class="bi bi-eye display-1 text-info"></i>
+                                <h5 class="mt-3">Visualización</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre el Proyecto Section -->
+    <section id="sobre-proyecto" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-4">Sobre el Proyecto</h2>
+                    <p class="lead mb-5">
+                        DataConecta es una solución innovadora que combina el poder del machine learning 
+                        con visualizaciones interactivas para identificar y prevenir transacciones fraudulentas 
+                        en tiempo real.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="bi bi-cpu"></i>
+                        </div>
+                        <h4>Machine Learning Avanzado</h4>
+                        <p>
+                            Implementamos algoritmos de aprendizaje automático de última generación 
+                            para detectar patrones anómalos en las transacciones con alta precisión.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="bi bi-bar-chart"></i>
+                        </div>
+                        <h4>Visualizaciones Interactivas</h4>
+                        <p>
+                            Dashboards intuitivos y gráficos interactivos que facilitan la 
+                            interpretación de datos complejos y la toma de decisiones informadas.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon">
+                            <i class="bi bi-lightning"></i>
+                        </div>
+                        <h4>Análisis en Tiempo Real</h4>
+                        <p>
+                            Procesamiento y análisis de transacciones en tiempo real para 
+                            una respuesta inmediata ante posibles intentos de fraude.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualizaciones Section -->
+    <section id="visualizaciones" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-4">Visualizaciones</h2>
+                    <p class="lead mb-5">
+                        Explora nuestros análisis visuales que revelan patrones importantes 
+                        en los datos de transacciones y comportamiento fraudulento.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-lg-6">
+                    <div class="visualization-card">
+                        <img src="/assets/visuals/fraud_distribution.png" 
+                             alt="Distribución de Transacciones Fraudulentas" 
+                             class="img-fluid rounded">
+                        <div class="vis-overlay">
+                            <h5>Distribución de Fraudes</h5>
+                            <p>Análisis temporal de patrones fraudulentos</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="visualization-card">
+                        <img src="/assets/visuals/amount_analysis.png" 
+                             alt="Análisis de Montos de Transacción" 
+                             class="img-fluid rounded">
+                        <div class="vis-overlay">
+                            <h5>Análisis de Montos</h5>
+                            <p>Distribución de montos en transacciones legítimas vs. fraudulentas</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="visualization-card">
+                        <img src="/assets/visuals/model_performance.png" 
+                             alt="Rendimiento del Modelo" 
+                             class="img-fluid rounded">
+                        <div class="vis-overlay">
+                            <h5>Rendimiento del Modelo</h5>
+                            <p>Métricas de precisión y recall del algoritmo de detección</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="visualization-card">
+                        <img src="/assets/visuals/feature_importance.png" 
+                             alt="Importancia de Características" 
+                             class="img-fluid rounded">
+                        <div class="vis-overlay">
+                            <h5>Importancia de Features</h5>
+                            <p>Variables más relevantes para la detección de fraude</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-12">
+                    <div class="visualization-card">
+                        <img src="/assets/visuals/correlation_matrix.png" 
+                             alt="Matriz de Correlación" 
+                             class="img-fluid rounded">
+                        <div class="vis-overlay">
+                            <h5>Matriz de Correlación</h5>
+                            <p>Relaciones entre diferentes variables del dataset</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="/assets/informe_tecnico_dataconecta.pdf" class="btn btn-primary btn-lg" download>
+                    <i class="bi bi-download me-2"></i>Descargar Informe Técnico
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Código Section -->
+    <section id="codigo" class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="display-5 fw-bold mb-4">Código y Tecnologías</h2>
+                    <p class="lead mb-5">
+                        Proyecto desarrollado con las mejores prácticas y tecnologías 
+                        más avanzadas en ciencia de datos y machine learning.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="code-section">
+                        <h4 class="mb-4">
+                            <i class="bi bi-github me-2"></i>Repositorio
+                        </h4>
+                        <p class="mb-4">
+                            Todo el código fuente está disponible en GitHub con documentación 
+                            completa, ejemplos de uso y guías de instalación.
+                        </p>
+                        <a href="https://github.com/dsd228/Dataconecta" class="btn btn-outline-primary" target="_blank">
+                            <i class="bi bi-code-slash me-2"></i>Ver Código Fuente
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <div class="technologies-section">
+                        <h4 class="mb-4">
+                            <i class="bi bi-tools me-2"></i>Tecnologías Utilizadas
+                        </h4>
+                        <div class="tech-grid">
+                            <div class="tech-item">
+                                <i class="bi bi-code-square"></i>
+                                <span>Python</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="bi bi-graph-up"></i>
+                                <span>Scikit-learn</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="bi bi-table"></i>
+                                <span>Pandas</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="bi bi-bar-chart-line"></i>
+                                <span>Matplotlib</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="bi bi-diagram-3"></i>
+                                <span>Seaborn</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="bi bi-calculator"></i>
+                                <span>NumPy</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="bi bi-journal-code"></i>
+                                <span>Jupyter</span>
+                            </div>
+                            <div class="tech-item">
+                                <i class="bi bi-database"></i>
+                                <span>SQL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contacto" class="bg-dark text-light py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-graph-up-arrow me-2"></i>DataConecta
+                    </h5>
+                    <p class="mb-3">
+                        Soluciones innovadoras en análisis de datos y machine learning 
+                        para la prevención de fraude financiero.
+                    </p>
+                </div>
+                
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">Contacto</h5>
+                    <div class="contact-info">
+                        <p class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            info@dataconecta.com
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-geo-alt me-2"></i>
+                            México, CDMX
+                        </p>
+                        <p class="mb-0">
+                            <i class="bi bi-telephone me-2"></i>
+                            +52 (55) 1234-5678
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">Síguenos</h5>
+                    <div class="social-links">
+                        <a href="https://github.com/dsd228/Dataconecta" class="social-link" target="_blank">
+                            <i class="bi bi-github"></i>
+                            GitHub
+                        </a>
+                        <a href="https://linkedin.com/company/dataconecta" class="social-link" target="_blank">
+                            <i class="bi bi-linkedin"></i>
+                            LinkedIn
+                        </a>
+                        <a href="mailto:info@dataconecta.com" class="social-link">
+                            <i class="bi bi-envelope"></i>
+                            Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="my-4 border-secondary">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">© 2025 DataConecta. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        Desarrollado con <i class="bi bi-heart-fill text-danger"></i> para la innovación
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Smooth Scrolling Script -->
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = document.querySelector('.navbar').offsetHeight;
+                    const targetPosition = target.offsetTop - navHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Update active nav link on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
