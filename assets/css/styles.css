@@ -43,9 +43,27 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.hero-bg {
+  background: linear-gradient(135deg, rgba(24, 90, 219, 0.8), rgba(57, 160, 237, 0.8)), 
+              url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="1000" height="500" fill="%23185adb"/><rect width="1000" height="500" fill="url(%23grid)"/></svg>') !important;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
 #hero h1 {
   color: var(--primary);
   font-weight: 700;
+}
+
+.hero-bg h1 {
+  color: white !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-bg .lead {
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 #hero .btn-primary {
   background: var(--primary);
@@ -109,6 +127,16 @@ footer a {
 }
 footer a:hover {
   color: var(--accent);
+}
+
+/* Services section */
+.service-icon {
+  font-size: 4rem;
+  transition: transform var(--transition);
+  display: inline-block;
+}
+.service-icon:hover {
+  transform: scale(1.1);
 }
 
 /* Responsive ajustes */
