@@ -4,7 +4,12 @@
   padding: 0;
   box-sizing: border-box;
 }
-
+body {
+  font-family: 'Inter', sans-serif;
+}
+h1, h2, h3, .navbar-brand {
+  font-family: 'Montserrat', sans-serif;
+}
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
