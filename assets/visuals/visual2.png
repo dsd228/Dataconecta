@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visual 2</title>
+    <style>
+        body {
+            background-color: green;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-size: 48px;
+        }
+    </style>
+</head>
+<body>
+    Visual 2
+</body>
+</html>
