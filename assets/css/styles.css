@@ -13,8 +13,44 @@ body {
   color: #333;
 }
 
-h1, h2, h3, .navbar-brand {
-  font-family: 'Montserrat', sans-serif;
+/* Variables para tema claro/oscuro */
+:root {
+  --bg-light: #f5f5f5;
+  --text-light: #333;
+  --accent-light: #00bcd4;
+
+  --bg-dark: #0d1117;
+  --text-dark: #c9d1d9;
+  --accent-dark: #00fff1;
+}
+
+/* Estilos para el botón de tema */
+.btn-theme {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 999;
+  background: var(--accent-light);
+  color: var(--text-light);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 24px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark-mode .btn-theme {
+  background: var(--accent-dark);
+  color: var(--bg-dark);
+}
+.btn-theme:focus {
+  outline: 3px solid var(--accent-dark);
+}
+
+/* Accesibilidad visual :focus para botones y enlaces */
+.btn:focus, .btn-primary:focus, a:focus, button:focus, .card:focus {
+  outline: 3px solid var(--accent-dark);
+  outline-offset: 2px;
 }
 
 /* Hero Section */
@@ -71,20 +107,26 @@ h1, h2, h3, .navbar-brand {
   padding: 1.5rem;
   width: 300px;
   text-align: center;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.3s, transform 0.3s;
 }
-.card:hover {
+.card:hover, .card:focus {
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  transform: scale(1.05);
 }
 .card img {
   width: 100%;
-  height: 200px;           /* Alto recomendado */
+  height: 200px;
   object-fit: contain;
   background: #f5f5f5;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   display: block;
   margin: 0 auto 1rem auto;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card img:hover, .card img:focus {
+  transform: scale(1.05);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
 }
 body.dark-mode .card img,
 html.dark-mode .card img {
@@ -115,11 +157,20 @@ html.dark-mode .card img {
   padding: 1.5rem;
   width: 240px;
   text-align: center;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+.servicio:hover, .servicio:focus {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  transform: scale(1.05);
 }
 .icono-servicio {
   width: 48px;
   height: 48px;
   margin-bottom: 1rem;
+  transition: transform 0.3s;
+}
+.icono-servicio:hover, .icono-servicio:focus {
+  transform: scale(1.08);
 }
 
 /* Sobre Nosotros */
@@ -133,6 +184,10 @@ html.dark-mode .card img {
   width: 180px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  transition: transform 0.3s;
+}
+.equipo-foto:hover, .equipo-foto:focus {
+  transform: scale(1.05);
 }
 
 /* Contacto */
@@ -149,6 +204,12 @@ html.dark-mode .card img {
   border-radius: 6px;
   border: 1px solid #e0e0e0;
   font-size: 1rem;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+}
+#contacto input:focus,
+#contacto textarea:focus {
+  border-color: var(--accent-dark);
+  outline: 2px solid var(--accent-dark);
 }
 #contacto textarea {
   min-height: 100px;
@@ -156,7 +217,7 @@ html.dark-mode .card img {
 }
 .btn {
   display: inline-block;
-  background-color: #00bcd4;
+  background-color: var(--accent-light);
   color: white;
   padding: 0.6rem 1.2rem;
   border-radius: 4px;
@@ -164,13 +225,15 @@ html.dark-mode .card img {
   font-weight: bold;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s, transform 0.3s;
 }
 .btn-primary {
-  background-color: #00bcd4;
+  background-color: var(--accent-light);
+  transition: background 0.3s, color 0.3s, transform 0.3s;
 }
 .btn:hover, .btn-primary:hover {
   background-color: #0097a7;
+  transform: scale(1.05);
 }
 .contact-info {
   text-align: center;
@@ -184,6 +247,11 @@ html.dark-mode .card img {
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   padding: 1rem 1.5rem;
   margin-bottom: 1rem;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+#blog article:hover, #blog article:focus {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  transform: scale(1.03);
 }
 
 /* Testimonios */
@@ -194,6 +262,11 @@ html.dark-mode .card img {
   margin: 1rem auto;
   max-width: 600px;
   font-style: italic;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+#testimonios blockquote:focus, #testimonios blockquote:hover {
+  box-shadow: 0 2px 10px rgba(0,188,212,0.14);
+  transform: scale(1.02);
 }
 
 /* Footer */
@@ -210,8 +283,6 @@ footer {
   margin-bottom: 1rem;
   max-width: 100%;
 }
-  
-}
 .footer-links {
   margin: 1rem 0;
 }
@@ -220,9 +291,11 @@ footer {
   text-decoration: none;
   margin: 0 0.5rem;
   font-weight: 500;
+  transition: color 0.3s;
 }
-.footer-links a:hover {
+.footer-links a:hover, .footer-links a:focus {
   text-decoration: underline;
+  color: #00fff1;
 }
 
 /* Responsive */
@@ -257,18 +330,18 @@ footer {
 
 /* Modo claro/oscuro */
 body {
-  background-color: #fff;
-  color: #222;
+  background-color: var(--bg-light);
+  color: var(--text-light);
   transition: background 0.3s, color 0.3s;
 }
 .header, .card, .section {
-  background-color: #f5f5f5;
-  color: #222;
+  background-color: var(--bg-light);
+  color: var(--text-light);
   border-color: #e1e4e8;
 }
 body.dark-mode {
-  background-color: #0d1117;
-  color: #c9d1d9;
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
 }
 .dark-mode .header, .dark-mode .card, .dark-mode .section {
   background-color: #161b22;
@@ -279,8 +352,8 @@ body.dark-mode {
   color: #c9d1d9;
 }
 .dark-mode .accent, .dark-mode a, .dark-mode button {
-  background-color: #00fff1;
-  color: #0d1117;
+  background-color: var(--accent-dark);
+  color: var(--bg-dark);
   border-color: #00cccc;
 }
 .dark-mode a:hover, .dark-mode button:hover {
@@ -289,7 +362,7 @@ body.dark-mode {
 }
 
 /* Animación sutil en imágenes */
-img:hover {
+img:hover, img:focus {
   transform: scale(1.05);
   transition: transform 0.3s ease;
 }
