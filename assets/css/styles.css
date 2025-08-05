@@ -93,6 +93,13 @@ img {
 }
 
 /* Botones (si usás) */
+.btn-primary {
+  transition: background-color 0.3s ease;
+}
+img:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
 .btn {
   display: inline-block;
   background-color: #00bcd4;
