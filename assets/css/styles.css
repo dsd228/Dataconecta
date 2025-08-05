@@ -57,6 +57,29 @@ nav a:hover {
   color: #00bcd4;
 }
 
+/* HERO BG (ahora fuera del @media) */
+.hero-bg {
+  background-image: url('assets/img/hero-bg.jpg'); /* Cambia la ruta si tu imagen está en otro lugar */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(13,17,23, 0.70); /* Oscurece para mejor legibilidad */
+  z-index: 1;
+}
+html.light-mode .hero-bg::before {
+  background: rgba(255,255,255, 0.70); /* Aclara en modo claro */
+}
+.hero-bg .container {
+  position: relative;
+  z-index: 2;
+}
+
 /* Contenido principal */
 main {
   max-width: 1100px;
@@ -164,28 +187,8 @@ footer a:hover {
   nav a {
     margin: 0.5rem 0;
   }
-  .hero-bg {
-  background-image: url('assets/img/hero-bg.jpg'); /* Cambia la ruta si tu imagen está en otro lugar */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
 }
-.hero-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(13,17,23, 0.70); /* Oscurece para mejor legibilidad */
-  z-index: 1;
-}
-html.light-mode .hero-bg::before {
-  background: rgba(255,255,255, 0.70); /* Aclara en modo claro */
-}
-.hero-bg .container {
-  position: relative;
-  z-index: 2;
-}
-}
+
 /* Modo claro (por defecto) */
 body {
   background-color: #fff;
