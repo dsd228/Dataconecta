@@ -165,3 +165,58 @@ footer a:hover {
     margin: 0.5rem 0;
   }
 }
+/* Modo claro (por defecto) */
+body {
+  background-color: #fff;
+  color: #222;
+  transition: background 0.3s, color 0.3s;
+}
+.header, .card, .section {
+  background-color: #f5f5f5;
+  color: #222;
+  border-color: #e1e4e8;
+}
+
+/* Modo oscuro */
+body.dark-mode {
+  background-color: #0d1117;
+  color: #c9d1d9;
+}
+.dark-mode .header, .dark-mode .card, .dark-mode .section {
+  background-color: #161b22;
+  color: #c9d1d9;
+  border-color: #30363d;
+}
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4 {
+  color: #c9d1d9;
+}
+.dark-mode .accent, .dark-mode a, .dark-mode button {
+  background-color: #00fff1;
+  color: #0d1117;
+  border-color: #00cccc;
+}
+.dark-mode a:hover, .dark-mode button:hover {
+  background-color: #00cccc;
+  color: #0d1117;
+}
+
+/* Botón de tema */
+.theme-toggle {
+  background: #00fff1;
+  color: #0d1117;
+  border: 1px solid #00cccc;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 1em;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark-mode .theme-toggle {
+  background: #161b22;
+  color: #00fff1;
+  border-color: #00cccc;
+}
+body.dark-mode .theme-toggle:hover {
+  background: #00cccc;
+  color: #161b22;
+}
