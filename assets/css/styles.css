@@ -4,17 +4,17 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+/* Tipografía personalizada */
 body {
   font-family: 'Inter', sans-serif;
-}
-h1, h2, h3, .navbar-brand {
-  font-family: 'Montserrat', sans-serif;
-}
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   background-color: #f5f5f5;
   color: #333;
+}
+
+h1, h2, h3, .navbar-brand {
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* Encabezado */
@@ -37,7 +37,7 @@ header p {
   color: #ccc;
 }
 
-/* Navegación (opcional) */
+/* Navegación */
 nav {
   display: flex;
   justify-content: center;
@@ -92,14 +92,27 @@ img {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Botones (si usás) */
+img[loading="lazy"] {
+  /* Asegura que las imágenes lazy tengan las mismas reglas que las normales */
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Animación sutil en botones e íconos */
 .btn-primary {
   transition: background-color 0.3s ease;
 }
+
 img:hover {
   transform: scale(1.05);
   transition: transform 0.3s ease;
 }
+
+/* Botones */
 .btn {
   display: inline-block;
   background-color: #00bcd4;
