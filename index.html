@@ -1,115 +1,118 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dataconecta — Inicio</title>
-  <meta name="description" content="Dataconecta: Ciencia de Datos, Visualización y Machine Learning.">
-  <link rel="icon" type="image/png" href="assets/img/favicon.png">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dataconecta Consultora</title>
+  <meta name="description" content="Consultoría en Ciencia de Datos, BI y Analítica Avanzada" />
+  <link rel="icon" type="image/png" href="assets/img/logo.png" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <!-- NAVBAR ORDENADO -->
-  <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+  <!-- NAVBAR PROFESIONAL -->
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="assets/img/logo.png" alt="Logo Dataconecta" width="100">
-        <span class="fw-bold fs-4">Dataconecta</span>
+        <img src="assets/img/logo.png" alt="Dataconecta Logo" width="100" class="align-middle" style="border-radius:8px;">
+        <span class="fw-bold fs-3 text-primary">Dataconecta</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav ms-auto align-items-center gap-2">
-          <li class="nav-item"><a class="nav-link active" href="index.html" data-i18n="nav_inicio">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="proyectos.html" data-i18n="nav_proyectos">Proyectos</a></li>
-          <li class="nav-item"><a class="nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
-          <li class="nav-item"><a class="nav-link" href="contacto.html" data-i18n="nav_contacto">Contacto</a></li>
-          <li class="nav-item">
-            <button class="btn theme-toggle px-2 py-1 ms-2" id="theme-toggle-btn" aria-label="Cambiar tema" title="Modo claro/oscuro">
-              <span id="theme-toggle-icon" aria-hidden="true">🌙</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="btn lang-switch px-2 py-1 ms-2" id="lang-switch-btn">EN</button>
-          </li>
+        <ul class="navbar-nav ms-auto gap-2">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="proyectos.html">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="equipo.html">Equipo</a></li>
+          <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+          <li class="nav-item"><a class="btn btn-primary ms-2" href="contacto.html">Contacto</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- HERO MODERNO -->
-  <section class="hero-bg d-flex align-items-center" style="min-height:80vh;">
-    <div class="container text-center py-5" style="position:relative; z-index:2;">
-      <h1 class="display-3 fw-bold mb-3 neon-text" data-i18n="hero_titulo">Conectando Ciencia de Datos e Inteligencia Visual</h1>
-      <p class="lead mb-4 text-white-50 fs-4" data-i18n="hero_subtitulo">Proyectos que transforman datos en decisiones.</p>
-      <a href="proyectos.html" class="btn btn-primary btn-lg shadow" data-i18n="explorar_proyectos">Explorar Proyectos</a>
+  <!-- HERO PROFESIONAL -->
+  <header class="hero-section d-flex align-items-center" style="min-height:80vh; background:linear-gradient(to right, #0d1117bb, #003366cc), url('assets/img/hero-bg.jpg') center/cover no-repeat;">
+    <div class="container text-center text-white py-5">
+      <h1 class="display-2 fw-bold mb-3">Impulsamos decisiones con datos</h1>
+      <p class="lead mb-4 fs-4">Consultoría en ciencia de datos, inteligencia de negocios y desarrollo de soluciones analíticas para empresas que quieren crecer.</p>
+      <a href="servicios.html" class="btn btn-lg btn-primary px-5 me-3">Nuestros Servicios</a>
+      <a href="contacto.html" class="btn btn-lg btn-outline-light px-5">Solicitar Asesoría</a>
+    </div>
+  </header>
+
+  <!-- SECCIÓN: VALOR DIFERENCIAL -->
+  <section class="container py-5">
+    <div class="row g-5 align-items-center">
+      <div class="col-md-6">
+        <h2 class="fw-bold mb-3">¿Por qué elegir Dataconecta?</h2>
+        <ul class="fs-5">
+          <li>+10 años de experiencia en analítica avanzada y BI</li>
+          <li>Soluciones a medida para cada cliente</li>
+          <li>Equipo senior, multidisciplinario y certificado</li>
+          <li>Enfoque en resultados y transferencia de conocimiento</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <img src="assets/img/equipo-data.jpg" class="img-fluid rounded-4 shadow" alt="Equipo Dataconecta">
+      </div>
     </div>
   </section>
 
-  <!-- FOOTER COMPACTO Y MODERNO -->
-  <footer class="text-center py-4">
-    <div class="mb-2">
-      <a href="https://www.linkedin.com/in/david-data-conecta" target="_blank" class="text-white mx-2"><img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="22"></a>
-      <a href="https://github.com/dsd228" target="_blank" class="text-white mx-2"><img src="assets/img/icono_github.png" alt="GitHub" width="22"></a>
-      <a href="https://kaggle.com/davidiaz" target="_blank" class="text-white mx-2"><img src="assets/img/icono_kaggle.png" alt="Kaggle" width="22"></a>
-      <a href="mailto:david.diaz.uxdata@gmail.com" class="text-white mx-2"><img src="assets/img/icono_email.png" alt="Email" width="22"></a>
-      <a href="assets/img/portfolio.pdf" target="_blank" class="text-white mx-2"><img src="assets/img/icono_portfolio.png" alt="Portfolio" width="22"></a>
+  <!-- SECCIÓN: SERVICIOS DESTACADOS -->
+  <section class="bg-light py-5">
+    <div class="container">
+      <h2 class="text-center fw-bold mb-4">Nuestros Servicios</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body py-4">
+              <img src="assets/img/icon-analytics.png" width="48" alt="Analytics" class="mb-3">
+              <h5 class="fw-bold mb-2">Ciencia de Datos & IA</h5>
+              <p>Modelado predictivo, machine learning, NLP y automatización de procesos.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body py-4">
+              <img src="assets/img/icon-bi.png" width="48" alt="BI" class="mb-3">
+              <h5 class="fw-bold mb-2">Business Intelligence</h5>
+              <p>Dashboards, data warehousing, visualización y gobernanza de datos.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body py-4">
+              <img src="assets/img/icon-training.png" width="48" alt="Capacitación" class="mb-3">
+              <h5 class="fw-bold mb-2">Capacitación y Workshops</h5>
+              <p>Formación in-company y talleres prácticos para equipos de negocio y tecnología.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-4">
+        <a href="servicios.html" class="btn btn-outline-primary">Ver todos los servicios</a>
+      </div>
     </div>
-    <div class="small mb-1 text-white-50">© 2025 Dataconecta</div>
-    <div class="small text-white-50" data-i18n="footer_tema">💡 Podés cambiar entre modo claro y oscuro con el botón 🌙/🌞.</div>
-  </footer>
+  </section>
 
-  <!-- SCRIPTS FINALES ORDENADOS -->
+  <!-- FOOTER -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container text-center">
+      <div class="mb-2">
+        <a href="https://www.linkedin.com/" class="text-white mx-2" target="_blank"><img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="22"></a>
+        <a href="https://github.com/" class="text-white mx-2" target="_blank"><img src="assets/img/icono_github.png" alt="GitHub" width="22"></a>
+        <a href="mailto:contacto@dataconecta.com" class="text-white mx-2"><img src="assets/img/icono_email.png" alt="Email" width="22"></a>
+      </div>
+      <div class="small mb-1">© 2025 Dataconecta Consultora · Todos los derechos reservados</div>
+      <div class="small text-white-50">Consultoría en Analítica, BI e Inteligencia Artificial</div>
+    </div>
+  </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Theme
-    function setTheme(mode) {
-      const icon = document.getElementById('theme-toggle-icon');
-      if (!icon) return;
-      if (mode === 'light') {
-        document.documentElement.classList.add('light-mode');
-        icon.textContent = '🌞';
-      } else {
-        document.documentElement.classList.remove('light-mode');
-        icon.textContent = '🌙';
-      }
-    }
-    function getTheme() {
-      return localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    }
-    document.addEventListener('DOMContentLoaded', function() {
-      setTheme(getTheme());
-      const btn = document.getElementById('theme-toggle-btn');
-      if (btn) {
-        btn.addEventListener('click', function() {
-          const current = getTheme();
-          const next = current === 'light' ? 'dark' : 'light';
-          setTheme(next); localStorage.setItem('theme', next);
-        });
-      }
-    });
-    // Multilenguaje
-    const i18n = {
-      es: { nav_inicio:"Inicio", nav_proyectos:"Proyectos", nav_blog:"Blog", nav_contacto:"Contacto", hero_titulo:"Conectando Ciencia de Datos e Inteligencia Visual", hero_subtitulo:"Proyectos que transforman datos en decisiones.", explorar_proyectos:"Explorar Proyectos", footer_tema:"💡 Podés cambiar entre modo claro y oscuro con el botón 🌙/🌞." },
-      en: { nav_inicio:"Home", nav_proyectos:"Projects", nav_blog:"Blog", nav_contacto:"Contact", hero_titulo:"Connecting Data Science and Visual Intelligence", hero_subtitulo:"Projects that turn data into decisions.", explorar_proyectos:"Explore Projects", footer_tema:"💡 You can switch between light and dark mode with the 🌙/🌞 button." }
-    };
-    function setLang(lang) {
-      document.documentElement.lang = lang;
-      document.querySelectorAll('[data-i18n]').forEach(function(el) {
-        const key = el.getAttribute('data-i18n');
-        if (i18n[lang][key]) el.textContent = i18n[lang][key];
-      });
-      document.getElementById('lang-switch-btn').textContent = lang === 'es' ? 'EN' : 'ES';
-      localStorage.setItem('lang', lang);
-    }
-    document.getElementById('lang-switch-btn').onclick = function() {
-      const current = localStorage.getItem('lang') || 'es';
-      setLang(current === 'es' ? 'en' : 'es');
-    };
-    setLang(localStorage.getItem('lang') || 'es');
-  </script>
 </body>
 </html>
