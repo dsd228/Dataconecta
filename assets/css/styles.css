@@ -1,62 +1,46 @@
 body {
-  background-color: #0d1117;
-  color: #c9d1d9;
   font-family: 'Montserrat', 'Inter', sans-serif;
-}
-.neon-text {
-  color: #00fff1;
-  text-shadow: 0 0 8px #00fff1, 0 0 32px #00fff1;
-}
-.navbar, footer {
-  background-color: #161b22 !important;
-}
-.theme-toggle, .lang-switch {
-  background: #00fff1;
-  color: #161b22;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: background 0.25s, color 0.25s;
-}
-.theme-toggle:hover, .lang-switch:hover {
-  background: #00cccc;
-  color: #0d1117;
-}
-a.text-white:hover, .nav-link:hover {
-  color: #00fff1 !important;
-  text-shadow: 0 0 8px #00fff1;
-}
-.hero-bg {
-  background-image: url('../img/hero-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
-}
-.hero-bg::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(13,17,23, 0.70);
-  z-index: 1;
-}
-.hero-bg .container {
-  position: relative;
-  z-index: 2;
-}
-html.light-mode body {
-  background: #fff;
+  background: #f5f7fb;
   color: #222;
 }
-html.light-mode .navbar, html.light-mode footer {
-  background-color: #f5f5f5 !important;
-  color: #222 !important;
+.navbar {
+  background: #fff !important;
 }
-html.light-mode .theme-toggle, html.light-mode .lang-switch {
-  background: #161b22;
-  color: #00fff1;
+.navbar-brand .fs-3 {
+  color: #0053a4 !important;
 }
-html.light-mode .theme-toggle:hover, html.light-mode .lang-switch:hover {
-  background: #00fff1;
-  color: #161b22;
+.btn-primary {
+  background: #00b4d8;
+  border: none;
 }
+.btn-primary:hover {
+  background: #0077b6;
+}
+.btn-outline-primary {
+  border-color: #00b4d8;
+  color: #00b4d8;
+}
+.btn-outline-primary:hover {
+  background: #00b4d8;
+  color: #fff;
+}
+.hero-section {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+h1, h2, h5 {
+  font-weight: 700;
+}
+.card {
+  border-radius: 16px;
+}
+.bg-light {
+  background: #f8fafc !important;
+}
+footer {
+  background: #161b22 !important;
+  color: #c9d1d9 !important;
+  border-top: 1px solid #2b2b2b;
+}
+footer .small { color: #b7b7b7; }
