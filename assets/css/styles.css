@@ -1,7 +1,14 @@
 :root {
-  --primary-dark: #0B132B;
-  --primary-medium: #1C2541;
-  --primary-light: #3A506B;
+  --primary-dark: #0B132B;      /* fondo principal */
+  --primary-medium: #1C2541;    /* secciones intermedias */
+  --primary-light: #3A506B;     /* secciones más claras */
+  --accent-primary: #00BFFF;    /* azul celeste brillante */
+  --accent-secondary: #5271FF;  /* azul eléctrico */
+  --text-primary: #FFFFFF;      /* texto principal */
+  --text-secondary: #CBD5E1;    /* texto secundario */
+  --text-muted: #94A3B8;        /* texto tenue */
+  --gradient-primary: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  --gradient-overlay: linear-gradient(135deg, rgba(11, 19, 43, 0.9) 0%, rgba(28, 37, 65, 0.85) 100%);
 }
 
 
