@@ -1,82 +1,302 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Blog — Dataconecta</title>
-  <meta name="description" content="Artículos y recursos de ciencia de datos y visualización.">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon.png">
-  <meta property="og:image" content="assets/img/preview.png">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Blog | Dataconecta Consultora</title>
+  <meta name="description" content="Consultoría especializada en Data Analytics, Business Intelligence, UX/UI y Marketing Digital" />
+  <link rel="icon" type="image/png" href="assets/img/logo.png" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
-  <!-- Navbar igual que en index.html, activa la sección Blog -->
-  <nav class="navbar navbar-expand-lg fixed-top shadow">
+  <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
     <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="assets/img/logo.png" alt="Logo Dataconecta" class="logo-footer me-2" width="40">
-        <span class="fw-bold fs-4">Dataconecta</span>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <img src="assets/img/logo.png" alt="Dataconecta Logo" width="60" style="border-radius:10px;">
+        <span class="fw-bold fs-3 text-white">Dataconecta</span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"><i class="bi bi-list text-light"></i></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav_inicio">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="proyectos.html" data-i18n="nav_proyectos">Proyectos</a></li>
-          <li class="nav-item"><a class="nav-link active" href="blog.html" data-i18n="nav_blog">Blog</a></li>
-          <li class="nav-item"><a class="nav-link" href="contacto.html" data-i18n="nav_contacto">Contacto</a></li>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto gap-3 align-items-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="proyectos.html">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="equipo.html">Equipo</a></li>
+          <li class="nav-item"><a class="nav-link active" href="blog.html">Blog</a></li>
+          <li class="nav-item"><a class="btn btn-glass ms-2" href="contacto.html">Contacto</a></li>
         </ul>
-        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Cambiar tema" title="Cambiar tema">
-          <span id="theme-toggle-icon" aria-hidden="true">🌙</span>
-        </button>
-        <button class="lang-switch" id="lang-switch-btn">EN</button>
       </div>
     </div>
   </nav>
-  <section class="container py-5 mt-5">
-    <h1 class="display-5 mb-4 text-center" data-i18n="blog_titulo">Blog & Artículos</h1>
-    <div class="blog-article mb-4">
-      <h4 data-i18n="articulo1_titulo">Cómo crear dashboards efectivos en ciencia de datos</h4>
-      <p data-i18n="articulo1_desc">Descubre técnicas para visualización y comunicación de resultados en proyectos reales de machine learning.</p>
-      <a href="#" class="btn btn-outline-primary" data-i18n="leer_mas">Leer más</a>
+
+  <header class="subpage-hero">
+    <div class="container text-center py-5">
+      <div class="hero-content">
+        <h1 class="display-4 fw-bold mb-3 hero-title">Nuestro <span class="text-gradient">Blog</span></h1>
+        <p class="lead mb-4 fs-5 hero-subtitle">Artículos, tendencias y insights sobre data analytics, UX/UI y marketing digital</p>
+      </div>
     </div>
-    <div class="blog-article mb-4">
-      <h4 data-i18n="articulo2_titulo">Introducción a la predicción de demanda con series temporales</h4>
-      <p data-i18n="articulo2_desc">Guía paso a paso para implementar forecasting en proyectos de logística y retail.</p>
-      <a href="#" class="btn btn-outline-primary" data-i18n="leer_mas">Leer más</a>
+    <div class="hero-pattern"></div>
+  </header>
+
+  <section class="container py-5 my-4">
+    <div class="row mb-5">
+      <div class="col-12 text-center">
+        <h2 class="fw-bold section-title">Últimas publicaciones</h2>
+        <p class="section-subtitle">Descubre las últimas tendencias, consejos y casos de estudio del mundo del data analytics</p>
+      </div>
     </div>
-    <!-- Más artículos aquí -->
+    
+    <div class="row g-4 mb-5">
+      <div class="col-lg-4 col-md-6">
+        <div class="card-blog card-glass h-100">
+          <div class="blog-image" style="background-color: #1C2E5C; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-graph-up-arrow" style="font-size: 3rem; color: #00F0FF;"></i>
+          </div>
+          <div class="blog-content p-4">
+            <span class="blog-category">Data Analytics</span>
+            <h4 class="blog-title">5 tendencias de BI que dominarán 2025</h4>
+            <p class="blog-excerpt">Descubre las tecnologías y metodologías que transformarán el business intelligence en el próximo año.</p>
+            <div class="blog-meta">
+              <div class="blog-author">
+                <i class="bi bi-person"></i>
+                <span>María Rodríguez</span>
+              </div>
+              <div class="blog-date">
+                <i class="bi bi-calendar"></i>
+                <span>12 Oct, 2024</span>
+              </div>
+            </div>
+            <a href="#" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card-blog card-glass h-100">
+          <div class="blog-image" style="background-color: #1C2E5C; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-layout-text-window" style="font-size: 3rem; color: #00F0FF;"></i>
+          </div>
+          <div class="blog-content p-4">
+            <span class="blog-category">UX/UI</span>
+            <h4 class="blog-title">Diseño centrado en datos: cómo combinar analytics y UX</h4>
+            <p class="blog-excerpt">Aprende a utilizar datos de comportamiento para crear experiencias digitales más efectivas y personalizadas.</p>
+            <div class="blog-meta">
+              <div class="blog-author">
+                <i class="bi bi-person"></i>
+                <span>Javier López</span>
+              </div>
+              <div class="blog-date">
+                <i class="bi bi-calendar"></i>
+                <span>5 Oct, 2024</span>
+              </div>
+            </div>
+            <a href="#" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card-blog card-glass h-100">
+          <div class="blog-image" style="background-color: #1C2E5C; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-megaphone" style="font-size: 3rem; color: #00F0FF;"></i>
+          </div>
+          <div class="blog-content p-4">
+            <span class="blog-category">Marketing</span>
+            <h4 class="blog-title">Cómo calcular el ROI de tus campañas marketing con analytics</h4>
+            <p class="blog-excerpt">Guía práctica para medir y optimizar el retorno de inversión de tus estrategias de marketing digital.</p>
+            <div class="blog-meta">
+              <div class="blog-author">
+                <i class="bi bi-person"></i>
+                <span>Ana Martínez</span>
+              </div>
+              <div class="blog-date">
+                <i class="bi bi-calendar"></i>
+                <span>28 Sep, 2024</span>
+              </div>
+            </div>
+            <a href="#" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card-blog card-glass h-100">
+          <div class="blog-image" style="background-color: #1C2E5C; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-shield-check" style="font-size: 3rem; color: #00F0FF;"></i>
+          </div>
+          <div class="blog-content p-4">
+            <span class="blog-category">Seguridad</span>
+            <h4 class="blog-title">GDPR y analytics: cómo cumplir sin sacrificar insights</h4>
+            <p class="blog-excerpt">Estrategias para obtener valor de los datos respetando la privacidad y normativas de protección.</p>
+            <div class="blog-meta">
+              <div class="blog-author">
+                <i class="bi bi-person"></i>
+                <span>Carlos Fernández</span>
+              </div>
+              <div class="blog-date">
+                <i class="bi bi-calendar"></i>
+                <span>20 Sep, 2024</span>
+              </div>
+            </div>
+            <a href="#" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card-blog card-glass h-100">
+          <div class="blog-image" style="background-color: #1C2E5C; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-cloud" style="font-size: 3rem; color: #00F0FF;"></i>
+          </div>
+          <div class="blog-content p-4">
+            <span class="blog-category">Tecnología</span>
+            <h4 class="blog-title">Azure vs AWS: comparativa para data lakes</h4>
+            <p class="blog-excerpt">Análisis detallado de las soluciones de data lakes en las principales plataformas cloud.</p>
+            <div class="blog-meta">
+              <div class="blog-author">
+                <i class="bi bi-person"></i>
+                <span>Elena García</span>
+              </div>
+              <div class="blog-date">
+                <i class="bi bi-calendar"></i>
+                <span>14 Sep, 2024</span>
+              </div>
+            </div>
+            <a href="#" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card-blog card-glass h-100">
+          <div class="blog-image" style="background-color: #1C2E5C; height: 200px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-graph-up" style="font-size: 3rem; color: #00F0FF;"></i>
+          </div>
+          <div class="blog-content p-4">
+            <span class="blog-category">Visualización</span>
+            <h4 class="blog-title">10 principios para crear dashboards efectivos</h4>
+            <p class="blog-excerpt">Diseña cuadros de mando que comuniquen insights de forma clara y accionable.</p>
+            <div class="blog-meta">
+              <div class="blog-author">
+                <i class="bi bi-person"></i>
+                <span>David Sánchez</span>
+              </div>
+              <div class="blog-date">
+                <i class="bi bi-calendar"></i>
+                <span>7 Sep, 2024</span>
+              </div>
+            </div>
+            <a href="#" class="stretched-link"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-5">
+      <div class="col-12 text-center">
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">Siguiente</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </section>
-  <!-- Footer igual que en index.html -->
-  <footer class="text-center py-4 mt-5">
-    <div>
-      <a href="https://www.linkedin.com/in/david-data-conecta" target="_blank" class="text-white me-3">
-        <img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="18"> LinkedIn
-      </a>
-      <a href="https://github.com/dsd228" target="_blank" class="text-white me-3">
-        <img src="assets/img/icono_github.png" alt="GitHub" width="18"> GitHub
-      </a>
-      <a href="https://kaggle.com/davidiaz" target="_blank" class="text-white me-3">
-        <img src="assets/img/icono_kaggle.png" alt="Kaggle" width="18"> Kaggle
-      </a>
-      <a href="mailto:david.diaz.uxdata@gmail.com" class="text-white me-3">
-        <img src="assets/img/icono_email.png" alt="Email" width="18"> Email
-      </a>
-      <a href="assets/img/portfolio.pdf" target="_blank" class="text-white">
-        <img src="assets/img/icono_portfolio.png" alt="Portfolio" width="18"> Portfolio
-      </a>
+
+  <section class="container-fluid bg-dark-custom py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <h2 class="fw-bold mb-4">Suscríbete a nuestra <span class="text-primary-custom">newsletter</span></h2>
+          <p class="mb-4">Recibe cada mes insights exclusivos, tendencias del sector y casos de estudio directamente en tu email.</p>
+          <form class="newsletter-form">
+            <div class="input-group mb-3">
+              <input type="email" class="form-control" placeholder="Tu email" aria-label="Tu email">
+              <button class="btn btn-primary-glass" type="submit">Suscribirme</button>
+            </div>
+            <div class="form-text">Respetamos tu privacidad y no compartiremos tu información con terceros.</div>
+          </form>
+        </div>
+        <div class="col-lg-6">
+          <div class="card-glass p-5">
+            <h4 class="mb-4">¿Te gustaría escribir para nuestro blog?</h4>
+            <p class="mb-4">Estamos siempre buscando profesionales apasionados por los datos que quieran compartir su conocimiento con nuestra comunidad.</p>
+            <a href="contacto.html" class="btn btn-primary-glass">Enviar propuesta</a>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mt-2">© 2025 Dataconecta</div>
-    <div class="mt-2 text-white-50" style="font-size:0.95em;">
-      <span data-i18n="footer_tema">💡 Podés cambiar entre modo claro y oscuro con el botón 🌙/🌞.</span>
+  </section>
+
+  <footer class="footer py-5 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <h5 class="footer-brand d-flex align-items-center gap-2 mb-4">
+            <img src="assets/img/logo.png" alt="Dataconecta Logo" width="50" style="border-radius:10px;">
+            <span class="fw-bold text-white">Dataconecta</span>
+          </h5>
+          <p class="footer-text">Consultoría especializada en Data Analytics, Business Intelligence, UX/UI y Marketing Digital.</p>
+        </div>
+        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+          <h5 class="footer-title">Navegación</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="index.html" class="footer-link">Inicio</a></li>
+            <li class="mb-2"><a href="servicios.html" class="footer-link">Servicios</a></li>
+            <li class="mb-2"><a href="proyectos.html" class="footer-link">Proyectos</a></li>
+            <li class="mb-2"><a href="equipo.html" class="footer-link">Equipo</a></li>
+            <li class="mb-2"><a href="blog.html" class="footer-link">Blog</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+          <h5 class="footer-title">Servicios</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="#" class="footer-link">Data Analytics</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Business Intelligence</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Diseño UX/UI</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Marketing Digital</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Capacitación</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-4">
+          <h5 class="footer-title">Contacto</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="bi bi-envelope me-2"></i> <a href="mailto:contacto@dataconecta.com" class="footer-link">contacto@dataconecta.com</a></li>
+            <li class="mb-2"><i class="bi bi-telephone me-2"></i> <a href="tel:+34123456789" class="footer-link">+34 123 456 789</a></li>
+            <li class="mb-2 d-flex gap-3">
+              <a href="https://www.linkedin.com/" class="footer-social" target="_blank"><i class="bi bi-linkedin"></i></a>
+              <a href="https://github.com/" class="footer-social" target="_blank"><i class="bi bi-github"></i></a>
+              <a href="https://twitter.com/" class="footer-social" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4 border-light-custom">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="small mb-0">© 2025 Dataconecta Consultora · Todos los derechos reservados</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <a href="#" class="small footer-link me-3">Política de Privacidad</a>
+          <a href="#" class="small footer-link">Términos de Servicio</a>
+        </div>
+      </div>
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Copia el script multilenguaje y theme de index.html aquí
-  </script>
 </body>
 </html>
