@@ -3,26 +3,33 @@ body {
   background: #191970;
   color: #f0f4ff;
   min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
+
 .navbar, footer {
   background: rgba(25, 25, 112, 0.85) !important;
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(255,255,255,0.06);
   border-top: none;
 }
+
 .navbar-brand .fs-3 {
   color: #fff !important;
   letter-spacing: 1px;
 }
+
 .nav-link, .navbar-brand, .navbar-nav .nav-link {
   color: #f0f4ff !important;
   font-weight: 500;
   transition: color 0.2s;
 }
+
 .nav-link.active, .nav-link:hover {
   color: #aee3fa !important;
   text-shadow: 0 0 6px #00fff1aa;
 }
+
 .btn-glass {
   background: rgba(255,255,255,0.10);
   color: #f0f4ff;
@@ -37,6 +44,7 @@ body {
   position: relative;
   overflow: hidden;
 }
+
 .btn-glass:after {
   content: '';
   position: absolute;
@@ -50,6 +58,7 @@ body {
   z-index: 0;
   transition: opacity 0.2s;
 }
+
 .btn-glass:hover,
 .btn-glass:focus {
   background: rgba(174,227,250,0.18);
@@ -57,21 +66,22 @@ body {
   border-color: #aee3fa;
   box-shadow: 0 6px 32px 6px #00fff177, 0 2px 16px 0 #00fff122;
 }
-.btn-glass:active {
-  opacity: 0.88;
-}
+
 .btn-glass > * {
   position: relative;
   z-index: 2;
 }
+
 a, .link-glass {
   color: #aee3fa;
   transition: color 0.2s;
 }
+
 a:hover, .link-glass:hover {
   color: #00fff1;
   text-decoration: underline;
 }
+
 .hero-section {
   min-height: 85vh;
   display: flex;
@@ -80,10 +90,12 @@ a:hover, .link-glass:hover {
   background: transparent;
   position: relative;
 }
+
 .hero-section .container {
   position: relative;
   z-index: 2;
 }
+
 .card-glass {
   background: rgba(255,255,255,0.10);
   border-radius: 22px;
@@ -93,32 +105,37 @@ a:hover, .link-glass:hover {
   color: #f0f4ff;
   transition: box-shadow 0.2s, transform 0.2s, border 0.2s;
 }
+
 .card-glass:hover {
   box-shadow: 0 8px 48px 8px #00fff1bb, 0 4px 16px 0 #00fff144;
   border-color: #00fff1cc;
   transform: translateY(-5px) scale(1.02);
 }
+
 .card-glass .card-title {
   color: #aee3fa;
   font-weight: 700;
 }
+
 footer {
   border-top: 1.5px solid rgba(174,227,250,0.07);
 }
+
 footer .small { color: #aee3fa; }
-::-webkit-scrollbar-thumb { background: #3939b0; }
-::-webkit-scrollbar { background: #191970; width: 8px; }
+
 input, textarea, select {
   background: rgba(255,255,255,0.08) !important;
   color: #f0f4ff !important;
   border: 1.2px solid #aee3fa66 !important;
   border-radius: 9px !important;
 }
+
 input:focus, textarea:focus {
   border-color: #00fff1 !important;
   outline: none !important;
   box-shadow: 0 0 6px #00fff1cc;
 }
+
 ::placeholder {
   color: #aee3fa !important;
   opacity: 1;
