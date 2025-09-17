@@ -1,19 +1,24 @@
-# Dataconecta — Sitio Web
+# Dataconecta — Sitio Web Multipágina
 
-Sitio web multipágina moderno, bilingüe (ES/EN), para el portfolio profesional de ciencia de datos y visualizaciones.
-
-- **Framework:** Bootstrap 5
-- **Secciones:** Inicio, Proyectos, Blog, Contacto
-- **Multilenguaje:** Español/Inglés
-- **Modo claro/oscuro**
-- **Futurista, detalles neón**
+Sitio web profesional, moderno y bilingüe para portfolio de ciencia de datos y visualización.
 
 ## Estructura
 
 ```
 dataconecta/
-├── assets/img/
-├── assets/css/
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   ├── img/
+│   │   ├── favicon.png
+│   │   ├── hero-bg.jpg
+│   │   ├── logo.png
+│   │   ├── preview.png
+│   │   ├── icono_kaggle.png
+│   │   ├── icono_portfolio.png
+│   │   ├── icono_github.png
+│   │   ├── icono_linkedin.png
+│   │   ├── icono_email.png
 ├── index.html
 ├── proyectos.html
 ├── blog.html
@@ -21,4 +26,7 @@ dataconecta/
 └── README.md
 ```
 
-Personaliza cada página y los textos en `i18n` del JS para tus necesidades.
+- **Multilenguaje:** Español/Inglés (botón arriba a la derecha)
+- **Modo claro/oscuro**
+- **Navegación entre páginas**
+- **Personaliza imágenes, favicon y textos como desees**
