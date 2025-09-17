@@ -1,191 +1,615 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dataconecta Consultora | Data Analytics & Business Intelligence</title>
-  <meta name="description" content="Consultoría especializada en Ciencia de Datos, BI, Analítica Avanzada, UX/UI y Marketing Digital" />
-  <link rel="icon" type="image/png" href="assets/img/logo.png" />
-  <link rel="stylesheet" href="assets/css/style.css" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataconecta Consultora</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-blue: #0A1128;
+            --medium-blue: #16244A;
+            --light-blue: #1C2E5C;
+            --accent-blue: #00F0FF;
+            --accent-purple: #5271FF;
+            --text-light: #F0F4FF;
+            --text-muted: #A6B0C9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-blue);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header desordenado */
+        .disordered-header {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--medium-blue) 100%);
+        }
+        
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            filter: blur(2px);
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-blue);
+            top: -100px;
+            left: -50px;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent-purple);
+            top: 40%;
+            right: -50px;
+        }
+        
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            background: var(--accent-blue);
+            bottom: 100px;
+            left: 20%;
+        }
+        
+        .shape-4 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-purple);
+            bottom: -100px;
+            right: 20%;
+        }
+        
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 0;
+            z-index: 1000;
+            background: rgba(10, 17, 40, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--accent-blue);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-blue);
+            transition: width 0.3s;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding-top: 180px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero-title span {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 240, 255, 0.4);
+        }
+        
+        .btn-outline {
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+            margin-left: 15px;
+        }
+        
+        .btn-outline:hover {
+            background: var(--accent-blue);
+            color: var(--dark-blue);
+        }
+        
+        /* Sección de servicios */
+        .services {
+            padding: 100px 0;
+            background-color: var(--medium-blue);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .service-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent-blue);
+        }
+        
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+        
+        .service-card p {
+            color: var(--text-muted);
+        }
+        
+        /* Sección de proyectos */
+        .projects {
+            padding: 100px 0;
+            background-color: var(--dark-blue);
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .project-card {
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            height: 300px;
+        }
+        
+        .project-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .project-card:hover .project-img {
+            transform: scale(1.1);
+        }
+        
+        .project-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(10, 17, 40, 0.9));
+            padding: 30px;
+            transform: translateY(100px);
+            transition: transform 0.5s;
+        }
+        
+        .project-card:hover .project-overlay {
+            transform: translateY(0);
+        }
+        
+        .project-overlay h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .project-overlay p {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--light-blue);
+            padding: 70px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+        }
+        
+        .footer-column p, .footer-column a {
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: var(--accent-blue);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--accent-blue);
+            color: var(--dark-blue);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px auto;
+                width: 80%;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
-        <img src="assets/img/logo.png" alt="Dataconecta Logo" width="60" style="border-radius:10px;">
-        <span class="fw-bold fs-3 text-white">Dataconecta</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-        <span class="navbar-toggler-icon"><i class="bi bi-list text-light"></i></span>
-      </button>
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav ms-auto gap-3 align-items-center">
-          <li class="nav-item"><a class="nav-link active" href="index.html">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
-          <li class="nav-item"><a class="nav-link" href="proyectos.html">Proyectos</a></li>
-          <li class="nav-item"><a class="nav-link" href="equipo.html">Equipo</a></li>
-          <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
-          <li class="nav-item"><a class="btn btn-glass ms-2" href="contacto.html">Contacto</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <header class="hero-section">
-    <div class="floating-shapes">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
-      <div class="shape shape-3"></div>
-      <div class="shape shape-4"></div>
-    </div>
-    <div class="container text-center py-5">
-      <div class="hero-content">
-        <h1 class="display-4 fw-bold mb-3 hero-title">Transformamos datos en <span class="text-gradient">ventajas competitivas</span></h1>
-        <p class="lead mb-4 fs-5 hero-subtitle">Consultoría especializada en ciencia de datos, inteligencia de negocios, UX/UI y soluciones analíticas para optimizar tu negocio.</p>
-        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
-          <a href="servicios.html" class="btn btn-primary-glass btn-lg px-4 py-3">Nuestros Servicios</a>
-          <a href="contacto.html" class="btn btn-secondary-glass btn-lg px-4 py-3">Solicitar Asesoría</a>
+    <!-- Header con diseño desordenado -->
+    <header class="disordered-header">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
         </div>
-      </div>
-    </div>
-  </header>
-
-  <section class="container py-5 my-4">
-    <div class="row mb-5">
-      <div class="col-12 text-center">
-        <h2 class="fw-bold section-title">Soluciones integrales para la era digital</h2>
-        <p class="section-subtitle">Combinamos análisis de datos, experiencia de usuario y estrategias de marketing para impulsar tu negocio</p>
-      </div>
-    </div>
-    <div class="row g-4 justify-content-center">
-      <div class="col-md-6 col-lg-4">
-        <div class="card-glass p-4 text-center h-100">
-          <div class="icon-wrapper mb-3">
-            <i class="bi bi-graph-up-arrow"></i>
-          </div>
-          <h5 class="card-title">Data Analytics & BI</h5>
-          <p>Modelado predictivo, machine learning, dashboards interactivos y gobernanza de datos.</p>
-          <a href="servicios.html" class="stretched-link"></a>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="card-glass p-4 text-center h-100">
-          <div class="icon-wrapper mb-3">
-            <i class="bi bi-layout-text-window"></i>
-          </div>
-          <h5 class="card-title">Diseño UX/UI</h5>
-          <p>Interfaces intuitivas, research de usuarios, tests de usabilidad y prototipado interactivo.</p>
-          <a href="servicios.html" class="stretched-link"></a>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="card-glass p-4 text-center h-100">
-          <div class="icon-wrapper mb-3">
-            <i class="bi bi-megaphone"></i>
-          </div>
-          <h5 class="card-title">Marketing Digital</h5>
-          <p>Analítica web, estrategias data-driven, optimización de conversión y personalización.</p>
-          <a href="servicios.html" class="stretched-link"></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="container-fluid bg-dark-custom py-5">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6 mb-5 mb-lg-0">
-          <h2 class="fw-bold mb-4">Nuestro enfoque <span class="text-primary-custom">basado en datos</span></h2>
-          <p class="mb-4">En Dataconecta combinamos experiencia técnica y conocimiento de negocio para ofrecer soluciones que realmente impacten en tus resultados.</p>
-          <ul class="list-unstyled">
-            <li class="mb-3"><i class="bi bi-check-circle-fill text-primary-custom me-2"></i> Análisis profundo de tus necesidades empresariales</li>
-            <li class="mb-3"><i class="bi bi-check-circle-fill text-primary-custom me-2"></i> Implementación de soluciones escalables y eficientes</li>
-            <li class="mb-3"><i class="bi bi-check-circle-fill text-primary-custom me-2"></i> Formación y acompañamiento continuo</li>
-            <li class="mb-3"><i class="bi bi-check-circle-fill text-primary-custom me-2"></i> Métricas claras para medir el ROI</li>
-          </ul>
-        </div>
-        <div class="col-lg-6">
-          <div class="stats-grid">
-            <div class="stat-item">
-              <h3 class="stat-number">+120</h3>
-              <p class="stat-label">Proyectos ejecutados</p>
+        
+        <nav class="navbar">
+            <div class="container nav-container">
+                <div class="logo">
+                    <div class="logo-img">DC</div>
+                    <div class="logo-text">Dataconecta</div>
+                </div>
+                <div class="nav-links">
+                    <a href="#">Inicio</a>
+                    <a href="#">Servicios</a>
+                    <a href="#">Proyectos</a>
+                    <a href="#">Equipo</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Contacto</a>
+                </div>
             </div>
-            <div class="stat-item">
-              <h3 class="stat-number">98%</h3>
-              <p class="stat-label">Clientes satisfechos</p>
+        </nav>
+        
+        <div class="container hero-content">
+            <h1 class="hero-title">Transformamos datos en <span>ventajas competitivas</span></h1>
+            <p class="hero-subtitle">Consultoría especializada en ciencia de datos, inteligencia de negocios, UX/UI y soluciones analíticas para optimizar tu negocio.</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary">Nuestros Servicios</a>
+                <a href="#" class="btn btn-outline">Solicitar Asesoría</a>
             </div>
-            <div class="stat-item">
-              <h3 class="stat-number">+15</h3>
-              <p class="stat-label">Industrias diferentes</p>
-            </div>
-            <div class="stat-item">
-              <h3 class="stat-number">5+</h3>
-              <p class="stat-label">Años de experiencia</p>
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </header>
+    
+    <!-- Sección de servicios -->
+    <section class="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nuestros Servicios</h2>
+                <p>Soluciones integrales para la era digital que combinan análisis de datos, experiencia de usuario y estrategias de marketing</p>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Data Analytics & BI</h3>
+                    <p>Transformamos tus datos en insights accionables con dashboards interactivos, reporting avanzado y modelos predictivos.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3>Diseño UX/UI</h3>
+                    <p>Creamos experiencias digitales intuitivas y atractivas que mejoran la satisfacción del usuario y aumentan la conversión.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>Marketing Digital</h3>
+                    <p>Desarrollamos estrategias data-driven para maximizar tu presencia digital, engagement y retorno de inversión.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección de proyectos -->
+    <section class="projects">
+        <div class="container">
+            <div class="section-title">
+                <h2>Proyectos Destacados</h2>
+                <p>Algunos de nuestros trabajos más recientes y representativos en diversas industrias</p>
+            </div>
+            
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-img" style="background-color: #1C2E5C;"></div>
+                    <div class="project-overlay">
+                        <h3>Sistema de Recomendación</h3>
+                        <p>E-commerce · Machine Learning</p>
+                        <a href="#">Ver caso de estudio</a>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-img" style="background-color: #16244A;"></div>
+                    <div class="project-overlay">
+                        <h3>Plataforma Analítica</h3>
+                        <p>Salud · Business Intelligence</p>
+                        <a href="#">Ver caso de estudio</a>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <div class="project-img" style="background-color: #1C2E5C;"></div>
+                    <div class="project-overlay">
+                        <h3>Rediseño UX/UI</h3>
+                        <p>Fintech · Experiencia de usuario</p>
+                        <a href="#">Ver caso de estudio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Dataconecta</h3>
+                    <p>Consultoría especializada en Data Analytics, Business Intelligence, UX/UI и Marketing Digital.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Servicios</h3>
+                    <a href="#">Data Analytics</a>
+                    <a href="#">Business Intelligence</a>
+                    <a href="#">Diseño UX/UI</a>
+                    <a href="#">Marketing Digital</a>
+                    <a href="#">Consultoría Estratégica</a>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Enlaces útiles</h3>
+                    <a href="#">Sobre nosotros</a>
+                    <a href="#">Nuestro equipo</a>
+                    <a href="#">Proyectos</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Contacto</a>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contacto</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Avenida de la Innovación, 123</p>
+                    <p><i class="fas fa-phone"></i> +34 123 456 789</p>
+                    <p><i class="fas fa-envelope"></i> info@dataconecta.com</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2023 Dataconecta Consultora. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
 
-  <footer class="footer py-5 mt-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4 mb-4 mb-lg-0">
-          <h5 class="footer-brand d-flex align-items-center gap-2 mb-4">
-            <img src="assets/img/logo.png" alt="Dataconecta Logo" width="50" style="border-radius:10px;">
-            <span class="fw-bold text-white">Dataconecta</span>
-          </h5>
-          <p class="footer-text">Consultoría especializada en Data Analytics, Business Intelligence, UX/UI y Marketing Digital.</p>
-        </div>
-        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-          <h5 class="footer-title">Navegación</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2"><a href="index.html" class="footer-link">Inicio</a></li>
-            <li class="mb-2"><a href="servicios.html" class="footer-link">Servicios</a></li>
-            <li class="mb-2"><a href="proyectos.html" class="footer-link">Proyectos</a></li>
-            <li class="mb-2"><a href="equipo.html" class="footer-link">Equipo</a></li>
-            <li class="mb-2"><a href="blog.html" class="footer-link">Blog</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
-          <h5 class="footer-title">Servicios</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2"><a href="#" class="footer-link">Data Analytics</a></li>
-            <li class="mb-2"><a href="#" class="footer-link">Business Intelligence</a></li>
-            <li class="mb-2"><a href="#" class="footer-link">Diseño UX/UI</a></li>
-            <li class="mb-2"><a href="#" class="footer-link">Marketing Digital</a></li>
-            <li class="mb-2"><a href="#" class="footer-link">Capacitación</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-3 col-md-4">
-          <h5 class="footer-title">Contacto</h5>
-          <ul class="list-unstyled">
-            <li class="mb-2"><i class="bi bi-envelope me-2"></i> <a href="mailto:contacto@dataconecta.com" class="footer-link">contacto@dataconecta.com</a></li>
-            <li class="mb-2"><i class="bi bi-telephone me-2"></i> <a href="tel:+34123456789" class="footer-link">+34 123 456 789</a></li>
-            <li class="mb-2 d-flex gap-3">
-              <a href="https://www.linkedin.com/" class="footer-social" target="_blank"><i class="bi bi-linkedin"></i></a>
-              <a href="https://github.com/" class="footer-social" target="_blank"><i class="bi bi-github"></i></a>
-              <a href="https://twitter.com/" class="footer-social" target="_blank"><i class="bi bi-twitter-x"></i></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <hr class="my-4 border-light-custom">
-      <div class="row align-items-center">
-        <div class="col-md-6 text-center text-md-start">
-          <p class="small mb-0">© 2025 Dataconecta Consultora · Todos los derechos reservados</p>
-        </div>
-        <div class="col-md-6 text-center text-md-end">
-          <a href="#" class="small footer-link me-3">Política de Privacidad</a>
-          <a href="#" class="small footer-link">Términos de Servicio</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Efecto de escritura para el título
+        document.addEventListener('DOMContentLoaded', function() {
+            const title = document.querySelector('.hero-title');
+            const originalText = title.innerHTML;
+            title.innerHTML = '';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < originalText.length) {
+                    title.innerHTML += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            };
+            
+            typeWriter();
+        });
+    </script>
 </body>
 </html>
