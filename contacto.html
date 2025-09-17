@@ -1,76 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Contacto — Dataconecta</title>
-  <meta name="description" content="Contacta con Dataconecta: proyectos, consultas y colaboraciones.">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon.png">
-  <meta property="og:image" content="assets/img/preview.png">
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
-<body>
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-expand-lg fixed-top shadow">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="assets/img/logo.png" alt="Logo Dataconecta" width="40">
-        <span class="fw-bold fs-4">Dataconecta</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="index.html" data-i18n="nav_inicio">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="proyectos.html" data-i18n="nav_proyectos">Proyectos</a></li>
-          <li class="nav-item"><a class="nav-link" href="blog.html" data-i18n="nav_blog">Blog</a></li>
-          <li class="nav-item"><a class="nav-link active" href="contacto.html" data-i18n="nav_contacto">Contacto</a></li>
-        </ul>
-        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Cambiar tema" title="Cambiar tema">
-          <span id="theme-toggle-icon" aria-hidden="true">🌙</span>
-        </button>
-        <button class="lang-switch" id="lang-switch-btn">EN</button>
-      </div>
-    </div>
+<body style="background:#00b4d8;">
+  <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+    <!-- igual a la navbar del index -->
   </nav>
-  
-  <!-- CONTACTO -->
-  <section class="container py-5 mt-5">
-    <h1 class="display-5 mb-4 text-center" data-i18n="contacto_titulo">Contacto</h1>
-    <p class="text-center mb-4" data-i18n="contacto_instruccion">
-      ¿Tienes un proyecto? ¿Quieres colaborar? Completa el formulario y te responderé a la brevedad.
-    </p>
-    <form class="mx-auto" style="max-width:400px;" action="https://formspree.io/f/{tu-id}" method="POST">
+  <section class="container py-5" style="color:#fff;">
+    <h1 class="fw-bold mb-4" style="color:#191970;">Contacto</h1>
+    <form class="mx-auto" style="max-width:400px;">
       <div class="mb-3">
-        <input type="email" class="form-control" placeholder="Tu email" name="email" required data-i18n="contacto_email">
+        <input type="email" class="form-control" placeholder="Tu email" name="email" required>
       </div>
       <div class="mb-3">
-        <textarea class="form-control" rows="4" placeholder="Tu mensaje" name="mensaje" required data-i18n="contacto_mensaje"></textarea>
+        <textarea class="form-control" rows="4" placeholder="Tu mensaje" name="mensaje" required></textarea>
       </div>
-      <button type="submit" class="btn btn-primary w-100" data-i18n="enviar">Enviar</button>
+      <button type="submit" class="btn btn-acento w-100">Enviar</button>
     </form>
   </section>
-
-  <!-- FOOTER ORDENADO Y SOLO UNA VEZ -->
-  <footer class="text-center py-4 mt-5">
-    <div class="mb-2">
-      <a href="https://www.linkedin.com/in/david-data-conecta" target="_blank" class="text-white mx-2"><img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="22"></a>
-      <a href="https://github.com/dsd228" target="_blank" class="text-white mx-2"><img src="assets/img/icono_github.png" alt="GitHub" width="22"></a>
-      <a href="https://kaggle.com/davidiaz" target="_blank" class="text-white mx-2"><img src="assets/img/icono_kaggle.png" alt="Kaggle" width="22"></a>
-      <a href="mailto:david.diaz.uxdata@gmail.com" class="text-white mx-2"><img src="assets/img/icono_email.png" alt="Email" width="22"></a>
-      <a href="assets/img/portfolio.pdf" target="_blank" class="text-white mx-2"><img src="assets/img/icono_portfolio.png" alt="Portfolio" width="22"></a>
-    </div>
-    <div class="small mb-1 text-white-50">© 2025 Dataconecta</div>
-    <div class="small text-white-50" data-i18n="footer_tema">💡 Podés cambiar entre modo claro y oscuro con el botón 🌙/🌞.</div>
+  <footer class="text-white py-4 mt-5">
+    <!-- igual al index -->
   </footer>
-
-  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // (Pega aquí tu script de theme y multilenguaje)
-  </script>
 </body>
 </html>
