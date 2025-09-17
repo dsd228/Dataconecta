@@ -1,71 +1,125 @@
 body {
   font-family: 'Montserrat', 'Inter', sans-serif;
-  background: #f5f7fb;
-  color: #222;
+  background: #191970;
+  color: #f0f4ff;
+  min-height: 100vh;
 }
-.navbar {
-  background: #191970 !important;
+.navbar, footer {
+  background: rgba(25, 25, 112, 0.85) !important;
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-top: none;
 }
-.navbar-brand .fs-3,
-h2,
-h5 {
-  color: #191970 !important;
+.navbar-brand .fs-3 {
+  color: #fff !important;
+  letter-spacing: 1px;
 }
 .nav-link, .navbar-brand, .navbar-nav .nav-link {
-  color: #fff !important;
+  color: #f0f4ff !important;
+  font-weight: 500;
   transition: color 0.2s;
 }
 .nav-link.active, .nav-link:hover {
-  color: #00bfff !important;
-  text-shadow: 0 0 6px #00bfff66;
+  color: #aee3fa !important;
+  text-shadow: 0 0 6px #00fff1aa;
 }
-.btn-acento {
-  background: #00bfff;
-  color: #191970;
-  border: none;
+.btn-glass {
+  background: rgba(255,255,255,0.10);
+  color: #f0f4ff;
+  border: 1.5px solid rgba(174,227,250,0.5);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 24px 4px rgba(0,255,241,0.12), 0 2px 8px 0 rgba(30,30,80,0.15);
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
   font-weight: 600;
-  border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
+  padding: 0.75em 2.5em;
+  font-size: 1.25rem;
+  position: relative;
+  overflow: hidden;
 }
-.btn-acento:hover, .btn-acento:focus {
-  background: #00fff1;
+.btn-glass:after {
+  content: '';
+  position: absolute;
+  left: 30%;
+  top: -80%;
+  width: 120%;
+  height: 250%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.20) 0%, rgba(0,255,241,0.12) 100%);
+  opacity: 0.33;
+  filter: blur(18px);
+  z-index: 0;
+  transition: opacity 0.2s;
+}
+.btn-glass:hover,
+.btn-glass:focus {
+  background: rgba(174,227,250,0.18);
   color: #191970;
+  border-color: #aee3fa;
+  box-shadow: 0 6px 32px 6px #00fff177, 0 2px 16px 0 #00fff122;
 }
-.btn-outline-light {
-  border-color: #00bfff;
-  color: #00bfff;
-  background: transparent;
-  transition: background 0.2s, color 0.2s;
+.btn-glass:active {
+  opacity: 0.88;
 }
-.btn-outline-light:hover {
-  background: #00bfff;
-  color: #fff;
+.btn-glass > * {
+  position: relative;
+  z-index: 2;
 }
-a, .link-celeste {
-  color: #00bfff;
+a, .link-glass {
+  color: #aee3fa;
   transition: color 0.2s;
 }
-a:hover, .link-celeste:hover {
+a:hover, .link-glass:hover {
   color: #00fff1;
   text-decoration: underline;
 }
 .hero-section {
-  min-height: 80vh;
+  min-height: 85vh;
   display: flex;
   align-items: center;
-  background: #191970;
+  justify-content: center;
+  background: transparent;
+  position: relative;
 }
-.card {
-  border-radius: 16px;
-  transition: box-shadow 0.2s, transform 0.2s;
+.hero-section .container {
+  position: relative;
+  z-index: 2;
 }
-.card:hover {
-  box-shadow: 0 6px 32px #00bfff22;
-  transform: translateY(-6px) scale(1.03);
+.card-glass {
+  background: rgba(255,255,255,0.10);
+  border-radius: 22px;
+  border: 1.5px solid rgba(174,227,250,0.17);
+  box-shadow: 0 4px 32px 4px rgba(0,255,241,0.09);
+  backdrop-filter: blur(10px);
+  color: #f0f4ff;
+  transition: box-shadow 0.2s, transform 0.2s, border 0.2s;
+}
+.card-glass:hover {
+  box-shadow: 0 8px 48px 8px #00fff1bb, 0 4px 16px 0 #00fff144;
+  border-color: #00fff1cc;
+  transform: translateY(-5px) scale(1.02);
+}
+.card-glass .card-title {
+  color: #aee3fa;
+  font-weight: 700;
 }
 footer {
-  background: #191970 !important;
-  color: #fff !important;
-  border-top: 1px solid #304080;
+  border-top: 1.5px solid rgba(174,227,250,0.07);
 }
-footer .small { color: #d8e0ff; }
+footer .small { color: #aee3fa; }
+::-webkit-scrollbar-thumb { background: #3939b0; }
+::-webkit-scrollbar { background: #191970; width: 8px; }
+input, textarea, select {
+  background: rgba(255,255,255,0.08) !important;
+  color: #f0f4ff !important;
+  border: 1.2px solid #aee3fa66 !important;
+  border-radius: 9px !important;
+}
+input:focus, textarea:focus {
+  border-color: #00fff1 !important;
+  outline: none !important;
+  box-shadow: 0 0 6px #00fff1cc;
+}
+::placeholder {
+  color: #aee3fa !important;
+  opacity: 1;
+}
