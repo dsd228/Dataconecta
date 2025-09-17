@@ -3,31 +3,256 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Servicios — Dataconecta</title>
+  <title>Servicios | Dataconecta Consultora</title>
+  <meta name="description" content="Consultoría especializada en Data Analytics, Business Intelligence, UX/UI y Marketing Digital" />
+  <link rel="icon" type="image/png" href="assets/img/logo.png" />
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
-<body style="background:#0053a4;">
+<body>
   <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
-    <!-- igual a la navbar del index -->
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <img src="assets/img/logo.png" alt="Dataconecta Logo" width="60" style="border-radius:10px;">
+        <span class="fw-bold fs-3 text-white">Dataconecta</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"><i class="bi bi-list text-light"></i></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto gap-3 align-items-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link active" href="servicios.html">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="proyectos.html">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="equipo.html">Equipo</a></li>
+          <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+          <li class="nav-item"><a class="btn btn-glass ms-2" href="contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
   </nav>
-  <section class="container py-5" style="color:#fff;">
-    <h1 class="fw-bold mb-4" style="color:#00fff1;">Servicios de Consultoría</h1>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 text-center border-0 shadow-sm">
-          <div class="card-body py-4">
-            <img src="assets/img/icon-analytics.png" width="48" alt="Analytics" class="mb-3">
-            <h5 class="fw-bold mb-2" style="color:#00fff1;">Ciencia de Datos & IA</h5>
-            <p>Modelado predictivo, machine learning, NLP y automatización de procesos.</p>
+
+  <header class="subpage-hero">
+    <div class="container text-center py-5">
+      <div class="hero-content">
+        <h1 class="display-4 fw-bold mb-3 hero-title">Nuestros <span class="text-gradient">Servicios</span></h1>
+        <p class="lead mb-4 fs-5 hero-subtitle">Soluciones integrales de data analytics, BI, UX/UI y marketing para transformar tu negocio</p>
+      </div>
+    </div>
+    <div class="hero-pattern"></div>
+  </header>
+
+  <section class="container py-5 my-4">
+    <div class="row mb-5">
+      <div class="col-12 text-center">
+        <h2 class="fw-bold section-title">Expertos en transformación digital</h2>
+        <p class="section-subtitle">Combinamos conocimiento técnico y de negocio para ofrecer soluciones que generen valor real</p>
+      </div>
+    </div>
+    
+    <div class="row g-4 justify-content-center mb-5">
+      <div class="col-md-6 col-lg-4">
+        <div class="card-glass p-4 text-center h-100">
+          <div class="icon-wrapper mb-3">
+            <i class="bi bi-bar-chart-line"></i>
+          </div>
+          <h5 class="card-title">Data Analytics & BI</h5>
+          <p>Transformamos tus datos en insights accionables con dashboards interactivos, reporting avanzado y modelos predictivos.</p>
+          <ul class="text-start mt-3 ps-3">
+            <li>Business Intelligence</li>
+            <li>Análisis predictivo</li>
+            <li>Visualización de datos</li>
+            <li>Cuadros de mando</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card-glass p-4 text-center h-100">
+          <div class="icon-wrapper mb-3">
+            <i class="bi bi-layout-text-window"></i>
+          </div>
+          <h5 class="card-title">Diseño UX/UI</h5>
+          <p>Creamos experiencias digitales intuitivas y atractivas que mejoran la satisfacción del usuario y aumentan la conversión.</p>
+          <ul class="text-start mt-3 ps-3">
+            <li>Research de usuarios</li>
+            <li>Prototipado interactivo</li>
+            <li>Tests de usabilidad</li>
+            <li>Diseño de interfaces</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card-glass p-4 text-center h-100">
+          <div class="icon-wrapper mb-3">
+            <i class="bi bi-megaphone"></i>
+          </div>
+          <h5 class="card-title">Marketing Digital</h5>
+          <p>Desarrollamos estrategias data-driven para maximizar tu presencia digital, engagement y retorno de inversión.</p>
+          <ul class="text-start mt-3 ps-3">
+            <li>Analítica web</li>
+            <li>SEO y SEM</li>
+            <li>Marketing automation</li>
+            <li>Growth marketing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="card-glass p-4 text-center h-100">
+          <div class="icon-wrapper mb-3">
+            <i class="bi bi-gear"></i>
+          </div>
+          <h5 class="card-title">Automatización</h5>
+          <p>Automatizamos procesos empresariales para mejorar la eficiencia operativa y reducir costos.</p>
+          <ul class="text-start mt-3 ps-3">
+            <li>RPA (Robotic Process Automation)</li>
+            <li>Automatización de flujos de trabajo</li>
+            <li>Integración de sistemas</li>
+            <li>Automatización de reporting</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card-glass p-4 text-center h-100">
+          <div class="icon-wrapper mb-3">
+            <i class="bi bi-people"></i>
+          </div>
+          <h5 class="card-title">Capacitación</h5>
+          <p>Programas de formación especializada para equipos de negocio y técnicos en herramientas de analytics.</p>
+          <ul class="text-start mt-3 ps-3">
+            <li>Talleres prácticos</li>
+            <li>Formación in-company</li>
+            <li>Mentoring especializado</li>
+            <li>Certificaciones</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card-glass p-4 text-center h-100">
+          <div class="icon-wrapper mb-3">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h5 class="card-title">Consultoría Estratégica</h5>
+          <p>Asesoramiento experto para definir tu estrategia de datos y transformación digital.</p>
+          <ul class="text-start mt-3 ps-3">
+            <li>Auditoría de datos</li>
+            <li>Roadmap tecnológico</li>
+            <li>Gobernanza de datos</li>
+            <li>Arquitectura de datos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-fluid bg-dark-custom py-5">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+          <h2 class="fw-bold mb-4">Nuestro <span class="text-primary-custom">proceso de trabajo</span></h2>
+          <p class="mb-4">Trabajamos de forma colaborativa con nuestros clientes para asegurar que cada solución se adapta perfectamente a sus necesidades y objetivos.</p>
+          
+          <div class="process-step mb-4">
+            <div class="step-number">01</div>
+            <div class="step-content">
+              <h5>Descubrimiento y análisis</h5>
+              <p>Comprendemos tus desafíos y oportunidades mediante workshops y análisis exhaustivo.</p>
+            </div>
+          </div>
+          
+          <div class="process-step mb-4">
+            <div class="step-number">02</div>
+            <div class="step-content">
+              <h5>Diseño de solución</h5>
+              <p>Diseñamos una solución personalizada con prototipos y plan de implementación.</p>
+            </div>
+          </div>
+          
+          <div class="process-step mb-4">
+            <div class="step-number">03</div>
+            <div class="step-content">
+              <h5>Implementación</h5>
+              <p>Desarrollamos e implementamos la solución con metodologías ágiles y iterativas.</p>
+            </div>
+          </div>
+          
+          <div class="process-step">
+            <div class="step-number">04</div>
+            <div class="step-content">
+              <h5>Soporte y mejora continua</h5>
+              <p>Aseguramos el éxito a largo plazo con soporte, formación y optimización continua.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card-glass p-5 text-center">
+            <h4 class="mb-4">¿Necesitas una solución personalizada?</h4>
+            <p class="mb-4">Nuestros expertos están listos para analizar tus necesidades y proponerte la mejor solución para tu negocio.</p>
+            <a href="contacto.html" class="btn btn-primary-glass btn-lg px-5">Solicitar consultoría</a>
           </div>
         </div>
       </div>
-      <!-- ...otros servicios... -->
     </div>
   </section>
-  <footer class="text-white py-4 mt-5">
-    <!-- igual al index -->
+
+  <footer class="footer py-5 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <h5 class="footer-brand d-flex align-items-center gap-2 mb-4">
+            <img src="assets/img/logo.png" alt="Dataconecta Logo" width="50" style="border-radius:10px;">
+            <span class="fw-bold text-white">Dataconecta</span>
+          </h5>
+          <p class="footer-text">Consultoría especializada en Data Analytics, Business Intelligence, UX/UI y Marketing Digital.</p>
+        </div>
+        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+          <h5 class="footer-title">Navegación</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="index.html" class="footer-link">Inicio</a></li>
+            <li class="mb-2"><a href="servicios.html" class="footer-link">Servicios</a></li>
+            <li class="mb-2"><a href="proyectos.html" class="footer-link">Proyectos</a></li>
+            <li class="mb-2"><a href="equipo.html" class="footer-link">Equipo</a></li>
+            <li class="mb-2"><a href="blog.html" class="footer-link">Blog</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+          <h5 class="footer-title">Servicios</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="#" class="footer-link">Data Analytics</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Business Intelligence</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Diseño UX/UI</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Marketing Digital</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Capacitación</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-4">
+          <h5 class="footer-title">Contacto</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="bi bi-envelope me-2"></i> <a href="mailto:contacto@dataconecta.com" class="footer-link">contacto@dataconecta.com</a></li>
+            <li class="mb-2"><i class="bi bi-telephone me-2"></i> <a href="tel:+34123456789" class="footer-link">+34 123 456 789</a></li>
+            <li class="mb-2 d-flex gap-3">
+              <a href="https://www.linkedin.com/" class="footer-social" target="_blank"><i class="bi bi-linkedin"></i></a>
+              <a href="https://github.com/" class="footer-social" target="_blank"><i class="bi bi-github"></i></a>
+              <a href="https://twitter.com/" class="footer-social" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4 border-light-custom">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="small mb-0">© 2025 Dataconecta Consultora · Todos los derechos reservados</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <a href="#" class="small footer-link me-3">Política de Privacidad</a>
+          <a href="#" class="small footer-link">Términos de Servicio</a>
+        </div>
+      </div>
+    </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
