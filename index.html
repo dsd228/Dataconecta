@@ -5,26 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dataconecta — Ciencia de Datos & Visualizaciones</title>
   <meta name="description" content="Dataconecta: proyectos de ciencia de datos, visualización y machine learning.">
-
-  <!-- FAVICON -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon.png">
-
-  <!-- Social Preview -->
-  <meta property="og:title" content="Dataconecta — Ciencia de Datos & Visualizaciones">
-  <meta property="og:description" content="Proyectos de ciencia de datos, visualización y machine learning.">
-  <meta property="og:image" content="https://dataconecta.me/assets/img/preview.png">
-  <meta property="og:url" content="https://dataconecta.me/">
-  <meta property="og:type" content="website">
-  <meta property="og:locale" content="es_ES">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Dataconecta — Ciencia de Datos & Visualizaciones">
-  <meta name="twitter:description" content="Proyectos de ciencia de datos, visualización y machine learning.">
-  <meta name="twitter:image" content="https://dataconecta.me/assets/img/preview.png">
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Inter&display=swap" rel="stylesheet">
-
   <!-- Optimización de carga: aplicar tema antes de renderizar -->
   <script>
     (function() {
@@ -244,29 +226,345 @@
 
 <body>
   <!-- Navbar -->
-  <!-- ...Navbar igual que antes (puedes pegar tu sección navbar aquí)... -->
+  <nav class="navbar navbar-expand-lg fixed-top shadow">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="assets/img/logo.png" alt="Logo Dataconecta" class="logo-footer me-2">
+        <span class="fw-bold fs-4">Dataconecta</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#hero">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#tecnologias">Tecnologías</a></li>
+          <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
+          <li class="nav-item"><a class="nav-link" href="#certificaciones">Certificaciones</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+        </ul>
+        <!-- Botón modo claro/oscuro -->
+        <button class="theme-toggle" id="theme-toggle-btn" aria-label="Cambiar tema" title="Cambiar tema">
+          <span id="theme-toggle-icon" aria-hidden="true">🌙</span>
+        </button>
+      </div>
+    </div>
+  </nav>
 
-  <!-- Hero, Proyectos, Tecnologías, Blog, Certificaciones, Contacto -->
-  <!-- ...todo igual que tu código original... -->
+  <!-- Hero con imagen de fondo -->
+  <section id="hero" class="d-flex align-items-center hero-bg" style="min-height:100vh;">
+    <div class="container text-center py-5">
+      <h1 class="display-4 fw-bold text-white">Conectando Ciencia de Datos e Inteligencia Visual</h1>
+      <p class="lead mb-4 text-white-50">Proyectos que transforman datos en decisiones.</p>
+      <a href="#proyectos" class="btn btn-primary btn-lg shadow">Explorar Proyectos</a>
+    </div>
+  </section>
 
-  <!-- Footer ÚNICO -->
+  <!-- Proyectos -->
+  <section id="proyectos" class="py-5 section-light">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Proyectos Destacados</h2>
+      <div class="row g-4">
+        <!-- Proyecto 1 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center" tabindex="0">
+            <img src="assets/img/fraude-dashboard.webp" class="card-img-top" alt="Dashboard futurista de detección de fraude con tarjetas de crédito">
+            <div class="card-body">
+              <h5 class="card-title">Fraude con Tarjetas</h5>
+              <p class="card-text">Modelo de detección de fraude con ML y dashboards.</p>
+              <a href="https://github.com/dsd228/credit-card-fraud-detection" target="_blank" class="btn btn-outline-primary">Ver GitHub</a>
+            </div>
+          </div>
+        </div>
+        <!-- Proyecto 2 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center" tabindex="0">
+            <img src="assets/img/ventas-retail-dashboard.webp" class="card-img-top" alt="Dashboard de ventas retail con gráficas interactivas">
+            <div class="card-body">
+              <h5 class="card-title">Ventas Retail</h5>
+              <p class="card-text">Análisis de ventas y segmentación con dashboards.</p>
+              <a href="#" target="_blank" class="btn btn-outline-primary">Demo Interactiva</a>
+            </div>
+          </div>
+        </div>
+        <!-- Proyecto 3 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center" tabindex="0">
+            <img src="assets/img/demanda-forecast.webp" class="card-img-top" alt="Predicción de demanda con dashboard moderno de series temporales">
+            <div class="card-body">
+              <h5 class="card-title">Predicción de Demanda</h5>
+              <p class="card-text">Forecasting para logística y stock con series temporales.</p>
+              <a href="#" target="_blank" class="btn btn-outline-primary">Demo Interactiva</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tecnologías -->
+  <section id="tecnologias" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Tecnologías Usadas</h2>
+      <div class="row text-center justify-content-center">
+        <div class="col-4 col-md-2"><img src="assets/img/icono_python.png" alt="Python" width="40"><p>Python</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_pandas.png" alt="Pandas" width="40"><p>Pandas</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_Scikit-learn.png" alt="Scikit-learn" width="40"><p>Scikit-learn</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_plotly.png" alt="Plotly" width="40"><p>Plotly</p></div>
+        <div class="col-4 col-md-2"><img src="assets/img/icono_github.png" alt="GitHub" width="40"><p>GitHub</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog / Artículos -->
+  <section id="blog" class="py-5 section-light">
+    <div class="container">
+      <h2 class="text-center mb-5 text-white">Blog y Artículos</h2>
+      <div class="blog-article">
+        <h4>Cómo crear dashboards efectivos en ciencia de datos</h4>
+        <p>Descubre técnicas para visualización y comunicación de resultados en proyectos reales de machine learning.</p>
+        <a href="#" class="btn btn-outline-primary">Leer más</a>
+      </div>
+      <div class="blog-article">
+        <h4>Introducción a la predicción de demanda con series temporales</h4>
+        <p>Guía paso a paso para implementar forecasting en proyectos de logística y retail.</p>
+        <a href="#" class="btn btn-outline-primary">Leer más</a>
+      </div>
+      <!-- Añade más artículos aquí -->
+    </div>
+  </section>
+
+  <!-- Certificaciones / Logros --> 
+<section id="certificaciones" class="py-5 section-light">
+  <div class="container">
+    <h2 class="text-center mb-5 text-white">Certificaciones Profesionales</h2>
+    <div class="row g-4 justify-content-center">
+      <!-- Google -->
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/google.png" alt="Google" class="cert-logo mb-2">
+          <h5 class="mb-1">Advanced Data Analytics</h5>
+          <small class="text-white-50">Coursera · Jul 2025</small>
+          <a href="https://www.credly.com/earner/earned/badge/70b14297-6039-41f8-9ab3-d63cb16a9bf6" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/google.png" alt="Google" class="cert-logo mb-2">
+          <h5 class="mb-1">Business Intelligence</h5>
+          <small class="text-white-50">Coursera · May 2025</small>
+          <a href="https://www.credly.com/earner/earned/badge/504468a2-da7e-43ca-b0ea-60f75499ed7c" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/google.png" alt="Google" class="cert-logo mb-2">
+          <h5 class="mb-1">Digital Marketing & E-commerce</h5>
+          <small class="text-white-50">Coursera · May 2025</small>
+          <a href="https://www.credly.com/earner/earned/badge/5c6c88a0-46a7-4d2e-9165-1095555acf97" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/google.png" alt="Google" class="cert-logo mb-2">
+          <h5 class="mb-1">UX Design Professional Certificate</h5>
+          <small class="text-white-50">Coursera · May 2025</small>
+          <a href="https://www.credly.com/earner/earned/badge/22f28a57-a9d6-4c88-bf0c-3c46270cac93" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <!-- IBM -->
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/ibm.png" alt="IBM" class="cert-logo mb-2">
+          <h5 class="mb-1">Introducción a la IA</h5>
+          <small class="text-white-50">IBM · Jul 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/ibm.png" alt="IBM" class="cert-logo mb-2">
+          <h5 class="mb-1">Ingeniería de Software</h5>
+          <small class="text-white-50">IBM · Jul 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <!-- Coursera AI -->
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/coursera.png" alt="Coursera" class="cert-logo mb-2">
+          <h5 class="mb-1">AI Essentials V2</h5>
+          <small class="text-white-50">Coursera · Jul 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/coursera.png" alt="Coursera" class="cert-logo mb-2">
+          <h5 class="mb-1">Generative AI Essentials</h5>
+          <small class="text-white-50">Coursera · Jul 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/coursera.png" alt="Coursera" class="cert-logo mb-2">
+          <h5 class="mb-1">Build RAG Applications</h5>
+          <small class="text-white-50">Coursera · Jul 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/coursera.png" alt="Coursera" class="cert-logo mb-2">
+          <h5 class="mb-1">Develop Generative AI Applications</h5>
+          <small class="text-white-50">Coursera · Jul 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/coursera.png" alt="Coursera" class="cert-logo mb-2">
+          <h5 class="mb-1">Software Engineering Essentials</h5>
+          <small class="text-white-50">Coursera · Jul 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <!-- Cisco -->
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/cisco.png" alt="Cisco" class="cert-logo mb-2">
+          <h5 class="mb-1">Python Essentials 1 & 2</h5>
+          <small class="text-white-50">Cisco · Mar 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/cisco.png" alt="Cisco" class="cert-logo mb-2">
+          <h5 class="mb-1">Introduction to Cybersecurity</h5>
+          <small class="text-white-50">Cisco · Mar 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <!-- MinnaLearn -->
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/minnalearn.png" alt="MinnaLearn" class="cert-logo mb-2">
+          <h5 class="mb-1">Ciberseguridad</h5>
+          <small class="text-white-50">MinnaLearn · Feb 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <!-- Cursa -->
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/cursa.png" alt="Cursa" class="cert-logo mb-2">
+          <h5 class="mb-1">Python desde 0</h5>
+          <small class="text-white-50">Cursa · Feb 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <!-- Marketing / Analítica -->
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/tecmonterrey.png" alt="Tec Monterrey" class="cert-logo mb-2">
+          <h5 class="mb-1">Analíticas y Métricas de Marketing</h5>
+          <small class="text-white-50">Tec Monterrey · Abr 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="cert-card text-center">
+          <img src="assets/img/anahuac.png" alt="Universidades Anáhuac" class="cert-logo mb-2">
+          <h5 class="mb-1">Marketing Digital: SEO y Analítica</h5>
+          <small class="text-white-50">Anáhuac · May 2025</small>
+          <a href="#" class="btn-credencial" target="_blank">Mostrar credencial</a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="https://www.credly.com/users/david-sebastian-diaz" class="btn-credly" target="_blank">
+        <img src="assets/img/credly.png" alt="Credly" width="24" style="vertical-align:middle; margin-right:8px;">
+        Ver todas mis insignias en Credly
+      </a>
+    </div>
+  </div>
+</section>
+ <!-- Contacto y redes -->
+<section id="contacto" class="py-5 section-light">
+  <div class="container">
+    <h2 class="text-center mb-4 text-white">Contacto</h2>
+    <form class="mx-auto" style="max-width:400px;" action="https://formspree.io/f/{tu-id}" method="POST">
+      <div class="mb-3">
+        <input type="email" class="form-control" placeholder="Tu email" name="email" required>
+      </div>
+      <div class="mb-3">
+        <textarea class="form-control" rows="4" placeholder="Tu mensaje" name="mensaje" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Enviar</button>
+    </form>
+    <div class="contact-info text-center mt-4">
+      <p>
+        <a href="mailto:david.diaz.uxdata@gmail.com" class="text-white">
+          <img src="assets/img/icono_email.png" alt="Email" width="18"> david.diaz.uxdata@gmail.com
+        </a>
+      </p>
+      <p>
+        <a href="https://www.linkedin.com/in/david-data-conecta" target="_blank" class="text-white">
+          <img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="18"> linkedin.com/in/david-data-conecta
+        </a>
+      </p>
+      <p>
+        <a href="https://github.com/dsd228" target="_blank" class="text-white">
+          <img src="assets/img/icono_github.png" alt="GitHub" width="18"> github.com/dsd228 (Blog)
+        </a>
+      </p>
+      <p>
+        <a href="https://kaggle.com/davidiaz" target="_blank" class="text-white">
+          <img src="assets/img/icono_kaggle.png" alt="Kaggle" width="18"> kaggle.com/davidiaz (Blog)
+        </a>
+      </p>
+      <p>
+        <a href="https://drive.google.com/file/d/1ILu3riCECFErx9yHToeL800SkExwdbXv/view?usp=sharing" target="_blank" class="text-white">
+          <img src="assets/img/icono_portfolio.png" alt="Cartera" width="18"> Ver Cartera (Portfolio)
+        </a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="text-center py-4 mt-5">
+  <div>
+    <a href="https://www.linkedin.com/in/david-data-conecta" target="_blank" class="text-white me-3">
+      <img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="18"> LinkedIn
+    </a>
+    <a href="https://github.com/dsd228" target="_blank" class="text-white me-3">
+      <img src="assets/img/icono_github.png" alt="GitHub" width="18"> GitHub
+    </a>
+    <a href="https://kaggle.com/davidiaz" target="_blank" class="text-white me-3">
+      <img src="assets/img/icono_kaggle.png" alt="Kaggle" width="18"> Kaggle
+    </a>
+    <a href="mailto:david.diaz.uxdata@gmail.com" class="text-white me-3">
+      <img src="assets/img/icono_email.png" alt="Email" width="18"> Email
+    </a>
+    <a href="https://drive.google.com/file/d/1ILu3riCECFErx9yHToeL800SkExwdbXv/view?usp=sharing" target="_blank" class="text-white">
+      <img src="assets/img/icono_portfolio.png" alt="Portfolio" width="18"> Portfolio
+    </a>
+  </div>
+  <div class="mt-2">© 2025 Dataconecta</div>
+  <div class="mt-2 text-white-50" style="font-size:0.95em;">
+    <span>💡 Podés cambiar entre modo claro y oscuro con el botón <span style="font-size:1.2em;">🌙/🌞</span> para adaptar la visualización a tu preferencia.</span>
+  </div>
+</footer>
+  <!-- Footer -->
   <footer class="text-center py-4 mt-5">
     <div>
-      <a href="https://www.linkedin.com/in/david-data-conecta" target="_blank" class="text-white me-3">
-        <img src="assets/img/icono_linkedin.png" alt="LinkedIn" width="18"> LinkedIn
-      </a>
-      <a href="https://github.com/dsd228" target="_blank" class="text-white me-3">
-        <img src="assets/img/icono_github.png" alt="GitHub" width="18"> GitHub
-      </a>
-      <a href="https://kaggle.com/davidiaz" target="_blank" class="text-white me-3">
-        <img src="assets/img/icono_kaggle.png" alt="Kaggle" width="18"> Kaggle
-      </a>
-      <a href="mailto:david.diaz.uxdata@gmail.com" class="text-white me-3">
-        <img src="assets/img/icono_email.png" alt="Email" width="18"> Email
-      </a>
-      <a href="https://drive.google.com/file/d/1ILu3riCECFErx9yHToeL800SkExwdbXv/view?usp=sharing" target="_blank" class="text-white">
-        <img src="assets/img/icono_portfolio.png" alt="Portfolio" width="18"> Portfolio
-      </a>
+      <a href="https://github.com/dsd228" target="_blank" class="text-white me-3"><img src="assets/img/icono_github.png" alt="https://github.com/dsd228" width="18"> GitHub</a>
+      <a href="mailto:dsd228.dd@ies21.onmicrosoft.com" class="text-white me-3"><img src="assets/img/icono_email.png" alt="Email" width="18"> Email</a>
+      <a href="https://www.linkedin.com/in/dsd228/" target="_blank" class="text-white"><img src="assets/img/icono_linkedin.png" alt="https://www.linkedin.com/in/dsd228/" width="18"> LinkedIn</a>
     </div>
     <div class="mt-2">© 2025 Dataconecta</div>
     <div class="mt-2 text-white-50" style="font-size:0.95em;">
