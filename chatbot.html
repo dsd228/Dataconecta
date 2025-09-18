@@ -90,6 +90,27 @@
     .chatbot-form button:hover {
       color: var(--text-primary);
     }
+    .chatbot-message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.4);
+      color: var(--text-primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      max-width: 90%;
+    }
+    .chatbot-message.user {
+      background: rgba(245,158,66,0.21);
+      align-self: flex-end;
+      color: #fff;
+      text-align: right;
+    }
+    .chatbot-message.bot {
+      background: rgba(30,64,175,0.09);
+      align-self: flex-start;
+      color: var(--text-primary);
+      text-align: left;
+    }
   </style>
 </head>
 <body>
