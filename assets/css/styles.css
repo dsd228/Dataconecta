@@ -219,3 +219,190 @@ a:hover {
   .card-glass, .glass-hero, .glass-nav, .glass-footer { border-radius: 15px; }
   .stats-grid { flex-direction: column; gap: 18px; }
 }
+
+/* Weather Dashboard Specific Styles */
+.weather-card {
+  background: var(--bubble-bg);
+  border-radius: 24px;
+  border: 2px solid var(--bubble-border);
+  box-shadow: var(--bubble-shadow);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(160%);
+  transition: all 0.3s ease;
+}
+
+.weather-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(30,64,175,0.2);
+}
+
+.weather-icon-large {
+  font-size: 4rem;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.weather-temp-display {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.weather-detail-item {
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.weather-detail-item:hover {
+  background: rgba(255,255,255,0.15);
+  transform: scale(1.02);
+}
+
+.weather-search-section {
+  background: var(--bubble-bg);
+  border-radius: 20px;
+  border: 2px solid var(--bubble-border);
+  box-shadow: var(--bubble-shadow);
+  backdrop-filter: blur(18px) saturate(160%);
+  position: relative;
+}
+
+.weather-search-section::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: var(--bubble-reflection);
+  opacity: 0.4;
+  z-index: 0;
+}
+
+.weather-search-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.weather-form-control {
+  background: rgba(255,255,255,0.9);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.weather-form-control:focus {
+  background: rgba(255,255,255,0.95);
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 0.2rem rgba(30,64,175,0.1);
+  outline: none;
+}
+
+.weather-btn-primary {
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(30,64,175,0.2);
+}
+
+.weather-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(30,64,175,0.3);
+  background: linear-gradient(135deg, #1e40af 0%, #f59e42 100%);
+}
+
+.weather-error-alert {
+  background: rgba(239,68,68,0.1);
+  border: 2px solid rgba(239,68,68,0.2);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.weather-loading-card {
+  background: var(--bubble-bg);
+  border-radius: 20px;
+  border: 2px solid var(--bubble-border);
+  box-shadow: var(--bubble-shadow);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+
+.weather-info-section {
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+}
+
+/* Animaciones específicas para el clima */
+@keyframes weather-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.weather-fade-in {
+  animation: weather-fade-in 0.6s ease-out;
+}
+
+.weather-spinner {
+  color: var(--text-primary);
+}
+
+/* Color personalizado para iconos meteorológicos */
+.text-orange {
+  color: #f97316 !important;
+}
+
+/* Responsive específico para dashboard del clima */
+@media (max-width: 991px) {
+  .weather-temp-display {
+    font-size: 2.8rem;
+  }
+  
+  .weather-icon-large {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .weather-card {
+    border-radius: 16px;
+    margin-bottom: 1rem;
+  }
+  
+  .weather-temp-display {
+    font-size: 2.5rem;
+  }
+  
+  .weather-icon-large {
+    font-size: 2.5rem;
+  }
+  
+  .weather-detail-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .weather-search-section {
+    border-radius: 16px;
+  }
+}
