@@ -230,3 +230,113 @@ input:focus, textarea:focus, select:focus {
 .border-custom {
   border-color: var(--border-light) !important;
 }
+
+/* Process steps */
+.step-number {
+  background: var(--gradient-primary);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Blog image styling */
+.blog-image {
+  background: var(--gradient-primary) !important;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Service icon styling */
+.service-icon {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+}
+
+/* Contact form improvements */
+.form-control {
+  border: 2px solid var(--border-medium) !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  transition: all 0.3s ease !important;
+}
+.form-control:focus {
+  border-color: var(--primary-blue) !important;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1) !important;
+}
+
+/* FAQ accordion styling */
+.accordion-button {
+  background: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-light) !important;
+  font-weight: 600 !important;
+}
+.accordion-button:not(.collapsed) {
+  background: var(--bg-secondary) !important;
+  color: var(--primary-blue) !important;
+}
+.accordion-body {
+  background: var(--bg-primary) !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-light) !important;
+  border-top: none !important;
+}
+
+/* Pagination styling */
+.page-link {
+  color: var(--text-secondary) !important;
+  border-color: var(--border-light) !important;
+  background: var(--bg-primary) !important;
+}
+.page-link:hover {
+  color: var(--primary-blue) !important;
+  background: var(--bg-secondary) !important;
+  border-color: var(--primary-blue) !important;
+}
+.page-item.active .page-link {
+  background: var(--primary-blue) !important;
+  border-color: var(--primary-blue) !important;
+  color: white !important;
+}
+
+/* Newsletter and CTA sections */
+.newsletter-section {
+  background: var(--gradient-light);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+}
+.newsletter-input {
+  border: 2px solid var(--border-medium) !important;
+  border-radius: 8px 0 0 8px !important;
+  background: var(--bg-primary) !important;
+}
+.newsletter-button {
+  border-radius: 0 8px 8px 0 !important;
+  background: var(--primary-blue) !important;
+  border-color: var(--primary-blue) !important;
+}
+
+/* Team card styling */
+.card-team {
+  transition: all 0.3s ease;
+}
+.card-team:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Responsive text sizing */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem !important;
+  }
+  .display-4 {
+    font-size: 2.5rem !important;
+  }
+}
