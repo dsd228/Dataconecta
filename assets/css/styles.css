@@ -1,142 +1,221 @@
-/* ...resto de tu CSS... */
-
-/* Banner Cookies GDPR */
-.cookie-banner {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  width: 100%;
-  background: #222a38;
-  color: #f3f6fa;
-  box-shadow: 0 -2px 12px rgba(30, 64, 175, 0.08);
-  padding: 1rem 2rem;
-  z-index: 1200;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  font-size: 1rem;
-  transition: transform 0.3s;
-}
-.cookie-banner[hidden] {
-  transform: translateY(100%);
-  pointer-events: none;
-}
-.cookie-banner a {
-  color: #3B82F6;
-  text-decoration: underline;
+:root {
+  --bubble-bg: linear-gradient(135deg, rgba(255,255,255,0.70) 0%, rgba(186,230,253,0.47) 100%);
+  --bubble-bg-dark: linear-gradient(135deg, rgba(32,42,65,0.72) 0%, rgba(116,180,255,0.19) 100%);
+  --bubble-border: rgba(255,255,255,0.8);
+  --bubble-reflection: linear-gradient(120deg, rgba(255,255,255,0.85) 20%, rgba(255,255,255,0.18) 90%);
+  --bubble-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 1.5px 0.5px 0 rgba(255,255,255,0.19);
+  --accent: #F59E42;
+  --text-primary: #1E40AF;
+  --text-secondary: #6b7280;
+  --background-main: linear-gradient(120deg,#c0e7ff 0%,#a7b7ff 100%);
+  --background-main-dark: linear-gradient(120deg,#27304d 0%,#1e253a 100%);
 }
 
-/* Chatbot Widget Flotante */
-.chatbot-toggle {
-  position: fixed;
-  bottom: 90px;
-  right: 30px;
-  z-index: 1201;
-  background: linear-gradient(135deg,#1E40AF,#06B6D4);
-  color: white;
-  border: none;
+body {
+  font-family: 'Montserrat', 'Inter', Arial, sans-serif;
+  background: var(--background-main);
+  min-height: 100vh;
+  transition: background 0.5s;
+}
+
+.dark-mode {
+  --bubble-bg: var(--bubble-bg-dark);
+  --background-main: var(--background-main-dark);
+  --text-primary: #e0e7ef;
+  --text-secondary: #b4b9d1;
+  background: var(--background-main-dark);
+}
+
+.glass-btn, .theme-toggle, .sustainability-btn, .chatbot-toggle {
+  background: var(--bubble-bg);
+  border: 2px solid var(--bubble-border);
+  box-shadow: var(--bubble-shadow);
   border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  box-shadow: var(--shadow-lg);
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.chatbot-toggle:hover {
-  background: linear-gradient(135deg,#1E40AF,#7C3AED);
-}
-.chatbot-widget {
+  width: 54px; height: 54px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 12px;
   position: fixed;
-  bottom: 160px;
-  right: 30px;
-  width: 350px;
-  max-width: 95vw;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: var(--shadow-xl);
-  z-index: 1202;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1.5px solid #3B82F6;
-}
-.chatbot-header {
-  background: linear-gradient(135deg,#1E40AF,#06B6D4);
-  color: #fff;
-  padding: 0.75rem 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
-}
-.chatbot-body {
-  padding: 1rem;
-  height: 220px;
-  background: var(--bg-secondary);
-  overflow-y: auto;
-  font-size: 0.97rem;
-}
-.chatbot-message {
-  margin-bottom: 0.7rem;
-  line-height: 1.5;
-}
-.chatbot-message.bot {
-  color: var(--primary-blue);
-  font-weight: 600;
-}
-.chatbot-message.user {
-  text-align: right;
-  color: var(--accent-cyan);
-}
-.chatbot-form {
-  display: flex;
-  border-top: 1px solid var(--border-light);
-  background: #fff;
-}
-.chatbot-form input[type="text"] {
-  flex: 1;
-  padding: 0.55rem 0.75rem;
-  border: none;
-  border-radius: 0;
-  outline: none;
-  font-size: 1rem;
-}
-.chatbot-form button {
-  background: var(--primary-blue);
-  color: #fff;
-  border: none;
-  padding: 0 1rem;
-  font-size: 1.2rem;
+  right: 26px;
   cursor: pointer;
-  border-radius: 0;
-  transition: background 0.2s;
+  z-index: 1001;
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(180%);
+  transition: background 0.3s, border 0.3s, box-shadow 0.3s, color 0.2s;
 }
-.chatbot-form button:hover {
-  background: var(--primary-blue-dark);
-}
-.skip-link {
+.theme-toggle { bottom: 26px; }
+.sustainability-btn { bottom: 94px; }
+.chatbot-toggle { bottom: 162px; }
+.glass-btn::after, .theme-toggle::after, .sustainability-btn::after, .chatbot-toggle::after {
+  content: "";
+  pointer-events: none;
   position: absolute;
-  left: -999px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  z-index: 2000;
-  background: #222a38;
-  color: #f3f6fa;
-  padding: 0.5rem 1rem;
-  border-radius: 0 0 8px 8px;
+  left: 0;top: 0;right: 0;bottom: 0;
+  border-radius: inherit;
+  background: var(--bubble-reflection);
+  opacity: 0.7;
+  z-index: 1;
 }
-.skip-link:focus {
-  position: fixed;
-  left: 16px;
-  top: 12px;
-  width: auto;
-  height: auto;
-  outline: 2px solid #06B6D4;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.glass-btn:hover {
+  background: rgba(255,255,255,0.87);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.08);
+}
+
+/* Glassmorphism for major sections */
+.card-glass, .glass-hero, .glass-nav, .glass-footer {
+  background: var(--bubble-bg);
+  border-radius: 24px;
+  border: 2px solid var(--bubble-border);
+  box-shadow: var(--bubble-shadow);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(160%);
+}
+.card-glass::before, .glass-hero::before, .glass-nav::before, .glass-footer::before {
+  content: "";
+  pointer-events: none;
+  position: absolute; left: 0;top: 0;right: 0;bottom: 0;
+  border-radius: inherit;
+  background: var(--bubble-reflection);
+  opacity: 0.6;
+  z-index: 0;
+}
+
+/* Navbar */
+.navbar, .glass-nav {
+  background: var(--bubble-bg) !important;
+  backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 2px solid var(--bubble-border);
+  box-shadow: var(--bubble-shadow);
+}
+
+/* Hero Section */
+.hero-section,
+.glass-hero {
+  background: var(--bubble-bg) !important;
+  margin-top: 82px;
+  border-radius: 24px;
+  box-shadow: var(--bubble-shadow);
+  backdrop-filter: blur(18px) saturate(160%);
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-title {
+  text-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  position: relative;
+  z-index: 2;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--accent) 0%, var(--text-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-title {
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+/* Section Title/Sub */
+.section-title {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 2.2rem;
+}
+.section-subtitle {
+  color: var(--text-secondary);
+}
+
+.icon-wrapper {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--text-primary) 80%);
+  border-radius: 50%;
+  padding: 18px;
+  display: inline-block;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(30,64,175,0.18);
+  margin-bottom: 12px;
+  font-size: 2rem;
+  z-index: 2;
+}
+
+/* Cards */
+.card-glass {
+  border-radius: 22px;
+  position: relative;
+  z-index: 1;
+}
+.card-glass:hover {
+  box-shadow: 0 10px 32px rgba(30,64,175,0.18);
+  transform: translateY(-6px) scale(1.04);
+  background: rgba(245,158,66,0.10) !important;
+}
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px 40px;
+  justify-content: center;
+}
+.stat-item {
+  padding: 22px 24px;
+  border-radius: 20px;
+  text-align: center;
+  min-width: 120px;
+  margin-bottom: 12px;
+  background: var(--bubble-bg);
+  box-shadow: 0 2px 12px rgba(30,64,175,0.08);
+}
+.stat-number {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.stat-label {
+  color: var(--text-secondary);
+}
+
+/* Footer */
+.footer,
+.glass-footer {
+  border-top: 2px solid var(--bubble-border);
+  box-shadow: 0 -2px 24px rgba(30,64,175,0.08);
+  color: var(--text-primary);
+}
+
+.footer-link,
+a {
+  color: var(--text-primary);
+  transition: color 0.2s;
+  text-decoration: none;
+}
+.footer-link:hover,
+a:hover {
+  color: var(--accent) !important;
+}
+.footer-social {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  margin-right: 7px;
+  transition: color 0.2s, transform 0.2s;
+}
+.footer-social:hover {
+  color: var(--accent);
+  transform: scale(1.18);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .theme-toggle, .sustainability-btn, .chatbot-toggle {
+    width: 44px; height: 44px; font-size: 1.2rem; right: 8px;
+  }
+}
+
+@media (max-width: 767px) {
+  .card-glass, .glass-hero, .glass-nav, .glass-footer { border-radius: 15px; }
+  .stats-grid { flex-direction: column; gap: 18px; }
 }
