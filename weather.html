@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard del Clima | Dataconecta Consultora</title>
+  <meta name="description" content="Dashboard en tiempo real del clima - Consultoría especializada en Data Analytics, Business Intelligence, UX/UI y Marketing Digital" />
+  <!-- Content Security Policy para incluir APIs meteorológicas -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'self';
+          script-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com;
+          style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com;
+          font-src 'self' https://fonts.gstatic.com;
+          img-src 'self' data: https://openweathermap.org;
+          connect-src 'self' https://cdn.jsdelivr.net https://api.openweathermap.org;
+        ">
+  <link rel="icon" type="image/png" href="assets/img/logo.png" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+  
+  <!-- Banner Cookies GDPR -->
+  <div id="cookie-banner" class="cookie-banner" role="dialog" aria-live="polite" aria-label="Aviso de cookies" hidden>
+    <span>
+      Utilizamos cookies para mejorar tu experiencia y analizar el tráfico. Consulta nuestra <a href="#" class="footer-link">Política de Privacidad</a>.
+    </span>
+    <button id="cookie-accept" class="btn btn-outline-primary btn-sm ms-3">Aceptar</button>
+  </div>
+
+  <!-- Chatbot Widget -->
+  <div id="chatbot-widget" class="chatbot-widget" role="dialog" aria-labelledby="chatbot-title" hidden>
+    <div class="chatbot-header">
+      <h4 id="chatbot-title" class="mb-0">
+        <i class="bi bi-robot me-2"></i>Asistente IA
+      </h4>
+      <button id="chatbot-close" class="btn-close" aria-label="Cerrar chat"></button>
+    </div>
+    <div id="chatbot-body" class="chatbot-body">
+      <div class="chatbot-message bot">
+        ¡Hola! Soy el asistente de Dataconecta. ¿Cómo puedo ayudarte hoy?
+      </div>
+    </div>
+    <form class="chatbot-form" id="chatbot-form" autocomplete="off" aria-label="Enviar mensaje al asistente">
+      <input id="chatbot-input" type="text" placeholder="Escribe tu pregunta..." aria-label="Mensaje" required />
+      <button type="submit" aria-label="Enviar"><i class="bi bi-send"></i></button>
+    </form>
+  </div>
+
+  <!-- Botones flotantes -->
+  <button id="chatbot-toggle" class="chatbot-toggle" aria-label="Abrir chat de ayuda">
+    <i class="bi bi-chat-dots"></i>
+  </button>
+
+  <nav class="navbar navbar-expand-lg shadow-sm fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <img src="assets/img/logo.png" alt="Dataconecta Logo" width="60" style="border-radius:10px;">
+        <span class="fw-bold fs-3 text-white">Dataconecta</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"><i class="bi bi-list text-light"></i></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto gap-3 align-items-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="servicios.html">Servicios</a></li>
+          <li class="nav-item"><a class="nav-link" href="proyectos.html">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="equipo.html">Equipo</a></li>
+          <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+          <li class="nav-item"><a class="nav-link active" href="weather.html">Clima</a></li>
+          <li class="nav-item"><a class="btn btn-glass ms-2" href="contacto.html">Contacto</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" tabindex="-1">
+    <!-- Hero Section del Dashboard del Clima -->
+    <section class="hero-section py-5 text-center" style="background: linear-gradient(135deg, #2980b9 0%, #3498db 100%);">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="icon-wrapper mx-auto mb-4">
+              <i class="bi bi-cloud-sun"></i>
+            </div>
+            <h1 class="display-4 fw-bold mb-3 text-white">Dashboard del Clima</h1>
+            <p class="lead mb-4 text-white">Consulta información meteorológica en tiempo real de cualquier ciudad del mundo</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección Principal del Dashboard -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            
+            <!-- Formulario de Búsqueda -->
+            <div class="card-glass mb-4 p-4">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="mb-3 mb-md-0">
+                    <label for="cityInput" class="form-label fw-semibold">
+                      <i class="bi bi-geo-alt me-2"></i>Buscar ciudad
+                    </label>
+                    <input 
+                      type="text" 
+                      class="form-control form-control-lg" 
+                      id="cityInput" 
+                      placeholder="Ingresa el nombre de una ciudad (ej: Madrid, Londres, Buenos Aires)"
+                      aria-describedby="cityHelp"
+                    >
+                    <div id="cityHelp" class="form-text">Puedes incluir el país para mayor precisión (ej: Madrid, España)</div>
+                  </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                  <button type="button" class="btn btn-primary btn-lg w-100" id="searchBtn">
+                    <i class="bi bi-search me-2"></i>Buscar Clima
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Área de Resultados -->
+            <div id="weatherResults" class="d-none">
+              <div class="card-glass p-4 mb-4">
+                <div class="row g-4">
+                  <!-- Información Principal -->
+                  <div class="col-lg-6">
+                    <div class="text-center">
+                      <h2 id="cityName" class="section-title mb-2"></h2>
+                      <p id="currentDate" class="text-muted mb-3"></p>
+                      <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div id="weatherIcon" class="me-3"></div>
+                        <div>
+                          <div id="temperature" class="display-3 fw-bold text-primary"></div>
+                          <div id="weatherDescription" class="fs-5 text-capitalize"></div>
+                        </div>
+                      </div>
+                      <div id="feelsLike" class="text-muted"></div>
+                    </div>
+                  </div>
+                  
+                  <!-- Detalles Meteorológicos -->
+                  <div class="col-lg-6">
+                    <h4 class="mb-3">Detalles</h4>
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-droplet-fill text-info me-2 fs-4"></i>
+                          <div>
+                            <div class="small text-muted">Humedad</div>
+                            <div id="humidity" class="fw-semibold"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-wind text-success me-2 fs-4"></i>
+                          <div>
+                            <div class="small text-muted">Viento</div>
+                            <div id="windSpeed" class="fw-semibold"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-thermometer-half text-warning me-2 fs-4"></i>
+                          <div>
+                            <div class="small text-muted">Presión</div>
+                            <div id="pressure" class="fw-semibold"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="d-flex align-items-center">
+                          <i class="bi bi-eye text-primary me-2 fs-4"></i>
+                          <div>
+                            <div class="small text-muted">Visibilidad</div>
+                            <div id="visibility" class="fw-semibold"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Información Solar -->
+              <div class="card-glass p-4">
+                <h4 class="mb-3">Información Solar</h4>
+                <div class="row text-center">
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                      <i class="bi bi-sunrise text-warning me-2 fs-3"></i>
+                      <div>
+                        <div class="small text-muted">Amanecer</div>
+                        <div id="sunrise" class="fw-semibold fs-5"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                      <i class="bi bi-sunset text-orange me-2 fs-3"></i>
+                      <div>
+                        <div class="small text-muted">Atardecer</div>
+                        <div id="sunset" class="fw-semibold fs-5"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Área de Error -->
+            <div id="errorMessage" class="d-none">
+              <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                <div>
+                  <h5 class="alert-heading mb-1">Error al obtener datos del clima</h5>
+                  <p class="mb-0" id="errorText"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Área de Carga -->
+            <div id="loadingMessage" class="d-none">
+              <div class="card-glass p-4 text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                  <span class="visually-hidden">Cargando...</span>
+                </div>
+                <h5>Obteniendo datos del clima...</h5>
+                <p class="text-muted mb-0">Esto puede tardar unos segundos</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de Información sobre la API -->
+    <section class="py-5 bg-light">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8 text-center">
+            <div class="card-glass p-4">
+              <div class="icon-wrapper mx-auto mb-3">
+                <i class="bi bi-info-circle"></i>
+              </div>
+              <h3 class="section-title mb-3">Información sobre los Datos</h3>
+              <p class="mb-3">
+                Este dashboard utiliza la API de OpenWeatherMap para obtener datos meteorológicos 
+                en tiempo real de más de 200,000 ciudades alrededor del mundo.
+              </p>
+              <div class="row text-start">
+                <div class="col-md-6">
+                  <h5><i class="bi bi-check-circle text-success me-2"></i>Características</h5>
+                  <ul class="list-unstyled">
+                    <li><i class="bi bi-dot"></i> Datos en tiempo real</li>
+                    <li><i class="bi bi-dot"></i> Cobertura global</li>
+                    <li><i class="bi bi-dot"></i> Información detallada</li>
+                    <li><i class="bi bi-dot"></i> Interfaz responsive</li>
+                  </ul>
+                </div>
+                <div class="col-md-6">
+                  <h5><i class="bi bi-gear text-primary me-2"></i>Tecnologías</h5>
+                  <ul class="list-unstyled">
+                    <li><i class="bi bi-dot"></i> JavaScript Vanilla</li>
+                    <li><i class="bi bi-dot"></i> Bootstrap 5</li>
+                    <li><i class="bi bi-dot"></i> OpenWeatherMap API</li>
+                    <li><i class="bi bi-dot"></i> Glassmorphism UI</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer py-5 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <h5 class="footer-brand d-flex align-items-center gap-2 mb-4">
+            <img src="assets/img/logo.png" alt="Dataconecta Logo" width="50" style="border-radius:10px;">
+            <span class="fw-bold text-white">Dataconecta</span>
+          </h5>
+          <p class="footer-text">Consultoría especializada en Data Analytics, Business Intelligence, UX/UI y Marketing Digital.</p>
+        </div>
+        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+          <h5 class="footer-title">Navegación</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="index.html" class="footer-link">Inicio</a></li>
+            <li class="mb-2"><a href="servicios.html" class="footer-link">Servicios</a></li>
+            <li class="mb-2"><a href="proyectos.html" class="footer-link">Proyectos</a></li>
+            <li class="mb-2"><a href="equipo.html" class="footer-link">Equipo</a></li>
+            <li class="mb-2"><a href="blog.html" class="footer-link">Blog</a></li>
+            <li class="mb-2"><a href="weather.html" class="footer-link">Clima</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-4 mb-4 mb-md-0">
+          <h5 class="footer-title">Servicios</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><a href="#" class="footer-link">Data Analytics</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Business Intelligence</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Diseño UX/UI</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Marketing Digital</a></li>
+            <li class="mb-2"><a href="#" class="footer-link">Capacitación</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-4">
+          <h5 class="footer-title">Contacto</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2"><i class="bi bi-envelope me-2"></i> <a href="mailto:contacto@dataconecta.com" class="footer-link">contacto@dataconecta.com</a></li>
+            <li class="mb-2"><i class="bi bi-telephone me-2"></i> <a href="tel:+34900123456" class="footer-link">+34 900 123 456</a></li>
+            <li class="mb-2"><i class="bi bi-geo-alt me-2"></i> Madrid, España</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4 border-light-custom">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="small mb-0">© 2025 Dataconecta Consultora · Todos los derechos reservados</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <a href="#" class="me-2 text-light"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="me-2 text-light"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/dataconecta-widgets.js"></script>
+  <script src="assets/js/weather.js"></script>
+</body>
+</html>
