@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataConecta Hub - Marketing Tools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+        min-height: 100vh;
+      }
+      
+      .glass-card {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+      
+      .glass-button {
+        backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+      
+      .glass-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-white">
+            <h1 class="text-3xl font-bold mb-2">📈 Marketing Tools</h1>
+            <p class="text-gray-300">
+                Simula campañas, calcula ROI y analiza métricas de marketing digital
+            </p>
+            <a href="demo.html" class="inline-block mt-4 text-blue-400 hover:text-blue-300">← Volver al Hub</a>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass-card p-6 text-center">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white text-xl">👥</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">125,000</h3>
+                <p class="text-gray-300">Alcance Total</p>
+            </div>
+
+            <div class="glass-card p-6 text-center">
+                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white text-xl">🎯</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">4.2%</h3>
+                <p class="text-gray-300">Engagement Rate</p>
+            </div>
+
+            <div class="glass-card p-6 text-center">
+                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white text-xl">📈</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">1,847</h3>
+                <p class="text-gray-300">Conversiones</p>
+            </div>
+
+            <div class="glass-card p-6 text-center">
+                <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white text-xl">💰</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">3.8x</h3>
+                <p class="text-gray-300">ROAS Promedio</p>
+            </div>
+        </div>
+
+        <!-- Tools Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- ROI Calculator -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <span class="text-xl">🧮</span>
+                    Calculadora ROI/ROAS
+                </h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            Inversión ($)
+                        </label>
+                        <input
+                            type="number"
+                            placeholder="10000"
+                            class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            Ingresos Generados ($)
+                        </label>
+                        <input
+                            type="number"
+                            placeholder="25000"
+                            class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                    </div>
+                    
+                    <button class="w-full glass-button text-white bg-gradient-to-r from-pink-500 to-red-500">
+                        Calcular ROI/ROAS
+                    </button>
+                    
+                    <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
+                        <div class="text-center">
+                            <p class="text-sm text-gray-300">ROI</p>
+                            <p class="text-2xl font-bold text-green-400">150.0%</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-sm text-gray-300">ROAS</p>
+                            <p class="text-2xl font-bold text-blue-400">2.5x</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaign Simulator -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <span class="text-xl">⏯️</span>
+                    Simulador de Campañas
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">
+                                Audiencia
+                            </label>
+                            <select class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white">
+                                <option>General (18-65)</option>
+                                <option>Jóvenes (18-35)</option>
+                                <option>Adultos (36-55)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">
+                                Presupuesto
+                            </label>
+                            <input
+                                type="number"
+                                placeholder="5000"
+                                class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400"
+                            />
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">
+                                Duración (días)
+                            </label>
+                            <input
+                                type="number"
+                                placeholder="30"
+                                class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400"
+                            />
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">
+                                Objetivo
+                            </label>
+                            <select class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white">
+                                <option>Awareness</option>
+                                <option>Conversión</option>
+                                <option>Tráfico</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full glass-button text-white bg-gradient-to-r from-blue-500 to-cyan-500">
+                        ⏯️ Simular Campaña
+                    </button>
+                    
+                    <div class="bg-white/5 rounded-lg p-4">
+                        <h4 class="text-sm font-medium text-white mb-2">Resultados Estimados:</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-300">Alcance:</span>
+                                <span class="text-white ml-2">~15,000</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-300">Clics:</span>
+                                <span class="text-white ml-2">~450</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-300">CTR:</span>
+                                <span class="text-white ml-2">~3.0%</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-300">CPC:</span>
+                                <span class="text-white ml-2">~$11.11</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Mock -->
+        <div class="glass-card p-6">
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <span class="text-xl">📊</span>
+                Métricas Analytics (Mock)
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-blue-400 mb-1">2.4M</div>
+                    <div class="text-sm text-gray-300">Impresiones</div>
+                    <div class="text-xs text-green-400">+12.3%</div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-400 mb-1">89K</div>
+                    <div class="text-sm text-gray-300">Clics</div>
+                    <div class="text-xs text-green-400">+8.7%</div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-400 mb-1">3.7%</div>
+                    <div class="text-sm text-gray-300">CTR</div>
+                    <div class="text-xs text-red-400">-0.2%</div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-orange-400 mb-1">$12.45</div>
+                    <div class="text-sm text-gray-300">CPC</div>
+                    <div class="text-xs text-green-400">-5.1%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaigns Table -->
+        <div class="glass-card p-6">
+            <h3 class="text-lg font-semibold text-white mb-4">Gestión de Campañas</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-white/20">
+                            <th class="text-left py-3 text-gray-300">Campaña</th>
+                            <th class="text-left py-3 text-gray-300">Estado</th>
+                            <th class="text-left py-3 text-gray-300">Presupuesto</th>
+                            <th class="text-left py-3 text-gray-300">Gastado</th>
+                            <th class="text-left py-3 text-gray-300">ROI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="py-3 text-white">📈 Campaña Navidad 2024</td>
+                            <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium text-white bg-green-500">Activa</span></td>
+                            <td class="py-3 text-white">$15,000</td>
+                            <td class="py-3 text-white">$8,420</td>
+                            <td class="py-3 text-green-400 font-semibold">245%</td>
+                        </tr>
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="py-3 text-white">📈 Black Friday Promo</td>
+                            <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium text-white bg-blue-500">Completada</span></td>
+                            <td class="py-3 text-white">$25,000</td>
+                            <td class="py-3 text-white">$24,800</td>
+                            <td class="py-3 text-green-400 font-semibold">189%</td>
+                        </tr>
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="py-3 text-white">📈 Q1 2025 Launch</td>
+                            <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium text-white bg-yellow-500">Planificación</span></td>
+                            <td class="py-3 text-white">$20,000</td>
+                            <td class="py-3 text-white">$0</td>
+                            <td class="py-3 text-gray-400 font-semibold">0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-inter bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-glass;
+  }
+  
+  .glass-button {
+    @apply backdrop-blur-sm bg-white/20 border border-white/30 rounded-xl px-6 py-3 font-medium transition-all duration-300 hover:bg-white/30 hover:scale-105;
+  }
+  
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:bg-white/10 cursor-pointer;
+  }
+  
+  .metric-card {
+    @apply glass-card p-6 hover:scale-105 transition-transform duration-300;
+  }
+}
