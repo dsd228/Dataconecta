@@ -1,0 +1,21 @@
+# Node
+node_modules/
+package-lock.json
+
+# Vite/React
+dist/
+.env
+
+# IDE / sistema
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Carpetas personales
+AppData/
+OneDrive/
+Downloads/
+Documents/
+*.exe
+*.LOG*
+
