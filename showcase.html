@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataConecta Hub - Rediseño Completo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+        min-height: 100vh;
+      }
+      
+      .glass-card {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+      
+      .glass-button {
+        backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+      
+      .glass-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-4xl mx-auto space-y-8">
+        <!-- Header -->
+        <div class="text-center text-white">
+            <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <span class="text-white text-4xl">📊</span>
+            </div>
+            <h1 class="text-4xl font-bold mb-4">DataConecta Hub</h1>
+            <p class="text-xl text-gray-300 mb-2">
+                Rediseño Completo - De Consultora a Hub de Herramientas
+            </p>
+            <p class="text-gray-400">
+                Transformación completa con React + Tailwind CSS y diseño glassmorphism
+            </p>
+        </div>
+
+        <!-- Before/After Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Before -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-semibold text-red-400 mb-4">❌ Antes: "Dataconecta Consultora"</h3>
+                <div class="space-y-3 text-sm text-gray-300">
+                    <div>• Sitio web estático con HTML/Bootstrap</div>
+                    <div>• Enfoque de consultoría tradicional</div>
+                    <div>• Páginas corporativas (servicios, equipo, blog)</div>
+                    <div>• Sin herramientas interactivas</div>
+                    <div>• Diseño convencional</div>
+                </div>
+            </div>
+
+            <!-- After -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-semibold text-green-400 mb-4">✅ Ahora: "DataConecta Hub"</h3>
+                <div class="space-y-3 text-sm text-gray-300">
+                    <div>• Aplicación React moderna</div>
+                    <div>• Hub de herramientas especializadas</div>
+                    <div>• 4 áreas con funciones específicas</div>
+                    <div>• Herramientas interactivas funcionales</div>
+                    <div>• Diseño glassmorphism inspirado en iOS 18</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tool Areas -->
+        <div class="glass-card p-6">
+            <h3 class="text-xl font-semibold text-white mb-6 text-center">🛠️ Áreas de Herramientas</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Hub Central -->
+                <div class="bg-white/5 rounded-xl p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🏠</span>
+                        <h4 class="font-semibold text-white">Hub Central</h4>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">
+                        Panel principal con insights de todas las áreas, KPIs consolidados y actividad reciente.
+                    </p>
+                    <a href="demo.html" class="glass-button text-white text-sm">Ver Hub</a>
+                </div>
+
+                <!-- Data Analysis -->
+                <div class="bg-white/5 rounded-xl p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">📊</span>
+                        <h4 class="font-semibold text-white">Análisis de Datos</h4>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">
+                        Carga CSV/Excel, dashboards dinámicos, visualización de tendencias y gestión de datasets.
+                    </p>
+                    <a href="data-analysis-demo.html" class="glass-button text-white text-sm">Ver Herramientas</a>
+                </div>
+
+                <!-- UX/UI Tools -->
+                <div class="bg-white/5 rounded-xl p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">🎨</span>
+                        <h4 class="font-semibold text-white">UX/UI Tools</h4>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">
+                        Generador de prototipos rápidos, repositorio de UI Kits e integración con Figma.
+                    </p>
+                    <button class="glass-button text-white text-sm opacity-60">Próximamente</button>
+                </div>
+
+                <!-- Marketing -->
+                <div class="bg-white/5 rounded-xl p-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-2xl">📈</span>
+                        <h4 class="font-semibold text-white">Marketing</h4>
+                    </div>
+                    <p class="text-sm text-gray-300 mb-3">
+                        Calculadora ROI/ROAS, simulador de campañas y métricas de analytics.
+                    </p>
+                    <a href="marketing-demo.html" class="glass-button text-white text-sm">Ver Herramientas</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="glass-card p-6">
+            <h3 class="text-xl font-semibold text-white mb-6 text-center">🎯 Características Técnicas</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div>
+                    <div class="text-3xl mb-2">⚛️</div>
+                    <h4 class="font-semibold text-white mb-2">React + Tailwind</h4>
+                    <p class="text-sm text-gray-300">Arquitectura moderna con componentes reutilizables</p>
+                </div>
+                
+                <div>
+                    <div class="text-3xl mb-2">✨</div>
+                    <h4 class="font-semibold text-white mb-2">Glassmorphism</h4>
+                    <p class="text-sm text-gray-300">Diseño inspirado en Apple/iOS 18 con efectos de cristal</p>
+                </div>
+                
+                <div>
+                    <div class="text-3xl mb-2">🔗</div>
+                    <h4 class="font-semibold text-white mb-2">Integración</h4>
+                    <p class="text-sm text-gray-300">Hub central conecta todas las herramientas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center">
+            <a href="demo.html" class="glass-button text-white text-lg bg-gradient-to-r from-blue-500 to-purple-600">
+                🚀 Explorar DataConecta Hub
+            </a>
+            <p class="text-sm text-gray-400 mt-4">
+                Rediseño completo: de sitio consultora a hub funcional con herramientas especializadas
+            </p>
+        </div>
+    </div>
+</body>
+</html>

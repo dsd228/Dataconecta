@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataConecta Hub - Análisis de Datos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
+        min-height: 100vh;
+      }
+      
+      .glass-card {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      }
+      
+      .glass-button {
+        backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+      
+      .glass-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.05);
+      }
+    </style>
+</head>
+<body class="p-6">
+    <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-white">
+            <h1 class="text-3xl font-bold mb-2">📊 Análisis de Datos</h1>
+            <p class="text-gray-300">
+                Carga, visualiza y analiza tus datasets con herramientas avanzadas
+            </p>
+            <a href="demo.html" class="inline-block mt-4 text-blue-400 hover:text-blue-300">← Volver al Hub</a>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="glass-card p-6 text-center">
+            <div class="text-6xl mb-4">⬆️</div>
+            <h3 class="text-lg font-semibold text-white mb-2">Cargar Nuevo Dataset</h3>
+            <p class="text-gray-300 mb-4">
+                Sube archivos CSV, Excel o JSON para comenzar el análisis
+            </p>
+            <button class="glass-button text-white">
+                📁 Seleccionar Archivo
+            </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-card p-6 text-center">
+                <div class="text-4xl mb-3">🗄️</div>
+                <h3 class="text-2xl font-bold text-white mb-1">8</h3>
+                <p class="text-gray-300">Datasets Totales</p>
+            </div>
+            
+            <div class="glass-card p-6 text-center">
+                <div class="text-4xl mb-3">📊</div>
+                <h3 class="text-2xl font-bold text-white mb-1">156,847</h3>
+                <p class="text-gray-300">Registros Totales</p>
+            </div>
+            
+            <div class="glass-card p-6 text-center">
+                <div class="text-4xl mb-3">📄</div>
+                <h3 class="text-2xl font-bold text-white mb-1">6</h3>
+                <p class="text-gray-300">Datasets Activos</p>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Mock Chart -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-semibold text-white mb-4">Tendencia de Ventas</h3>
+                <div class="h-32 flex items-end justify-between gap-1">
+                    <div class="flex-1 flex flex-col items-center">
+                        <div class="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-sm" style="height: 60%"></div>
+                        <span class="text-xs text-gray-300 mt-1">Ene</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center">
+                        <div class="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-sm" style="height: 90%"></div>
+                        <span class="text-xs text-gray-300 mt-1">Feb</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center">
+                        <div class="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-sm" style="height: 75%"></div>
+                        <span class="text-xs text-gray-300 mt-1">Mar</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center">
+                        <div class="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-sm" style="height: 100%"></div>
+                        <span class="text-xs text-gray-300 mt-1">Abr</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center">
+                        <div class="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-sm" style="height: 85%"></div>
+                        <span class="text-xs text-gray-300 mt-1">May</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center">
+                        <div class="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-sm" style="height: 95%"></div>
+                        <span class="text-xs text-gray-300 mt-1">Jun</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Metrics -->
+            <div class="glass-card p-6">
+                <h3 class="text-lg font-semibold text-white mb-4">Métricas Clave</h3>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Promedio Ventas Mensuales</span>
+                        <span class="text-white font-semibold">$22,167</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Meta vs Realizado</span>
+                        <span class="text-green-400 font-semibold">+15.2%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300">Crecimiento Trimestral</span>
+                        <span class="text-blue-400 font-semibold">+28.5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datasets Table -->
+        <div class="glass-card p-6">
+            <h3 class="text-lg font-semibold text-white mb-4">Datasets Administrados</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-white/20">
+                            <th class="text-left py-3 text-gray-300">Dataset</th>
+                            <th class="text-left py-3 text-gray-300">Registros</th>
+                            <th class="text-left py-3 text-gray-300">Última Actualización</th>
+                            <th class="text-left py-3 text-gray-300">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="py-3 text-white">🗄️ Ventas Q4 2024</td>
+                            <td class="py-3 text-white">15,420</td>
+                            <td class="py-3 text-white">2024-12-20</td>
+                            <td class="py-3"><span class="text-green-400">✅ Activo</span></td>
+                        </tr>
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="py-3 text-white">🗄️ Customer Analytics</td>
+                            <td class="py-3 text-white">8,935</td>
+                            <td class="py-3 text-white">2024-12-19</td>
+                            <td class="py-3"><span class="text-green-400">✅ Activo</span></td>
+                        </tr>
+                        <tr class="border-b border-white/10 hover:bg-white/5">
+                            <td class="py-3 text-white">🗄️ Marketing Performance</td>
+                            <td class="py-3 text-white">2,847</td>
+                            <td class="py-3 text-white">2024-12-18</td>
+                            <td class="py-3"><span class="text-yellow-400">🕐 Procesando</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
