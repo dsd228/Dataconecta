@@ -1,6 +1,5 @@
 const { BrowserRouter, Routes, Route, Link } = ReactRouterDOM;
 
-
 /* ---------- COMPONENTES ---------- */
 function GlassCard({ children }) {
   return (
@@ -33,20 +32,15 @@ function Analytics() {
           {
             label: "Visitas",
             data: [120, 190, 300, 250, 400],
-            backgroundColor: "rgba(14, 165, 233, 0.7)", // Tailwind primary-500
+            backgroundColor: "rgba(14, 165, 233, 0.7)",
             borderRadius: 6,
           },
         ],
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: { labels: { color: "white" } },
-        },
-        scales: {
-          x: { ticks: { color: "white" } },
-          y: { ticks: { color: "white" } },
-        },
+        plugins: { legend: { labels: { color: "white" } } },
+        scales: { x: { ticks: { color: "white" } }, y: { ticks: { color: "white" } } },
       },
     });
   }, []);
