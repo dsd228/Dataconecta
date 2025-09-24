@@ -1,3 +1,4 @@
+// Destructuring desde el global ReactRouterDOM
 const { BrowserRouter, Routes, Route, Link } = ReactRouterDOM;
 
 /* ---------- COMPONENTES ---------- */
