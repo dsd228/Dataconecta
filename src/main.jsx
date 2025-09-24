@@ -1,5 +1,72 @@
 const { BrowserRouter, Routes, Route, Link } = ReactRouterDOM;
 
+/* ---------- COMPONENTES ---------- */
+function GlassCard({ children }) {
+  return (
+    <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-glass p-6 my-4">
+      {children}
+    </div>
+  );
+}
+
+/* ---------- PÁGINAS ---------- */
+function Home() {
+  return (
+    <div>
+      <h2 className="text-2xl font-montserrat mb-4">Bienvenido a DataConecta Hub</h2>
+      <GlassCard>
+        <p>Centraliza tus herramientas de Analytics, UX y Marketing.</p>
+      </GlassCard>
+    </div>
+  );
+}
+
+function Analytics() {
+  React.useEffect(() => {
+    const ctx = document.getElementById("myChart");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"],
+        datasets: [
+          {
+            label: "Visitas",
+            data: [120, 190, 300, 250, 400],
+            backgroundColor: "rgba(14, 165, 233, 0.7)", // Tailwind primary-500
+            borderRadius: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "white" } },
+        },
+        scales: {
+          x: { ticks: { color: "white" } },
+          y: { ticks: { color: "white" } },
+        },
+      },
+    });
+  }, []);
+
+  return (
+    <GlassCard>
+      <h2 className="text-xl font-montserrat mb-4">📊 Analytics</h2>
+      <canvas id="myChart" width="400" height="200"></canvas>
+    </GlassCard>
+  );
+}
+
+function UX() {
+  return <GlassCard>🎨 Biblioteca de componentes UI</GlassCard>;
+}
+
+function Marketing() {
+  return <GlassCard>📈 Calculadora de ROI y campañas</GlassCard>;
+}
+
+/* ---------- APP ---------- */
 function App() {
   return (
     <BrowserRouter basename="/">
@@ -29,38 +96,5 @@ function App() {
   );
 }
 
-/* Pages */
-function Home() {
-  return (
-    <div>
-      <h2 className="text-2xl font-montserrat mb-4">Bienvenido a DataConecta Hub</h2>
-      <GlassCard>
-        <p>Centraliza tus herramientas de Analytics, UX y Marketing.</p>
-      </GlassCard>
-    </div>
-  );
-}
-
-function Analytics() {
-  return <GlassCard>📊 Aquí va un gráfico interactivo (Chart.js/Recharts)</GlassCard>;
-}
-
-function UX() {
-  return <GlassCard>🎨 Biblioteca de componentes UI</GlassCard>;
-}
-
-function Marketing() {
-  return <GlassCard>📈 Calculadora de ROI y campañas</GlassCard>;
-}
-
-/* Components */
-function GlassCard({ children }) {
-  return (
-    <div className="glass-card p-6 my-4">
-      {children}
-    </div>
-  );
-}
-
-/* Mount App */
+/* ---------- MOUNT ---------- */
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
