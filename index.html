@@ -1,43 +1,43 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/svg+xml" href="/logo.svg">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataConecta Hub</title>
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="./logo.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataConecta Hub</title>
 
-    <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
 
-    <!-- React + Router + Babel -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/react-router-dom@6/dist/umd/react-router-dom.development.js"></script>
+  <!-- React + Router + Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/react-router-dom@6/dist/umd/react-router-dom.development.js"></script>
 
-    <!-- TailwindCDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              inter: ["Inter", "sans-serif"],
-              montserrat: ["Montserrat", "sans-serif"],
-            },
-            boxShadow: {
-              glass: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-            }
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ["Inter", "sans-serif"],
+            montserrat: ["Montserrat", "sans-serif"],
+          },
+          boxShadow: {
+            glass: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
           }
         }
       }
-    </script>
+    }
+  </script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
-  <body class="font-inter bg-gradient-to-br from-slate-900 to-indigo-900 min-h-screen text-white">
-    <div id="root"></div>
-    <script type="text/babel" src="./src/main.jsx"></script>
-  </body>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="font-inter bg-gradient-to-br from-slate-900 to-indigo-900 min-h-screen text-white">
+  <div id="root"></div>
+  <script type="text/babel" src="./src/main.jsx"></script>
+</body>
 </html>
