@@ -1,131 +1,41 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DataConecta Hub - Herramientas Integradas</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/react-router-dom@6/dist/umd/react-router-dom.development.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              'inter': ['Inter', 'sans-serif'],
-              'montserrat': ['Montserrat', 'sans-serif'],
-            },
-            colors: {
-              primary: {
-                50: '#f0f9ff',
-                100: '#e0f2fe',
-                200: '#bae6fd',
-                300: '#7dd3fc',
-                400: '#38bdf8',
-                500: '#0ea5e9',
-                600: '#0284c7',
-                700: '#0369a1',
-                800: '#075985',
-                900: '#0c4a6e',
-              },
-              glass: {
-                'white': 'rgba(255, 255, 255, 0.1)',
-                'dark': 'rgba(0, 0, 0, 0.1)',
-              }
-            },
-            backdropBlur: {
-              xs: '2px',
-            },
-            backgroundImage: {
-              'gradient-glassmorphism': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))',
-              'gradient-primary': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              'gradient-secondary': 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-              'gradient-accent': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-            },
-            boxShadow: {
-              'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-              'glass-inset': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)',
-            },
-            border: {
-              'glass': '1px solid rgba(255, 255, 255, 0.18)',
-            }
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="./logo.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataConecta Hub</title>
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- React + ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- React Router -->
+  <script src="https://unpkg.com/react-router-dom@6/dist/umd/react-router-dom.development.js"></script>
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ["Inter", "sans-serif"],
+            montserrat: ["Montserrat", "sans-serif"],
           },
+          boxShadow: {
+            glass: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+          }
         }
       }
-    </script>
-    <style>
-      @layer base {
-        body {
-          font-family: 'Inter', sans-serif;
-          background: linear-gradient(135deg, #1e293b 0%, #7c3aed 50%, #1e293b 100%);
-          min-height: 100vh;
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-          font-family: 'Montserrat', sans-serif;
-        }
-      }
-
-      .glass-card {
-        backdrop-filter: blur(20px);
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 1rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      }
-      
-      .glass-button {
-        backdrop-filter: blur(8px);
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 0.75rem;
-        padding: 0.75rem 1.5rem;
-        font-weight: 500;
-        transition: all 0.3s;
-      }
-      
-      .glass-button:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-      }
-      
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        border-radius: 0.75rem;
-        transition: all 0.3s;
-        cursor: pointer;
-      }
-      
-      .nav-item:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-      
-      .metric-card {
-        backdrop-filter: blur(20px);
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 1rem;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        padding: 1.5rem;
-        transition: transform 0.3s;
-      }
-      
-      .metric-card:hover {
-        transform: scale(1.05);
-      }
-    </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="text/babel" data-type="module" src="/src/main.jsx"></script>
-  </body>
+    }
+  </script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="font-inter bg-gradient-to-br from-slate-900 to-indigo-900 min-h-screen text-white">
+  <div id="root"></div>
+  <script type="text/babel" src="./src/main.jsx"></script>
+</body>
 </html>
