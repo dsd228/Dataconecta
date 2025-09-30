@@ -340,7 +340,7 @@ function ABTestDemo() {
       <h2 className="font-bold text-lg mb-2">Mini Test A/B</h2>
       <div className="mb-2">
         <span className="font-bold">Estás viendo la versión {version}</span>
-        <div className={`my-2 p-4 rounded ${version==="A"?"bg-indigo-500/50":"bg-green-500/40"}`}>
+        <div className={`my-2 p-4 rounded ${version==="A"?"bg-indigo-500/50":"bg-green-500/40"}`}>  
           {version === "A"
             ? <span>Botón azul destacado:</span>
             : <span>Botón verde destacado:</span>
