@@ -147,4 +147,7 @@
       if (canvas) downloadCanvasPNG(canvas, 'revenue.png');
     }
   };
+
+  // Backwards compatibility: some code calls Analytics.render()
+  window.Analytics.render = window.Analytics.renderAll;
 })();
