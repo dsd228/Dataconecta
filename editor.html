@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Visual de Prototipos | DataConecta</title>
+    <!-- Carga de Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Carga de Konva.js -->
+    <script src="https://unpkg.com/konva@9.3.13/konva.min.js"></script>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --text: #333;
+            --text-light: #7f8c8d;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --bg-light: #f9fbfd;
+            --bg-darker: #f1f5f9;
+            --border-color: #e2e8f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-darker);
+            color: var(--text);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-right: 20px;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        #user-display {
+            font-size: 12px;
+            background-color: rgba(0,0,0,0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-controls button,
+        .mode-toggle {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-controls button.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .view-controls button:hover,
+        .mode-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main Layout */
+        .editor-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Toolbar (Left) */
+        aside.components-toolbar {
+            width: 220px;
+            background-color: white;
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .toolbar-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .toolbar-section h3 {
+            font-size: 16px;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .component-item {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: grab;
+            transition: all 0.3s;
+        }
+
+        .component-item:hover {
+            background-color: white;
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .component-item i {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .component-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        #saved-components-list {
+            font-size: 14px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* Canvas (Center) */
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+            padding: 30px;
+            background-color: var(--bg-darker);
+        }
+
+        #canvas-stage {
+            background-color: white;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            transition: width 0.4s ease, height 0.4s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Properties (Right) */
+        aside.properties-panel {
+            width: 260px;
+            background-color: white;
+            border-left: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .properties-panel h3 {
+            font-size: 16px;
+            color: var(--secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        #properties-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        #properties-form .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        #properties-form .form-control,
+        #properties-form .form-control-color {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        #properties-form .form-control-color {
+            padding: 4px;
+            height: 38px;
+        }
+
+        #properties-form .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        #properties-form .form-row .form-group {
+            flex: 1;
+        }
+
+        #properties-form .btn {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        #properties-form .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        #properties-form .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        #properties-form .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        #properties-form .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+
+        #properties-form .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        #properties-form .btn-danger:hover {
+            background-color: #c0392b; /* Darker danger */
+        }
+        
+        #properties-placeholder {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 14px;
+            padding-top: 20px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-drafting-compass"></i>
+                <span>DataConecta Editor</span>
+            </div>
+            <div id="user-display">Cargando...</div>
+        </div>
+        <div class="editor-toolbar">
+            <div class="view-controls">
+                <button id="view-mobile" title="Vista Móvil"><i class="fas fa-mobile-alt"></i></button>
+                <button id="view-tablet" title="Vista Tablet"><i class="fas fa-tablet-alt"></i></button>
+                <button id="view-desktop" title="Vista Escritorio" class="active"><i class="fas fa-desktop"></i></button>
+            </div>
+            <button class="mode-toggle" id="toggle-preview">
+                <i class="fas fa-play"></i>
+                <span id="preview-text">Vista Previa</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="editor-main">
+        
+        <!-- Toolbar (Left) -->
+        <aside class="components-toolbar">
+            <div class="toolbar-section">
+                <h3>Componentes</h3>
+                <div class="component-grid">
+                    <div class="component-item" draggable="true" data-type="Text">
+                        <i class="fas fa-font"></i>
+                        <span>Texto</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-type="Button">
+                        <i class="fas fa-mouse-pointer"></i>
+                        <span>Botón</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-type="Image">
+                        <i class="fas fa-image"></i>
+                        <span>Imagen</span>
+                    </div>
+                    <div class="component-item" draggable="true" data-type="Input">
+                        <i class="fas fa-keyboard"></i>
+                        <span>Input</span>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar-section">
+                <h3>Componentes Guardados</h3>
+                <div id="saved-components-list">
+                    <p>Aquí aparecerán tus componentes reutilizables.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas (Center) -->
+        <section class="canvas-container" id="canvas-container">
+            <div id="canvas-stage"></div>
+        </section>
+
+        <!-- Properties (Right) -->
+        <aside class="properties-panel">
+            <h3>Propiedades</h3>
+            <div id="properties-placeholder">
+                <i class="fas fa-hand-pointer" style="font-size: 24px; margin-bottom: 10px;"></i>
+                <p>Selecciona un elemento para editar sus propiedades.</p>
+            </div>
+            <form id="properties-form" style="display: none;">
+                <input type="hidden" id="selected-node-id">
+                
+                <div class="form-group" id="group-text">
+                    <label class="form-label" for="prop-text">Texto</label>
+                    <input type="text" class="form-control" id="prop-text">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="prop-fontsize">Tamaño</label>
+                        <input type="number" class="form-control" id="prop-fontsize" min="8" max="100">
+                    </div>
+                    <div class="form-group" id="group-fill">
+                        <label class="form-label" for="prop-fill">Color Texto</label>
+                        <input type="color" class="form-control-color" id="prop-fill">
+                    </div>
+                </div>
+                <div class="form-group" id="group-background">
+                    <label class="form-label" for="prop-background">Color Fondo</label>
+                    <input type="color" class="form-control-color" id="prop-background">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="prop-x">X</label>
+                        <input type="number" class="form-control" id="prop-x" step="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prop-y">Y</label>
+                        <input type="number" class="form-control" id="prop-y" step="1">
+                    </div>
+                </div>
+                 <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="prop-width">Ancho</label>
+                        <input type="number" class="form-control" id="prop-width" min="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prop-height">Alto</label>
+                        <input type="number" class="form-control" id="prop-height" min="10">
+                    </div>
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid var(--light); margin: 20px 0;">
+                
+                <div class="form-group">
+                     <label class="form-label">Interacción</label>
+                     <button type="button" class="btn btn-primary" id="add-interaction-btn">
+                         <i class="fas fa-link"></i> Añadir Interacción
+                     </button>
+                </div>
+                
+                 <div class="form-group">
+                     <label class="form-label">Componente</label>
+                     <button type="button" class="btn btn-success" id="save-component-btn">
+                         <i class="fas fa-save"></i> Guardar como Componente
+                     </button>
+                </div>
+
+                <div class="form-group">
+                     <button type="button" class="btn btn-danger" id="delete-element-btn">
+                         <i class="fas fa-trash-alt"></i> Eliminar Elemento
+                     </button>
+                </div>
+            </form>
+        </aside>
+    </main>
+
+    <!-- Interaction Modal -->
+    <div class="modal" id="interaction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Añadir Interacción</h3>
+                <span class="close" id="close-modal">&times;</span>
+            </div>
+            <form id="interaction-form">
+                <div class="form-group">
+                    <label class="form-label" for="interaction-event">Evento</label>
+                    <select class="form-control" id="interaction-event">
+                        <option value="click">Al hacer Clic</option>
+                        <option value="hover">Al pasar el ratón</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="interaction-action">Acción</label>
+                    <select class="form-control" id="interaction-action">
+                        <option value="link">Ir a otra pantalla</option>
+                        <option value="modal">Mostrar modal</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label class="form-label" for="interaction-target">Destino (Simulado)</label>
+                    <input type="text" class="form-control" id="interaction-target" placeholder="Ej: 'Pantalla de Perfil' o 'Modal de Éxito'">
+                </div>
+                <div class="form-actions" style="justify-content: space-between;">
+                    <button type="button" class="btn btn-danger" id="remove-interaction-btn" style="width: auto;">Eliminar</button>
+                    <button type="submit" class="btn btn-primary" style="width: auto;">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Importar Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- 0. INICIALIZACIÓN DE FIREBASE ---
+        
+        // Variables globales de Firebase
+        let db, auth, userId, appId, elementsCollection;
+
+        // Configuración y autenticación
+        async function initFirebase() {
+            // Cargar configuración y App ID (provistos por el entorno)
+            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-editor-app';
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+            if (!firebaseConfig.apiKey) {
+                console.error("Configuración de Firebase no encontrada. La colaboración no funcionará.");
+                document.getElementById('user-display').textContent = "Error: Colaboración desactivada";
+                return false;
+            }
+
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            setLogLevel('debug'); // Para depuración
+
+            // Autenticar usuario
+            try {
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Error de autenticación:", error);
+                return false;
+            }
+
+            return true;
+        }
+
+
+        document.addEventListener('DOMContentLoaded', async () => {
+
+            let stage, layer, tr;
+            let selectedNode = null;
+            let isPreviewMode = false;
+            const userDisplay = document.getElementById('user-display');
+
+            // --- INICIAR FIREBASE Y AUTH ---
+            const firebaseReady = await initFirebase();
+            
+            if (firebaseReady) {
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userDisplay.textContent = `ID Colaborador: ${userId.substring(0, 8)}`;
+                        
+                        // Definir la colección de Firestore (compartida por todos los usuarios en este "appId")
+                        // Usamos la ruta pública para colaboración
+                        elementsCollection = collection(db, 'artifacts', appId, 'public', 'editor-elements');
+                        
+                        // Iniciar el listener de snapshot *después* de que todo esté listo
+                        setupSnapshotListener();
+
+                    } else {
+                        userDisplay.textContent = "Autenticando...";
+                    }
+                });
+            } else {
+                // Si Firebase falla, iniciar en modo local (sin colaboración)
+                userDisplay.textContent = "Modo Local (sin conexión)";
+            }
+            
+            // --- FIN DE FIREBASE ---
+
+
+            const views = {
+                mobile: { width: 375, height: 667 },
+                tablet: { width: 768, height: 1024 },
+                desktop: { width: 1366, height: 768 }
+            };
+            let currentView = 'desktop';
+
+            const propertiesForm = document.getElementById('properties-form');
+            const propertiesPlaceholder = document.getElementById('properties-placeholder');
+
+            // --- 1. INICIALIZACIÓN DEL CANVAS ---
+            
+            function initCanvas() {
+                const container = document.getElementById('canvas-stage');
+                const viewSize = views[currentView];
+                
+                stage = new Konva.Stage({
+                    container: 'canvas-stage',
+                    width: viewSize.width,
+                    height: viewSize.height,
+                });
+
+                layer = new Konva.Layer();
+                stage.add(layer);
+
+                // Transformador (para redimensionar/rotar)
+                tr = new Konva.Transformer({
+                    nodes: [],
+                    keepRatio: false,
+                    anchorStroke: 'var(--primary)',
+                    anchorFill: 'white',
+                    anchorSize: 10,
+                    borderStroke: 'var(--primary)',
+                    borderDash: [3, 3],
+                });
+                layer.add(tr);
+
+                // --- 2. MANEJO DE SELECCIÓN ---
+                
+                // Clic en el canvas
+                stage.on('click tap', (e) => {
+                    // Si estamos en modo preview, ejecutar interacciones
+                    if (isPreviewMode) {
+                        handlePreviewClick(e.target);
+                        return;
+                    }
+
+                    // Si se hizo clic en el fondo, deseleccionar todo
+                    if (e.target === stage) {
+                        deselectNode();
+                        return;
+                    }
+
+                    // Si se hizo clic en un elemento
+                    selectNode(e.target);
+                });
+            }
+
+            function selectNode(node) {
+                // Ignorar clics en el transformador
+                if (node.getParent() && node.getParent().className === 'Transformer') {
+                    return;
+                }
+                
+                // Si el nodo es un texto dentro de un grupo (botón), seleccionar el grupo
+                if (node.parent && (node.parent.getAttr('data-type') === 'Button' || node.parent.getAttr('data-type') === 'Image' || node.parent.getAttr('data-type') === 'Input')) {
+                     node = node.parent;
+                }
+
+                selectedNode = node;
+                tr.nodes([node]);
+                showProperties(node);
+                layer.draw();
+            }
+
+            function deselectNode() {
+                selectedNode = null;
+                tr.nodes([]);
+                hideProperties();
+                layer.draw();
+            }
+
+
+            // --- 3. DRAG AND DROP (ARRASTRAR Y SOLTAR) ---
+            
+            let dragItemType = null;
+            
+            // Iniciar arrastre desde la barra de componentes
+            document.querySelectorAll('.component-item').forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    dragItemType = e.target.closest('.component-item').dataset.type;
+                });
+            });
+
+            const canvasContainer = document.getElementById('canvas-container');
+
+            // Permitir soltar sobre el canvas
+            canvasContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            // Soltar en el canvas
+            canvasContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (!dragItemType) return;
+
+                // Asegurarse de que el drop es dentro del stage de Konva
+                stage.setPointersPositions(e);
+                const pos = stage.getPointerPosition();
+
+                // Ajustar posición para que quede centrada
+                pos.x = pos.x - (stage.x() / stage.scaleX());
+                pos.y = pos.y - (stage.y() / stage.scaleY());
+
+                // En lugar de llamar a createElement, creamos los datos y los enviamos a Firestore
+                createAndSaveElement(dragItemType, pos);
+                dragItemType = null;
+            });
+
+
+            // --- 4. CREACIÓN DE ELEMENTOS (NUEVO FLUJO CON FIRESTORE) ---
+
+            // Esta función *solo* crea el objeto de datos y lo guarda en Firestore.
+            // El `onSnapshot` listener se encargará de dibujarlo.
+            async function createAndSaveElement(type, pos) {
+                if (!firebaseReady) {
+                    alert("El modo de colaboración está desactivado. No se pueden guardar elementos.");
+                    return;
+                }
+                
+                let elementData = {
+                    type: type,
+                    x: pos.x,
+                    y: pos.y,
+                    rotation: 0,
+                    scaleX: 1,
+                    scaleY: 1,
+                    interaction: null,
+                    createdBy: userId // Guardamos quién lo creó
+                };
+
+                switch (type) {
+                    case 'Text':
+                        elementData = { ...elementData,
+                            text: 'Texto de ejemplo',
+                            fontSize: 20,
+                            fill: '#333',
+                            width: 200, // Dar un ancho por defecto
+                            height: 22
+                        };
+                        break;
+                    
+                    case 'Button':
+                        elementData = { ...elementData,
+                            text: 'Click Aquí',
+                            fontSize: 16,
+                            fill: 'white',
+                            background: 'var(--primary)',
+                            width: 120,
+                            height: 40,
+                            cornerRadius: 4
+                        };
+                        break;
+
+                    case 'Image':
+                        elementData = { ...elementData,
+                            fill: '#eee',
+                            stroke: '#ccc',
+                            width: 150,
+                            height: 100,
+                        };
+                        break;
+
+                    case 'Input':
+                        elementData = { ...elementData,
+                            text: 'Placeholder...',
+                            fontSize: 14,
+                            fill: '#999',
+                            background: 'white',
+                            stroke: '#ccc',
+                            width: 200,
+                            height: 36,
+                            cornerRadius: 4
+                        };
+                        break;
+                }
+
+                try {
+                    // Añadir el nuevo elemento a Firestore
+                    const docRef = await addDoc(elementsCollection, elementData);
+                    console.log("Elemento creado con ID: ", docRef.id);
+                } catch (e) {
+                    console.error("Error al añadir documento: ", e);
+                }
+            }
+            
+            // --- 4b. RE-CREACIÓN DE NODOS DESDE FIRESTORE ---
+            
+            // Esta función es llamada por el onSnapshot listener
+            // Crea un nodo Konva a partir de los datos de Firestore
+            function createNodeFromData(data, docId) {
+                let node;
+                const type = data.type;
+                
+                // Función de listener para actualizar Firestore en drag/transform
+                const onNodeUpdate = async (e) => {
+                    const node = e.target;
+                    try {
+                        await updateDoc(doc(elementsCollection, docId), {
+                            x: node.x(),
+                            y: node.y(),
+                            rotation: node.rotation(),
+                            scaleX: node.scaleX(),
+                            scaleY: node.scaleY()
+                        });
+                    } catch (error) {
+                        console.error("Error al actualizar nodo: ", error);
+                    }
+                };
+
+                switch (type) {
+                    case 'Text':
+                        node = new Konva.Text({
+                            x: data.x,
+                            y: data.y,
+                            text: data.text,
+                            fontSize: data.fontSize,
+                            fill: data.fill,
+                            width: data.width,
+                            height: data.height,
+                            rotation: data.rotation,
+                            scaleX: data.scaleX,
+                            scaleY: data.scaleY,
+                            draggable: true,
+                            id: docId, // Usar el ID de Firestore
+                            'data-type': type,
+                            'interaction': data.interaction
+                        });
+                        break;
+                    
+                    case 'Button':
+                        node = new Konva.Group({
+                            x: data.x,
+                            y: data.y,
+                            rotation: data.rotation,
+                            scaleX: data.scaleX,
+                            scaleY: data.scaleY,
+                            width: data.width,
+                            height: data.height,
+                            draggable: true,
+                            id: docId,
+                            'data-type': type,
+                            'interaction': data.interaction
+                        });
+                        
+                        const buttonRect = new Konva.Rect({
+                            width: data.width,
+                            height: data.height,
+                            fill: data.background,
+                            cornerRadius: data.cornerRadius,
+                        });
+                        
+                        const buttonText = new Konva.Text({
+                            text: data.text,
+                            fontSize: data.fontSize,
+                            fill: data.fill,
+                            width: data.width,
+                            height: data.height,
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            listening: false // Importante para que el clic vaya al grupo
+                        });
+                        
+                        node.add(buttonRect, buttonText);
+                        break;
+
+                    case 'Image':
+                        node = new Konva.Group({
+                            x: data.x,
+                            y: data.y,
+                            rotation: data.rotation,
+                            scaleX: data.scaleX,
+                            scaleY: data.scaleY,
+                            width: data.width,
+                            height: data.height,
+                            draggable: true,
+                            id: docId,
+                            'data-type': type,
+                            'interaction': data.interaction
+                        });
+
+                        const imgRect = new Konva.Rect({
+                            width: data.width,
+                            height: data.height,
+                            fill: data.fill,
+                            stroke: data.stroke,
+                            strokeWidth: 2,
+                            dash: [5, 5],
+                        });
+                        
+                        const imgLabel = new Konva.Text({
+                            text: 'IMAGEN',
+                            fontSize: 14,
+                            fill: '#aaa',
+                            width: data.width,
+                            height: data.height,
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            listening: false 
+                        });
+                        
+                        node.add(imgRect, imgLabel);
+                        break;
+
+                    case 'Input':
+                         node = new Konva.Group({
+                            x: data.x,
+                            y: data.y,
+                            rotation: data.rotation,
+                            scaleX: data.scaleX,
+                            scaleY: data.scaleY,
+                            width: data.width,
+                            height: data.height,
+                            draggable: true,
+                            id: docId,
+                            'data-type': type,
+                            'interaction': data.interaction
+                        });
+                        
+                        const inputRect = new Konva.Rect({
+                            width: data.width,
+                            height: data.height,
+                            fill: data.background,
+                            stroke: data.stroke,
+                            strokeWidth: 1,
+                            cornerRadius: data.cornerRadius,
+                        });
+                        
+                        const inputText = new Konva.Text({
+                            text: data.text,
+                            fontSize: data.fontSize,
+                            fill: data.fill,
+                            width: data.width,
+                            height: data.height,
+                            align: 'left',
+                            verticalAlign: 'middle',
+                            padding: 10,
+                            listening: false
+                        });
+                        
+                        node.add(inputRect, inputText);
+                        break;
+                }
+
+                if (node) {
+                    // Sincronizar movimiento, redimensión y rotación con Firestore
+                    node.on('transformend dragend', onNodeUpdate);
+                }
+                
+                return node;
+            }
+
+
+            // --- 5. LISTENER DE FIRESTORE (EL NÚCLEO DE LA COLABORACIÓN) ---
+            
+            function setupSnapshotListener() {
+                if (!elementsCollection) return;
+
+                onSnapshot(elementsCollection, (snapshot) => {
+                    console.log("Datos recibidos de Firestore, redibujando...");
+                    
+                    // Guardar el nodo seleccionado actualmente
+                    const selectedId = selectedNode ? selectedNode.id() : null;
+                    
+                    // Limpiar capa
+                    tr.nodes([]);
+                    layer.destroyChildren();
+                    layer.add(tr); // Re-añadir transformador
+
+                    let newSelectedNode = null;
+
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        
+                        // Crear el nodo Konva desde los datos
+                        const node = createNodeFromData(data, doc.id);
+                        
+                        if (node) {
+                            layer.add(node);
+                            
+                            // Si este era el nodo seleccionado, re-seleccionarlo
+                            if (node.id() === selectedId) {
+                                newSelectedNode = node;
+                            }
+                        }
+                    });
+
+                    // Si había un nodo seleccionado, restaurar la selección y el panel
+                    if (newSelectedNode) {
+                        selectNode(newSelectedNode);
+                    } else {
+                        deselectNode();
+                    }
+
+                    layer.batchDraw();
+                }, (error) => {
+                    console.error("Error en listener de snapshot: ", error);
+                    userDisplay.textContent = "Error de conexión";
+                });
+            }
+            
+
+            // --- 6. PANEL DE PROPIEDADES (DERECHA) ---
+            
+            function showProperties(node) {
+                propertiesPlaceholder.style.display = 'none';
+                propertiesForm.style.display = 'block';
+                updatePropertiesPanel(node);
+            }
+
+            function hideProperties() {
+                propertiesPlaceholder.style.display = 'block';
+                propertiesForm.style.display = 'none';
+            }
+            
+            // Actualizar el panel con los datos del nodo seleccionado
+            function updatePropertiesPanel(node) {
+                if (!node) return;
+
+                const type = node.getAttr('data-type');
+                // Usamos el ID del nodo Konva, que es el ID del doc de Firestore
+                document.getElementById('selected-node-id').value = node.id();
+
+                // Ocultar todos los grupos de propiedades
+                document.getElementById('group-text').style.display = 'none';
+                document.getElementById('group-fill').style.display = 'none';
+                document.getElementById('group-background').style.display = 'none';
+
+                // Propiedades comunes
+                document.getElementById('prop-x').value = Math.round(node.x());
+                document.getElementById('prop-y').value = Math.round(node.y());
+                document.getElementById('prop-width').value = Math.round(node.width() * node.scaleX());
+                document.getElementById('prop-height').value = Math.round(node.height() * node.scaleY());
+
+                if (type === 'Text') {
+                    const textNode = node;
+                    document.getElementById('group-text').style.display = 'block';
+                    document.getElementById('group-fill').style.display = 'block';
+                    document.getElementById('prop-text').value = textNode.text();
+                    document.getElementById('prop-fontsize').value = textNode.fontSize();
+                    document.getElementById('prop-fill').value = textNode.fill();
+                } 
+                else if (type === 'Button' || type === 'Input') {
+                    const rect = node.findOne('Rect');
+                    const text = node.findOne('Text');
+                    
+                    document.getElementById('group-text').style.display = 'block';
+                    document.getElementById('group-fill').style.display = 'block';
+                    document.getElementById('group-background').style.display = 'block';
+
+                    document.getElementById('prop-text').value = text.text();
+                    document.getElementById('prop-fontsize').value = text.fontSize();
+                    document.getElementById('prop-fill').value = text.fill();
+                    document.getElementById('prop-background').value = rect.fill();
+                }
+                else if (type === 'Image') {
+                    const rect = node.findOne('Rect');
+                    document.getElementById('group-background').style.display = 'block';
+                    document.getElementById('prop-background').value = rect.fill();
+                }
+
+                // Cargar datos de interacción
+                const interaction = node.getAttr('interaction');
+                const interactionBtn = document.getElementById('add-interaction-btn');
+                if (interaction) {
+                    interactionBtn.innerHTML = '<i class="fas fa-link"></i> Editar Interacción';
+                    interactionBtn.style.backgroundColor = 'var(--success)';
+                } else {
+                    interactionBtn.innerHTML = '<i class="fas fa-link"></i> Añadir Interacción';
+                    interactionBtn.style.backgroundColor = 'var(--primary)';
+                }
+            }
+            
+            // Aplicar cambios del panel de propiedades al nodo (Y A FIRESTORE)
+            propertiesForm.addEventListener('input', async (e) => {
+                if (!selectedNode || !firebaseReady) return;
+
+                const prop = e.target.id;
+                let value = e.target.value;
+                const docId = selectedNode.id(); // El ID del nodo es el ID de Firestore
+
+                // Convertir a número si es necesario
+                if (e.target.type === 'number') {
+                    value = parseInt(value, 10);
+                }
+
+                // Mapear IDs de formulario a nombres de campo en Firestore
+                let dbField = '';
+                switch (prop) {
+                    case 'prop-text': dbField = 'text'; break;
+                    case 'prop-fontsize': dbField = 'fontSize'; value = parseInt(value, 10); break;
+                    case 'prop-fill': dbField = 'fill'; break;
+                    case 'prop-background': dbField = 'background'; break;
+                    case 'prop-x': dbField = 'x'; value = parseInt(value, 10); break;
+                    case 'prop-y': dbField = 'y'; value = parseInt(value, 10); break;
+                    case 'prop-width': dbField = 'width'; value = parseInt(value, 10); break;
+                    case 'prop-height': dbField = 'height'; value = parseInt(value, 10); break;
+                }
+
+                if (dbField) {
+                    try {
+                        // Actualizar el documento en Firestore
+                        await updateDoc(doc(elementsCollection, docId), { [dbField]: value });
+                        
+                        // Si es ancho/alto, también reseteamos escala
+                        if (dbField === 'width') {
+                             await updateDoc(doc(elementsCollection, docId), { 'scaleX': 1 });
+                        }
+                        if (dbField === 'height') {
+                             await updateDoc(doc(elementsCollection, docId), { 'scaleY': 1 });
+                        }
+
+                    } catch (error) {
+                        console.error("Error al actualizar propiedad: ", error);
+                    }
+                }
+                // El onSnapshot listener se encargará de redibujar el cambio
+            });
+
+            // Botón Eliminar (DE FIRESTORE)
+            document.getElementById('delete-element-btn').addEventListener('click', async () => {
+                if (selectedNode && firebaseReady) {
+                    const docId = selectedNode.id();
+                    try {
+                        await deleteDoc(doc(elementsCollection, docId));
+                        // El onSnapshot listener se encargará de quitarlo
+                        deselectNode();
+                    } catch (error) {
+                        console.error("Error al eliminar: ", error);
+                    }
+                }
+            });
+
+            // Botón Guardar Componente (Simulado)
+            document.getElementById('save-component-btn').addEventListener('click', () => {
+                if(!selectedNode) return;
+                const componentData = selectedNode.toObject();
+                componentData.type = selectedNode.getAttr('data-type');
+                console.log("Guardando componente (simulado):", componentData);
+                // Aquí, en una app real, guardarías 'componentData' en otra colección
+                // de Firestore (ej: 'user-components')
+                alert("Componente guardado (simulado). Mira la consola.");
+            });
+
+
+            // --- 7. CONTROLES DE VISTA RESPONSIVA ---
+            
+            document.querySelectorAll('.view-controls button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Quitar 'active' de todos
+                    document.querySelectorAll('.view-controls button').forEach(b => b.classList.remove('active'));
+                    
+                    // Añadir 'active' al clickeado
+                    const clickedBtn = e.target.closest('button');
+                    clickedBtn.classList.add('active');
+
+                    if (clickedBtn.id === 'view-mobile') currentView = 'mobile';
+                    else if (clickedBtn.id === 'view-tablet') currentView = 'tablet';
+                    else currentView = 'desktop';
+                    
+                    resizeCanvas();
+                });
+            });
+
+            function resizeCanvas() {
+                const viewSize = views[currentView];
+                stage.width(viewSize.width);
+                stage.height(viewSize.height);
+                stage.draw();
+            }
+
+            // --- 8. MODO VISTA PREVIA E INTERACCIONES ---
+            
+            const modal = document.getElementById('interaction-modal');
+
+            // Abrir modal de interacción
+            document.getElementById('add-interaction-btn').addEventListener('click', () => {
+                if (!selectedNode) return;
+                
+                const interaction = selectedNode.getAttr('interaction');
+                if (interaction) {
+                    document.getElementById('interaction-event').value = interaction.event;
+                    document.getElementById('interaction-action').value = interaction.action;
+                    document.getElementById('interaction-target').value = interaction.target;
+                    document.getElementById('remove-interaction-btn').style.display = 'block';
+                } else {
+                    document.getElementById('interaction-form').reset();
+                    document.getElementById('remove-interaction-btn').style.display = 'none';
+                }
+                modal.style.display = 'flex';
+            });
+
+            // Cerrar modal
+            document.getElementById('close-modal').addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+            
+            // Guardar interacción (EN FIRESTORE)
+            document.getElementById('interaction-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!selectedNode || !firebaseReady) return;
+
+                const docId = selectedNode.id();
+                const interactionData = {
+                    event: document.getElementById('interaction-event').value,
+                    action: document.getElementById('interaction-action').value,
+                    target: document.getElementById('interaction-target').value,
+                };
+                
+                try {
+                    await updateDoc(doc(elementsCollection, docId), { interaction: interactionData });
+                    modal.style.display = 'none';
+                } catch (error) {
+                    console.error("Error al guardar interacción: ", error);
+                }
+            });
+            
+            // Eliminar interacción (DE FIRESTORE)
+            document.getElementById('remove-interaction-btn').addEventListener('click', async () => {
+                 if (selectedNode && firebaseReady) {
+                     const docId = selectedNode.id();
+                     try {
+                         await updateDoc(doc(elementsCollection, docId), { interaction: null });
+                         modal.style.display = 'none';
+                     } catch (error) {
+                         console.error("Error al eliminar interacción: ", error);
+                     }
+                 }
+            });
+
+            // Activar/Desactivar modo Vista Previa
+            document.getElementById('toggle-preview').addEventListener('click', () => {
+                isPreviewMode = !isPreviewMode;
+                const btn = document.getElementById('toggle-preview');
+                const text = document.getElementById('preview-text');
+                
+                if (isPreviewMode) {
+                    deselectNode(); // Oculta el transformador
+                    btn.innerHTML = '<i class="fas fa-edit"></i>';
+                    text.textContent = 'Modo Edición';
+                    btn.style.backgroundColor = 'var(--success)';
+                    stage.container().style.cursor = 'pointer';
+                } else {
+                    btn.innerHTML = '<i class="fas fa-play"></i>';
+                    text.textContent = 'Vista Previa';
+                    btn.style.backgroundColor = 'transparent';
+                    stage.container().style.cursor = 'default';
+                }
+            });
+
+            function handlePreviewClick(node) {
+                 if (node === stage) return;
+                
+                 // Subir al grupo padre si es necesario
+                 if (node.parent && (node.parent.getAttr('data-type') === 'Button' || node.parent.getAttr('data-type') === 'Image' || node.parent.getAttr('data-type') === 'Input')) {
+                     node = node.parent;
+                }
+                
+                const interaction = node.getAttr('interaction');
+                
+                if (interaction && interaction.event === 'click') {
+                    // Simulación de acción
+                    // NO USAR ALERT()
+                    // Simulación de acción
+                    const modalTitle = document.getElementById('interaction-modal').querySelector('.modal-title');
+                    const modalContent = document.getElementById('interaction-modal').querySelector('.modal-content');
+                    const originalTitle = modalTitle.textContent;
+                    const originalContent = modalContent.innerHTML;
+
+                    modalTitle.textContent = "Vista Previa de Interacción";
+                    modalContent.innerHTML = `
+                        <p><strong>Evento:</strong> ${interaction.event}</p>
+                        <p><strong>Acción:</strong> ${interaction.action}</p>
+                        <p><strong>Destino:</strong> ${interaction.target}</p>
+                        <button id="close-preview-modal" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Cerrar</button>
+                    `;
+                    
+                    document.getElementById('interaction-modal').style.display = 'flex';
+
+                    document.getElementById('close-preview-modal').onclick = () => {
+                        document.getElementById('interaction-modal').style.display = 'none';
+                        modalTitle.textContent = originalTitle;
+                        modalContent.innerHTML = originalContent;
+                        // Re-adjuntar listeners del modal original
+                         document.getElementById('close-modal').addEventListener('click', () => {
+                            modal.style.display = 'none';
+                        });
+                        document.getElementById('interaction-form').addEventListener('submit', async (e) => { e.preventDefault(); /* ... lógica de guardado ... */ });
+                        document.getElementById('remove-interaction-btn').addEventListener('click', async () => { /* ... lógica de borrado ... */ });
+                    };
+                }
+            }
+
+
+            // --- INICIALIZAR ---
+            initCanvas();
+            resizeCanvas();
+
+        });
+    </script>
+</body>
+</html>
