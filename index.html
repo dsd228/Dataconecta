@@ -1,1460 +1,689 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>DataConecta CRM | Plataforma Integral de Gestión</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DataConecta CRM | Gestión de contactos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #3498db;
-            --primary-dark: #2980b9;
-            --secondary: #2c3e50;
-            --accent: #9b59b6;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --text: #333;
-            --text-light: #7f8c8d;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --bg-light: #f9fbfd;
-            --bg-darker: #f1f5f9;
-            --border-color: #e2e8f0;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        body {
-            background-color: var(--bg-light);
-            color: var(--text);
-            line-height: 1.6;
-        }
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);
-            color: white;
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: 700;
-        }
-        .logo i {
-            margin-right: 10px;
-            color: var(--primary);
-        }
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            list-style: none;
-        }
-        .nav-menu li {
-            margin-left: 20px;
-        }
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 5px 8px;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        .nav-menu a:hover {
-            color: var(--primary);
-        }
-        .nav-menu a.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-            font-weight: 700;
-        }
-        .btn {
-            padding: 10px 20px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid white;
-            color: white;
-        }
-        .btn-outline:hover {
-            background-color: white;
-            color: var(--secondary);
-        }
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-        /* Dashboard */
-        .dashboard {
-            padding: 40px 0;
-        }
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-        .card-icon.primary {
-            background-color: var(--primary);
-        }
-        .card-icon.success {
-            background-color: var(--success);
-        }
-        .card-icon.warning {
-            background-color: var(--warning);
-        }
-        .card-icon.danger {
-            background-color: var(--danger);
-        }
-        .card-value {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-        .card-description {
-            font-size: 14px;
-            color: var(--text-light);
-        }
-        /* Tabs */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--light);
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .tab {
-            padding: 15px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-light);
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-        }
-        .tab.active {
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        /* Tables */
-        .table-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-        .table-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .table-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 15px 20px;
-            text-align: left;
-            border-bottom: 1px solid var(--light);
-        }
-        th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-        .status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        .status.active {
-            background-color: rgba(46, 204, 113, 0.1);
-            color: var(--success);
-        }
-        .status.inactive {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--danger);
-        }
-        /* Forms */
-        .form-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-row {
-            display: flex;
-            gap: 20px;
-        }
-        .form-row .form-group {
-            flex: 1;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid var(--light);
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        /* Pipeline */
-        .pipeline-container {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding: 10px 0;
-        }
-        .pipeline-stage {
-            min-width: 280px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-        }
-        .stage-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .stage-title {
-            font-weight: 600;
-            color: var(--secondary);
-        }
-        .stage-count {
-            background-color: var(--primary);
-            color: white;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-        .deal-card {
-            background-color: white;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            cursor: move;
-        }
-        .deal-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        .deal-value {
-            color: var(--success);
-            font-weight: 600;
-        }
-        .deal-contact {
-            font-size: 14px;
-            color: var(--text-light);
-            margin-top: 5px;
-        }
-        /* Email Tracking */
-        .email-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .email-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--light);
-        }
-        .email-subject {
-            font-weight: 600;
-            font-size: 18px;
-        }
-        .email-meta {
-            display: flex;
-            gap: 15px;
-            color: var(--text-light);
-            font-size: 14px;
-        }
-        .email-body {
-            line-height: 1.6;
-        }
-        .email-stats {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid var(--light);
-        }
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        /* Chat */
-        .chat-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--light);
-            font-weight: 600;
-        }
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .message {
-            margin-bottom: 15px;
-            max-width: 80%;
-        }
-        .message.received {
-            align-self: flex-start;
-        }
-        .message.sent {
-            align-self: flex-end;
-            margin-left: auto;
-        }
-        .message-bubble {
-            padding: 10px 15px;
-            border-radius: 18px;
-        }
-        .message.received .message-bubble {
-            background-color: #f1f1f1;
-        }
-        .message.sent .message-bubble {
-            background-color: var(--primary);
-            color: white;
-        }
-        .chat-input {
-            display: flex;
-            padding: 15px;
-            border-top: 1px solid var(--light);
-        }
-        .chat-input input {
-            flex: 1;
-            padding: 10px 15px;
-            border: 1px solid var(--light);
-            border-radius: 20px;
-            margin-right: 10px;
-        }
-        /* Automation */
-        .automation-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .automation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .automation-title {
-            font-weight: 600;
-            font-size: 18px;
-        }
-        .automation-steps {
-            margin-top: 20px;
-        }
-        .automation-step {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--light);
-        }
-        .step-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-weight: 600;
-        }
-        /* Analytics */
-        .analytics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .chart-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            padding: 20px;
-        }
-        .chart-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--secondary);
-        }
-        .chart-placeholder {
-            height: 200px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light);
-        }
-        /* Analytics 2.0 (Nueva sección) */
-        .feature-box {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .feature-box:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-        .feature-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .feature-icon {
-            font-size: 20px;
-            color: var(--primary);
-            margin-right: 15px;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(52, 152, 219, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-        }
-        .feature-header h4 {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--secondary);
-        }
-        .feature-box p {
-            color: var(--text);
-            margin-bottom: 15px;
-        }
-        .feature-box ul {
-            list-style: none;
-            padding-left: 10px;
-        }
-        .feature-box li {
-            position: relative;
-            padding-left: 25px;
-            margin-bottom: 8px;
-            color: var(--text-light);
-        }
-        .feature-box li::before {
-            content: "\f00c"; /* Check icon */
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            color: var(--success);
-            position: absolute;
-            left: 0;
-            top: 2px;
-        }
-        /* Toggle Switch para Privacidad */
-        .privacy-control {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--light);
-        }
-        .privacy-control:last-child {
-            border-bottom: none;
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 28px;
-        }
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 28px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-        input:checked + .slider:before {
-            transform: translateX(22px);
-        }
-        /* Alerts */
-        .alert {
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        .alert-success {
-            background-color: rgba(46, 204, 113, 0.1);
-            border: 1px solid var(--success);
-            color: var(--success);
-        }
-        .alert-error {
-            background-color: rgba(231, 76, 60, 0.1);
-            border: 1px solid var(--danger);
-            color: var(--danger);
-        }
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content {
-            background-color: white;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-        .close {
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--text-light);
-        }
-        .close:hover {
-            color: var(--text);
-        }
-        /* Integrations */
-        .integration-card {
-            display: flex;
-            align-items: center;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            border: 1px solid var(--light);
-        }
-        .integration-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            font-size: 24px;
-        }
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                text-align: center;
-            }
-            .nav-menu {
-                margin-top: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .nav-menu li {
-                margin: 5px 10px;
-            }
-            .tabs {
-                flex-direction: column;
-            }
-            .tab {
-                padding: 10px 20px;
-            }
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-            .pipeline-container {
-                flex-direction: column;
-            }
-            .pipeline-stage {
-                min-width: auto;
-            }
-        }
-        /* Styles for Custom Confirm Modal */
-        #custom-confirm-modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 2000; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            justify-content: center;
-            align-items: center;
-        }
-
-        #custom-confirm-modal .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 30px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
-            text-align: center;
-            position: relative;
-        }
-
-        #custom-confirm-modal .modal-content p {
-            margin-bottom: 25px;
-            font-size: 16px;
-            color: var(--text);
-        }
-
-        #custom-confirm-modal .modal-actions {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        #custom-confirm-modal .modal-actions button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            min-width: 100px;
-        }
-
-        #custom-confirm-modal .btn-confirm {
-            background-color: var(--danger);
-            color: white;
-            border: 1px solid var(--danger);
-        }
-        #custom-confirm-modal .btn-confirm:hover {
-            background-color: #c0392b;
-            border-color: #c0392b;
-        }
-
-        #custom-confirm-modal .btn-cancel {
-            background-color: transparent;
-            color: var(--secondary);
-            border: 1px solid var(--border-color);
-        }
-        #custom-confirm-modal .btn-cancel:hover {
-            background-color: var(--bg-darker);
-        }
-
-        /* Small helpers */
-        .muted { color: var(--text-light); font-size: 13px; }
-        .actions button { margin-right: 8px; }
-        .hidden { display: none !important; }
+        :root{
+            --primary:#3498db; --primary-dark:#2b83c6; --accent:#9b59b6;
+            --bg:#f7fbff; --card:#ffffff; --muted:#7f8c8d; --border:#e6eef6;
+            --success:#2ecc71; --danger:#e74c3c;
+        }
+        *{box-sizing:border-box}
+        body{font-family:Inter, "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial; margin:0; background:var(--bg); color:#263238}
+        .container{max-width:1200px;margin:0 auto;padding:18px}
+        header{background:linear-gradient(135deg,#2c3e50,#203140);color:#fff;padding:14px 0;position:sticky;top:0;z-index:50;box-shadow:0 4px 14px rgba(8,20,30,0.08)}
+        .header-inner{max-width:1200px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between}
+        .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+        .brand i{color:var(--primary);font-size:20px}
+        nav{display:flex;gap:8px;align-items:center}
+        nav a{color:#fff;text-decoration:none;padding:8px 10px;border-radius:6px;font-size:14px}
+        nav a.active, nav a:hover{background:rgba(255,255,255,0.06)}
+        .btn{display:inline-block;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+        .btn-primary{background:var(--primary);color:#fff}
+        .btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.12);color:#fff}
+        .hero{background:var(--card);border-radius:12px;padding:20px;margin-top:18px;box-shadow:0 8px 32px rgba(27,40,54,0.06);display:flex;gap:20px}
+        .hero-left{flex:1}
+        .hero-title{font-size:22px;margin-bottom:6px;color:#123}
+        .hero-sub{color:var(--muted);margin-bottom:12px}
+        .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+        .panel{background:var(--card);padding:14px;border-radius:10px;border:1px solid var(--border);box-shadow:0 6px 24px rgba(20,40,60,0.04)}
+        .panel h3{margin:0 0 10px 0}
+        .controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+        .input, select{padding:10px;border-radius:8px;border:1px solid var(--border);background:white;min-width:0}
+        table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden}
+        th,td{padding:10px;border-bottom:1px solid #f0f6fb;text-align:left;font-size:14px}
+        th{background:#fbfeff;color:var(--muted);font-weight:600}
+        .muted{color:var(--muted);font-size:13px}
+        .actions button{margin-right:6px}
+        .status{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:600;font-size:12px}
+        .status.lead{background:rgba(52,152,219,0.08);color:var(--primary)}
+        .status.prospect{background:rgba(46,204,113,0.08);color:var(--success)}
+        .right-col{display:flex;flex-direction:column;gap:12px}
+        .small{font-size:13px;color:var(--muted)}
+        .segment-controls{display:flex;flex-direction:column;gap:8px}
+        .pipeline{display:flex;gap:12px;overflow:auto;padding:12px 6px}
+        .stage{min-width:220px;background:#fbfeff;padding:10px;border-radius:8px;border:1px dashed #e9f3fb;flex:0 0 220px}
+        .stage h4{margin:0 0 8px 0;font-size:14px}
+        .deal{background:white;padding:8px;border-radius:6px;margin-bottom:8px;border:1px solid #eef7ff;cursor:grab}
+        .deal .meta{font-size:13px;color:var(--muted)}
+        .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,10,20,0.45);z-index:200}
+        .modal-box{background:white;padding:18px;border-radius:10px;max-width:720px;width:100%;box-shadow:0 12px 40px rgba(6,14,28,0.2)}
+        .form-row{display:flex;gap:10px}
+        .form-row .col{flex:1}
+        .mb8{margin-bottom:8px}
+        .hidden{display:none}
+        footer{max-width:1200px;margin:18px auto;padding:0 18px 40px;color:var(--muted);font-size:13px}
+        @media (max-width:980px){ .grid{grid-template-columns:1fr} .hero{flex-direction:column} .pipeline{flex-direction:row;overflow:auto} .stage{min-width:180px} }
     </style>
 </head>
-<body id="main-body">
-    <!-- Header -->
+<body>
     <header>
-        <div class="container header-container">
-            <div class="logo">
-                <i class="fas fa-database"></i>
-                <span>DataConecta</span>
-            </div>
-            <!-- NAVEGACIÓN ACTUALIZADA -->
-            <ul class="nav-menu">
-                <li><a href="./index.html" class="active">CRM</a></li>
-                <li><a href="./editor.html">Editor</a></li>
-                <li><a href="./analitica.html">Analítica</a></li>
-                <li style="margin-left: 40px;"><a href="#" id="export-data" class="btn btn-outline">Exportar</a></li>
-                <li><a href="#" id="import-data" class="btn btn-outline">Importar</a></li>
-                <li><a href="#" id="clear-data" class="btn btn-outline btn-danger">Limpiar</a></li>
-            </ul>
+        <div class="header-inner">
+            <div class="brand"><i class="fas fa-database"></i><div>DataConecta</div></div>
+            <nav>
+                <a href="./index.html" class="active">CRM</a>
+                <a href="./editor.html">Editor</a>
+                <a href="./analitica.html">Analítica</a>
+                <button id="export-data" class="btn btn-outline">Exportar</button>
+                <button id="import-data" class="btn btn-outline">Importar</button>
+                <button id="clear-data" class="btn btn-outline" style="margin-left:6px;color:#ffdddd">Limpiar</button>
+            </nav>
         </div>
     </header>
 
-    <!-- Dashboard -->
-    <section class="dashboard">
-        <div class="container">
-            <div class="dashboard-cards">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Total Contactos</div>
-                        <div class="card-icon primary">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="card-value" id="total-contacts">0</div>
-                    <div class="card-description">Contactos registrados en el sistema</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Oportunidades Activas</div>
-                        <div class="card-icon success">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                    </div>
-                    <div class="card-value" id="active-deals">0</div>
-                    <div class="card-description">Oportunidades en pipeline</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Tickets Abiertos</div>
-                        <div class="card-icon warning">
-                            <i class="fas fa-ticket-alt"></i>
-                        </div>
-                    </div>
-                    <div class="card-value" id="open-tickets">0</div>
-                    <div class="card-description">Tickets de soporte pendientes</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Ingresos del Mes</div>
-                        <div class="card-icon danger">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                    </div>
-                    <div class="card-value" id="monthly-revenue">$0</div>
-                    <div class="card-description">Ingresos generados este mes</div>
+    <div class="container">
+        <section class="hero">
+            <div class="hero-left">
+                <div class="hero-title">Gestión de contactos</div>
+                <div class="hero-sub">Guarda y organiza todos los datos de tus clientes, leads y empresas. Permite ver historial de interacciones (emails, llamadas, reuniones, formularios) y segmentar por criterios (ubicación, etapa, tipo de cliente, comportamiento).</div>
+                <div style="display:flex;gap:8px">
+                    <button id="add-contact-btn" class="btn btn-primary">Agregar contacto</button>
+                    <button id="open-segment" class="btn">Segmentar</button>
                 </div>
             </div>
-
-            <!-- Tabs -->
-            <div class="tabs">
-                <div class="tab active" data-tab="contacts">Contactos</div>
-                <div class="tab" data-tab="communication">Comunicación</div>
-                <div class="tab" data-tab="sales">Ventas</div>
-                <div class="tab" data-tab="marketing">Marketing</div>
-                <div class="tab" data-tab="service">Servicio</div>
-            </div>
-
-            <!-- Alerts -->
-            <div class="alert alert-success" id="success-alert">Operación realizada con éxito.</div>
-            <div class="alert alert-error" id="error-alert">Ha ocurrido un error. Por favor, intente nuevamente.</div>
-
-            <!-- Contacts Tab -->
-            <div class="tab-content active" id="contacts-content">
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="table-title">Gestión de Contactos</div>
-                        <div>
-                            <button class="btn btn-outline" id="segment-contacts">Segmentar</button>
-                            <button class="btn btn-primary" id="add-contact-btn">Agregar Contacto</button>
-                        </div>
+            <aside style="width:360px">
+                <div class="panel">
+                    <strong>Resumen</strong>
+                    <div class="mb8 small" style="margin-top:10px">
+                        Total contactos: <strong id="total-contacts">0</strong><br>
+                        Oportunidades: <strong id="active-deals">0</strong><br>
+                        Tickets: <strong id="open-tickets">0</strong><br>
+                        Ingresos mes: <strong id="monthly-revenue">$0</strong>
                     </div>
-                    <table id="contacts-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Empresa</th>
-                                <th>Etapa</th>
-                                <th>Última Interacción</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="contacts-tbody">
-                            <!-- Los datos se cargarán dinámicamente -->
-                        </tbody>
-                    </table>
+                    <div class="small muted">Ej: Filtrar leads que abrieron email pero no compraron</div>
                 </div>
+            </aside>
+        </section>
 
-                <div class="form-container" id="segment-form" style="display: none;">
-                    <h3>Segmentar Contactos</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="segment-criteria">Criterio de Segmentación</label>
-                            <select class="form-control" id="segment-criteria">
-                                <option value="location">Ubicación</option>
-                                <option value="funnel-stage">Etapa del Embudo</option>
-                                <option value="client-type">Tipo de Cliente</option>
-                                <option value="email-opened">Abrió Email</option>
-                                <option value="email-not-opened">No Abrió Email</option>
-                                <option value="purchased">Compró</option>
-                                <option value="not-purchased">No Compró</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="segment-value">Valor</label>
-                            <input type="text" class="form-control" id="segment-value" placeholder="Ej: Madrid, Lead, Cliente VIP">
-                        </div>
+        <div class="grid">
+            <main>
+                <div class="panel">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <h3>Gestión de Contactos</h3>
+                        <div class="small muted">CRUD + historial + segmentación</div>
                     </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-outline" id="cancel-segment">Cancelar</button>
-                        <button type="button" class="btn btn-primary" id="apply-segment">Aplicar Segmentación</button>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Communication Tab -->
-            <div class="tab-content" id="communication-content">
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="table-title">Seguimiento de Comunicación</div>
-                        <button class="btn btn-primary" id="send-email-btn">Enviar Email</button>
-                    </div>
-                    <table id="communications-table">
-                        <thead>
-                            <tr>
-                                <th>Contacto</th>
-                                <th>Tipo</th>
-                                <th>Asunto/Resumen</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="communications-tbody">
-                            <!-- Los datos se cargarán dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="email-container">
-                    <div class="email-header">
-                        <div class="email-subject">Seguimiento de Producto - DataConecta CRM</div>
-                        <div class="email-meta">
-                            <span>Enviado: 15/05/2023</span>
-                            <span>Para: María González</span>
-                        </div>
-                    </div>
-                    <div class="email-body">
-                        <p>Hola María,</p>
-                        <p>Me pongo en contacto contigo para hacer seguimiento de nuestra última conversación sobre DataConecta CRM. ¿Hay alguna pregunta que pueda responder?</p>
-                        <p>Estamos aquí para ayudarte a aprovechar al máximo nuestra plataforma.</p>
-                        <p>Saludos,<br>El equipo de DataConecta</p>
-                    </div>
-                    <div class="email-stats">
-                        <div class="stat-item">
-                            <i class="fas fa-envelope-open" style="color: var(--primary);"></i>
-                            <span>Abierto: Sí (3 veces)</span>
-                        </div>
-                        <div class="stat-item">
-                            <i class="fas fa-mouse-pointer" style="color: var(--success);"></i>
-                            <span>Clicks: 2</span>
-                        </div>
-                        <div class="stat-item">
-                            <i class="fas fa-clock" style="color: var(--warning);"></i>
-                            <span>Última apertura: Hace 2 horas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Other tabs (placeholder content) -->
-            <div class="tab-content" id="sales-content">
-                <div class="form-container">
-                    <h3>Ventas</h3>
-                    <p class="muted">Aquí aparecerán las métricas y pipeline detallado.</p>
-                </div>
-            </div>
-            <div class="tab-content" id="marketing-content">
-                <div class="form-container">
-                    <h3>Marketing</h3>
-                    <p class="muted">Automations, campañas y métricas de marketing.</p>
-                </div>
-            </div>
-            <div class="tab-content" id="service-content">
-                <div class="form-container">
-                    <h3>Servicio</h3>
-                    <p class="muted">Tickets y base de conocimiento.</p>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Add/Edit Contact Modal -->
-    <div class="modal" id="add-contact-modal" aria-hidden="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="modal-title">Agregar Contacto</div>
-                <div class="close" id="close-add-modal">&times;</div>
-            </div>
-            <div>
-                <div class="form-group">
-                    <label class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="contact-name" placeholder="Nombre completo">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="contact-email" placeholder="email@ejemplo.com">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="contact-phone" placeholder="+34 600 000 000">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Empresa</label>
-                        <input type="text" class="form-control" id="contact-company" placeholder="Empresa S.A.">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Etapa</label>
-                        <select class="form-control" id="contact-stage">
+                    <div class="controls" style="margin-top:12px">
+                        <input id="search-input" class="input" placeholder="Buscar por nombre, email, empresa" />
+                        <select id="filter-stage" class="input">
+                            <option value="">Todas las etapas</option>
                             <option value="Lead">Lead</option>
                             <option value="Contacto">Contacto</option>
                             <option value="Prospecto">Prospecto</option>
                             <option value="Cliente">Cliente</option>
                         </select>
+                        <button id="btn-filter" class="btn">Aplicar</button>
+                        <button id="btn-reset" class="btn">Reset</button>
+                    </div>
+
+                    <div style="margin-top:12px; overflow:auto">
+                        <table id="contacts-table" role="table" aria-label="Lista de contactos">
+                            <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Empresa</th><th>Etapa</th><th>Última interacción</th><th>Acciones</th></tr></thead>
+                            <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">No hay contactos aún.</td></tr></tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Última Interacción</label>
-                    <input type="date" class="form-control" id="contact-last-interaction">
+
+                <div style="display:flex;gap:12px;margin-top:12px">
+                    <div class="panel" style="flex:1">
+                        <h4>Comunicación y seguimiento</h4>
+                        <p class="muted">Email tracking, plantillas, chat y registros de llamadas/reuniones.</p>
+                        <div style="margin-top:8px">
+                            <table>
+                                <thead><tr><th>Contacto</th><th>Tipo</th><th>Resumen</th><th>Fecha</th></tr></thead>
+                                <tbody id="communications-tbody"><tr><td colspan="4" class="muted">No hay comunicaciones.</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="width:320px">
+                        <h4>Pipeline (vista rápida)</h4>
+                        <div class="small muted">Arrastra y suelta oportunidades entre etapas</div>
+                        <div style="margin-top:8px">
+                            <div class="pipeline" id="pipeline">
+                                <!-- stages injected here -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-actions">
-                    <button class="btn btn-outline" id="cancel-contact">Cancelar</button>
-                    <button class="btn btn-primary" id="save-contact-btn">Guardar Contacto</button>
+            </main>
+
+            <aside class="right-col">
+                <div class="panel">
+                    <h4>Segmentación</h4>
+                    <div class="segment-controls">
+                        <label class="small">Criterio</label>
+                        <select id="segment-criteria" class="input">
+                            <option value="location">Ubicación</option>
+                            <option value="funnel-stage">Etapa del Embudo</option>
+                            <option value="client-type">Tipo de Cliente</option>
+                            <option value="email-opened">Abrió Email</option>
+                            <option value="email-not-opened">No Abrió Email</option>
+                            <option value="purchased">Compró</option>
+                            <option value="not-purchased">No Compró</option>
+                        </select>
+                        <input id="segment-value" class="input" placeholder="Ej: Madrid, Lead, Cliente VIP" />
+                        <div style="display:flex;gap:8px">
+                            <button id="apply-segment" class="btn btn-primary" style="flex:1">Aplicar</button>
+                            <button id="cancel-segment" class="btn" style="flex:1">Reset</button>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="panel">
+                    <h4>Automatizaciones</h4>
+                    <p class="muted small">Crear flujos según comportamiento (emails, tareas, recordatorios).</p>
+                </div>
+
+                <div class="panel">
+                    <h4>Analítica</h4>
+                    <p class="muted small">Paneles personalizables con métricas de marketing, ventas y atención.</p>
+                </div>
+            </aside>
+        </div>
+
+        <section style="margin-top:18px" class="panel">
+            <h4>Soporte / Service Hub</h4>
+            <p class="muted small">Tickets, base de conocimiento y encuestas de satisfacción.</p>
+            <div style="margin-top:12px">
+                <table>
+                    <thead><tr><th>ID</th><th>Título</th><th>Contacto</th><th>Estado</th></tr></thead>
+                    <tbody id="tickets-tbody"><tr><td colspan="4" class="muted">No hay tickets.</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <footer>DataConecta — Demo local (Almacenamiento en localStorage). Puedo integrar un backend si lo deseás.</footer>
+
+    <!-- Modales -->
+    <div id="modal-add-contact" class="modal hidden" aria-hidden="true">
+        <div class="modal-box">
+            <h3 id="modal-title">Agregar contacto</h3>
+            <div class="form-row mb8">
+                <div class="col"><input id="contact-name" class="input" placeholder="Nombre completo"></div>
+                <div class="col"><input id="contact-email" class="input" placeholder="email@ejemplo.com"></div>
+            </div>
+            <div class="form-row mb8">
+                <div class="col"><input id="contact-phone" class="input" placeholder="Teléfono"></div>
+                <div class="col"><input id="contact-company" class="input" placeholder="Empresa"></div>
+            </div>
+            <div class="form-row mb8">
+                <div class="col">
+                    <select id="contact-stage" class="input">
+                        <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
+                    </select>
+                </div>
+                <div class="col"><input id="contact-location" class="input" placeholder="Ubicación (ciudad)"></div>
+            </div>
+            <div class="form-row mb8">
+                <div class="col"><label><input type="checkbox" id="contact-email-opened"> Abrió email</label></div>
+                <div class="col"><label><input type="checkbox" id="contact-purchased"> Compró</label></div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+                <button id="cancel-contact" class="btn">Cancelar</button>
+                <button id="save-contact-btn" class="btn btn-primary">Guardar</button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Confirm Modal -->
-    <div id="custom-confirm-modal">
-        <div class="modal-content">
-            <p id="confirm-message">¿Estás seguro?</p>
-            <div class="modal-actions">
-                <button class="btn btn-confirm" id="confirm-yes">Sí, eliminar</button>
-                <button class="btn btn-cancel" id="confirm-no">Cancelar</button>
+    <div id="modal-contact-details" class="modal hidden" aria-hidden="true">
+        <div class="modal-box">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <h3 id="detail-name">Contacto</h3>
+                <div><button id="close-details" class="btn">Cerrar</button></div>
+            </div>
+            <div style="margin-top:8px" id="detail-content">
+                <!-- details injected -->
             </div>
         </div>
     </div>
 
-    <!-- Hidden file input for import -->
-    <input type="file" id="file-input" accept="application/json" class="hidden" />
+    <!-- Confirm -->
+    <div id="confirm-modal" class="modal hidden" aria-hidden="true">
+        <div class="modal-box">
+            <p id="confirm-text">¿Estás seguro?</p>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+                <button id="confirm-no" class="btn">Cancelar</button>
+                <button id="confirm-yes" class="btn btn-primary">Sí</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="file-input" accept="application/json" class="hidden">
 
     <script>
-        // DataConecta: lógica mínima en localStorage para CRUD de contactos, export/import y UI básica.
-        (function () {
-            const STORAGE_KEY = 'dataconecta_contacts_v1';
-            const contactsTbody = document.getElementById('contacts-tbody');
-            const totalContactsEl = document.getElementById('total-contacts');
-            const activeDealsEl = document.getElementById('active-deals');
-            const openTicketsEl = document.getElementById('open-tickets');
-            const monthlyRevenueEl = document.getElementById('monthly-revenue');
+    (function(){
+        // LocalStorage keys
+        const KEY_CONTACTS = 'dataconecta_contacts_v1';
+        const KEY_DEALS = 'dataconecta_deals_v1';
+        const KEY_COMM = 'dataconecta_communications_v1';
+        const KEY_TICKETS = 'dataconecta_tickets_v1';
 
-            const addContactBtn = document.getElementById('add-contact-btn');
-            const addContactModal = document.getElementById('add-contact-modal');
-            const closeAddModal = document.getElementById('close-add-modal');
-            const cancelContactBtn = document.getElementById('cancel-contact');
-            const saveContactBtn = document.getElementById('save-contact-btn');
-            const modalTitle = document.getElementById('modal-title');
+        // DOM
+        const contactsTbody = document.getElementById('contacts-tbody');
+        const communicationsTbody = document.getElementById('communications-tbody');
+        const ticketsTbody = document.getElementById('tickets-tbody');
+        const totalContactsEl = document.getElementById('total-contacts');
+        const activeDealsEl = document.getElementById('active-deals');
+        const openTicketsEl = document.getElementById('open-tickets');
+        const monthlyRevenueEl = document.getElementById('monthly-revenue');
 
-            const nameInput = document.getElementById('contact-name');
-            const emailInput = document.getElementById('contact-email');
-            const phoneInput = document.getElementById('contact-phone');
-            const companyInput = document.getElementById('contact-company');
-            const stageInput = document.getElementById('contact-stage');
-            const lastInteractionInput = document.getElementById('contact-last-interaction');
+        const addContactBtn = document.getElementById('add-contact-btn');
+        const modalAdd = document.getElementById('modal-add-contact');
+        const modalDetails = document.getElementById('modal-contact-details');
+        const confirmModal = document.getElementById('confirm-modal');
 
-            const exportBtn = document.getElementById('export-data');
-            const importBtn = document.getElementById('import-data');
-            const clearBtn = document.getElementById('clear-data');
-            const fileInput = document.getElementById('file-input');
+        const fileInput = document.getElementById('file-input');
 
-            const successAlert = document.getElementById('success-alert');
-            const errorAlert = document.getElementById('error-alert');
+        // pipeline stages
+        const STAGES = ['Lead','Contacto','Prospecto','Cliente'];
 
-            const customConfirmModal = document.getElementById('custom-confirm-modal');
-            const confirmMessage = document.getElementById('confirm-message');
-            const confirmYesBtn = document.getElementById('confirm-yes');
-            const confirmNoBtn = document.getElementById('confirm-no');
+        // in-memory
+        let contacts = [];
+        let deals = [];
+        let communications = [];
+        let tickets = [];
 
-            let contacts = [];
-            let editingId = null;
-            let pendingConfirmAction = null;
+        // editing state
+        let editingContactId = null;
+        let pendingConfirm = null;
 
-            // Utils
-            function uid() {
-                return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-            }
-            function showAlert(type, message, timeout = 2500) {
-                const el = type === 'success' ? successAlert : errorAlert;
-                el.textContent = message;
-                el.style.display = 'block';
-                setTimeout(() => { el.style.display = 'none'; }, timeout);
-            }
-            function saveToStorage() {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
-            }
-            function loadFromStorage() {
-                try {
-                    const raw = localStorage.getItem(STORAGE_KEY);
-                    if (!raw) return [];
-                    return JSON.parse(raw);
-                } catch (e) {
-                    console.error('Error leyendo storage', e);
-                    return [];
-                }
-            }
+        // utils
+        function uid(){ return 'id_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+        function saveAll(){
+            localStorage.setItem(KEY_CONTACTS, JSON.stringify(contacts));
+            localStorage.setItem(KEY_DEALS, JSON.stringify(deals));
+            localStorage.setItem(KEY_COMM, JSON.stringify(communications));
+            localStorage.setItem(KEY_TICKETS, JSON.stringify(tickets));
+            renderAll();
+        }
+        function loadAll(){
+            try{ contacts = JSON.parse(localStorage.getItem(KEY_CONTACTS) || '[]'); }catch(e){contacts=[]}
+            try{ deals = JSON.parse(localStorage.getItem(KEY_DEALS) || '[]'); }catch(e){deals=[]}
+            try{ communications = JSON.parse(localStorage.getItem(KEY_COMM) || '[]'); }catch(e){communications=[]}
+            try{ tickets = JSON.parse(localStorage.getItem(KEY_TICKETS) || '[]'); }catch(e){tickets=[]}
+        }
+        function show(el){ el.classList.remove('hidden'); el.setAttribute('aria-hidden','false'); }
+        function hide(el){ el.classList.add('hidden'); el.setAttribute('aria-hidden','true'); }
+        function formatDate(ts){ if(!ts) return '-'; const d = new Date(ts); return d.toLocaleString(); }
 
-            // Render
-            function renderContacts(list) {
-                contactsTbody.innerHTML = '';
-                if (!list || list.length === 0) {
-                    contactsTbody.innerHTML = '<tr><td colspan="7" class="muted">No hay contactos. Añade uno usando "Agregar Contacto".</td></tr>';
-                    updateCards();
-                    return;
-                }
-                list.forEach(contact => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${escapeHtml(contact.name)}</td>
-                        <td>${escapeHtml(contact.email || '')}</td>
-                        <td>${escapeHtml(contact.phone || '')}</td>
-                        <td>${escapeHtml(contact.company || '')}</td>
-                        <td>${escapeHtml(contact.stage || '')}</td>
-                        <td>${contact.lastInteraction ? formatDate(contact.lastInteraction) : '-'}</td>
-                        <td class="actions">
-                            <button class="btn btn-outline" data-action="edit" data-id="${contact.id}"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger" data-action="delete" data-id="${contact.id}"><i class="fas fa-trash-alt"></i></button>
-                        </td>
-                    `;
-                    contactsTbody.appendChild(tr);
-                });
-                // Actions binding
-                contactsTbody.querySelectorAll('button[data-action]').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const action = btn.getAttribute('data-action');
-                        const id = btn.getAttribute('data-id');
-                        if (action === 'edit') openEditContact(id);
-                        if (action === 'delete') confirmAction(() => deleteContact(id), '¿Deseas eliminar este contacto?');
-                    });
-                });
-                updateCards();
+        // seed sample data if empty
+        function seed(){
+            if(contacts.length===0){
+                contacts.push({ id:uid(), name:'María González', email:'maria@example.com', phone:'+34 600 111 222', company:'ACME S.A.', stage:'Lead', lastInteraction:new Date().toISOString(), location:'Madrid', emailOpened:true, purchased:false });
+                contacts.push({ id:uid(), name:'Juan Pérez', email:'juan@example.com', phone:'+34 655 222 333', company:'Beta SRL', stage:'Prospecto', lastInteraction:new Date().toISOString(), location:'Barcelona', emailOpened:false, purchased:false });
             }
+            if(deals.length===0){
+                deals.push({ id:uid(), title:'Oferta ACME', contactId:contacts[0].id, value:1200, stage:'Lead' });
+                deals.push({ id:uid(), title:'Demo Beta', contactId:contacts[1].id, value:4500, stage:'Prospecto' });
+            }
+            if(communications.length===0){
+                communications.push({ id:uid(), contactId:contacts[0].id, type:'Email', summary:'Email de bienvenida', date:new Date().toISOString(), opened:true });
+            }
+            if(tickets.length===0){
+                tickets.push({ id:uid(), title:'Error facturación', contactId:contacts[1].id, state:'open' });
+            }
+            saveAll();
+        }
 
-            function updateCards() {
-                totalContactsEl.textContent = contacts.length;
-                // Simplified placeholders
-                const activeDeals = contacts.filter(c => c.stage && (c.stage.toLowerCase() === 'prospecto' || c.stage.toLowerCase() === 'contacto')).length;
-                activeDealsEl.textContent = activeDeals;
-                const openTickets = Math.floor(contacts.length / 5); // placeholder logic
-                openTicketsEl.textContent = openTickets;
-                const revenue = contacts.length * 200; // placeholder
-                monthlyRevenueEl.textContent = '$' + revenue;
+        // render contacts
+        function renderContacts(list){
+            contactsTbody.innerHTML = '';
+            if(!list || list.length===0){
+                contactsTbody.innerHTML = '<tr><td colspan="7" class="muted">No hay contactos. Agregá uno.</td></tr>';
+                return;
             }
-
-            // Helpers
-            function escapeHtml(text) {
-                if (!text && text !== 0) return '';
-                return String(text)
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
-            }
-            function formatDate(dateStr) {
-                try {
-                    const d = new Date(dateStr);
-                    if (isNaN(d)) return dateStr;
-                    return d.toLocaleDateString();
-                } catch (e) {
-                    return dateStr;
-                }
-            }
-
-            // CRUD
-            function addContact(contact) {
-                contact.id = uid();
-                contacts.unshift(contact);
-                saveToStorage();
-                renderContacts(contacts);
-                showAlert('success', 'Contacto agregado.');
-            }
-            function updateContact(id, updated) {
-                const idx = contacts.findIndex(c => c.id === id);
-                if (idx === -1) { showAlert('error', 'Contacto no encontrado'); return; }
-                contacts[idx] = Object.assign({}, contacts[idx], updated);
-                saveToStorage();
-                renderContacts(contacts);
-                showAlert('success', 'Contacto actualizado.');
-            }
-            function deleteContact(id) {
-                contacts = contacts.filter(c => c.id !== id);
-                saveToStorage();
-                renderContacts(contacts);
-                hideConfirm();
-                showAlert('success', 'Contacto eliminado.');
-            }
-            function openEditContact(id) {
-                const c = contacts.find(x => x.id === id);
-                if (!c) { showAlert('error', 'Contacto no encontrado'); return; }
-                editingId = id;
-                modalTitle.textContent = 'Editar Contacto';
-                nameInput.value = c.name || '';
-                emailInput.value = c.email || '';
-                phoneInput.value = c.phone || '';
-                companyInput.value = c.company || '';
-                stageInput.value = c.stage || 'Lead';
-                lastInteractionInput.value = c.lastInteraction ? new Date(c.lastInteraction).toISOString().split('T')[0] : '';
-                openModal(addContactModal);
-            }
-
-            // Modal handling
-            function openModal(modal) {
-                modal.style.display = 'flex';
-                modal.setAttribute('aria-hidden', 'false');
-            }
-            function closeModal(modal) {
-                modal.style.display = 'none';
-                modal.setAttribute('aria-hidden', 'true');
-            }
-
-            // Confirm modal
-            function confirmAction(actionFn, message = '¿Estás seguro?') {
-                pendingConfirmAction = actionFn;
-                confirmMessage.textContent = message;
-                customConfirmModal.style.display = 'flex';
-            }
-            function hideConfirm() {
-                customConfirmModal.style.display = 'none';
-                pendingConfirmAction = null;
-            }
-
-            // Export / Import
-            function exportData() {
-                try {
-                    const dataStr = JSON.stringify(contacts, null, 2);
-                    const blob = new Blob([dataStr], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'dataconecta_contacts.json';
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    URL.revokeObjectURL(url);
-                    showAlert('success', 'Exportado correctamente.');
-                } catch (e) {
-                    console.error(e);
-                    showAlert('error', 'Error al exportar.');
-                }
-            }
-            function importDataFile(file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    try {
-                        const parsed = JSON.parse(e.target.result);
-                        if (!Array.isArray(parsed)) throw new Error('Formato inválido');
-                        // Basic validation of items
-                        const valid = parsed.every(it => it.name && typeof it.name === 'string');
-                        if (!valid) throw new Error('Datos inválidos en el JSON');
-                        contacts = parsed.map(it => {
-                            // ensure id exists
-                            if (!it.id) it.id = uid();
-                            return it;
-                        });
-                        saveToStorage();
-                        renderContacts(contacts);
-                        showAlert('success', 'Importación completada.');
-                    } catch (err) {
-                        console.error(err);
-                        showAlert('error', 'Error al importar: ' + (err.message || 'JSON inválido'));
-                    }
-                };
-                reader.onerror = () => showAlert('error', 'No se pudo leer el archivo.');
-                reader.readAsText(file);
-            }
-
-            // Events
-            addContactBtn.addEventListener('click', () => {
-                editingId = null;
-                modalTitle.textContent = 'Agregar Contacto';
-                nameInput.value = emailInput.value = phoneInput.value = companyInput.value = '';
-                stageInput.value = 'Lead';
-                lastInteractionInput.value = '';
-                openModal(addContactModal);
+            list.forEach(c=>{
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><a href="#" data-id="${c.id}" class="link-contact">${escapeHtml(c.name)}</a></td>
+                    <td>${escapeHtml(c.email||'')}</td>
+                    <td>${escapeHtml(c.phone||'')}</td>
+                    <td>${escapeHtml(c.company||'')}</td>
+                    <td><span class="status ${stClass(c.stage)}">${escapeHtml(c.stage||'-')}</span></td>
+                    <td>${c.lastInteraction?formatDate(c.lastInteraction):'-'}</td>
+                    <td class="actions">
+                        <button class="btn" data-action="edit" data-id="${c.id}"><i class="fas fa-edit"></i></button>
+                        <button class="btn" data-action="delete" data-id="${c.id}"><i class="fas fa-trash-alt" style="color:#c0392b"></i></button>
+                    </td>
+                `;
+                contactsTbody.appendChild(tr);
             });
-            closeAddModal.addEventListener('click', () => closeModal(addContactModal));
-            cancelContactBtn.addEventListener('click', () => closeModal(addContactModal));
-
-            saveContactBtn.addEventListener('click', () => {
-                const name = nameInput.value.trim();
-                const email = emailInput.value.trim();
-                const phone = phoneInput.value.trim();
-                const company = companyInput.value.trim();
-                const stage = stageInput.value;
-                const lastInteraction = lastInteractionInput.value ? new Date(lastInteractionInput.value).toISOString() : null;
-
-                if (!name) { showAlert('error', 'El nombre es obligatorio'); return; }
-
-                const contactData = { name, email, phone, company, stage, lastInteraction };
-                if (editingId) {
-                    updateContact(editingId, contactData);
-                } else {
-                    addContact(contactData);
-                }
-                closeModal(addContactModal);
-            });
-
-            // Export / Import / Clear
-            exportBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                exportData();
-            });
-            importBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                fileInput.click();
-            });
-            fileInput.addEventListener('change', (ev) => {
-                const file = ev.target.files && ev.target.files[0];
-                if (!file) return;
-                importDataFile(file);
-                fileInput.value = ''; // reset
-            });
-
-            clearBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                confirmAction(() => {
-                    contacts = [];
-                    saveToStorage();
-                    renderContacts(contacts);
-                    hideConfirm();
-                    showAlert('success', 'Datos limpiados.');
-                }, 'Esto eliminará todos los contactos. ¿Deseas continuar?');
-            });
-
-            // Confirm modal buttons
-            confirmYesBtn.addEventListener('click', () => {
-                if (typeof pendingConfirmAction === 'function') pendingConfirmAction();
-            });
-            confirmNoBtn.addEventListener('click', () => hideConfirm());
-            customConfirmModal.addEventListener('click', (ev) => {
-                if (ev.target === customConfirmModal) hideConfirm();
-            });
-
-            // Tabs handling
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const target = tab.getAttribute('data-tab');
-                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-                    const content = document.getElementById(target + '-content');
-                    if (content) content.classList.add('active');
+            // bind link and actions
+            document.querySelectorAll('.link-contact').forEach(a=>{
+                a.addEventListener('click', e=>{
+                    e.preventDefault();
+                    const id = a.getAttribute('data-id');
+                    openContactDetails(id);
                 });
             });
-
-            // Segmentation quick UI
-            const segmentBtn = document.getElementById('segment-contacts');
-            const segmentForm = document.getElementById('segment-form');
-            const cancelSegment = document.getElementById('cancel-segment');
-            const applySegment = document.getElementById('apply-segment');
-
-            segmentBtn.addEventListener('click', () => {
-                segmentForm.style.display = segmentForm.style.display === 'none' ? 'block' : 'none';
-                segmentForm.scrollIntoView({ behavior: 'smooth' });
+            document.querySelectorAll('button[data-action]').forEach(b=>{
+                b.addEventListener('click', ()=>{
+                    const id = b.getAttribute('data-id');
+                    const action = b.getAttribute('data-action');
+                    if(action==='edit') openEditContact(id);
+                    if(action==='delete') confirmAction(()=>{ deleteContact(id); }, 'Eliminar contacto permanentemente?');
+                });
             });
-            cancelSegment.addEventListener('click', () => { segmentForm.style.display = 'none'; });
-            applySegment.addEventListener('click', () => {
-                const criteria = document.getElementById('segment-criteria').value;
-                const value = document.getElementById('segment-value').value.trim().toLowerCase();
-                if (!value) { showAlert('error', 'Introduce un valor para segmentar'); return; }
-                // Simple segmentation demo: filter by stage or company or name containing value
-                let results = contacts.filter(c => (c.company && c.company.toLowerCase().includes(value)) ||
-                    (c.name && c.name.toLowerCase().includes(value)) ||
-                    (c.stage && c.stage.toLowerCase().includes(value)));
-                if (results.length === 0) {
-                    showAlert('error', 'No se encontraron contactos para la segmentación');
-                } else {
-                    renderContacts(results);
-                    showAlert('success', 'Segmentación aplicada (' + results.length + ')');
-                }
-            });
+        }
 
-            // Small UX: clicking outside modal closes it
-            window.addEventListener('click', (ev) => {
-                if (ev.target === addContactModal) closeModal(addContactModal);
-            });
+        function stClass(stage){ if(!stage) return ''; const s = stage.toLowerCase(); if(s.includes('lead')) return 'lead'; if(s.includes('prospec')) return 'prospect'; return ''; }
 
-            // Initialize app
-            function init() {
-                contacts = loadFromStorage();
-                renderContacts(contacts);
-            }
-            init();
+        // contact modal
+        addContactBtn.addEventListener('click', ()=>{
+            editingContactId = null;
+            document.getElementById('modal-title').textContent = 'Agregar contacto';
+            document.getElementById('contact-name').value='';
+            document.getElementById('contact-email').value='';
+            document.getElementById('contact-phone').value='';
+            document.getElementById('contact-company').value='';
+            document.getElementById('contact-stage').value='Lead';
+            document.getElementById('contact-location').value='';
+            document.getElementById('contact-email-opened').checked=false;
+            document.getElementById('contact-purchased').checked=false;
+            show(modalAdd);
+        });
 
-            // Expose some helpers to console for debugging
-            window.__DataConecta = {
-                contacts,
-                saveToStorage,
-                loadFromStorage,
-                renderContacts
+        document.getElementById('cancel-contact').addEventListener('click', ()=> hide(modalAdd));
+        document.getElementById('save-contact-btn').addEventListener('click', ()=>{
+            const name = document.getElementById('contact-name').value.trim();
+            if(!name){ alert('Nombre requerido'); return; }
+            const obj = {
+                name,
+                email: document.getElementById('contact-email').value.trim(),
+                phone: document.getElementById('contact-phone').value.trim(),
+                company: document.getElementById('contact-company').value.trim(),
+                stage: document.getElementById('contact-stage').value,
+                location: document.getElementById('contact-location').value.trim(),
+                emailOpened: document.getElementById('contact-email-opened').checked,
+                purchased: document.getElementById('contact-purchased').checked,
+                lastInteraction: new Date().toISOString()
             };
+            if(editingContactId){
+                const idx = contacts.findIndex(c=>c.id===editingContactId);
+                if(idx>-1){ contacts[idx] = Object.assign({id:editingContactId}, contacts[idx], obj); }
+            } else {
+                contacts.unshift(Object.assign({ id: uid() }, obj));
+            }
+            saveAll();
+            hide(modalAdd);
+        });
 
-        })();
+        function openEditContact(id){
+            const c = contacts.find(x=>x.id===id);
+            if(!c) return alert('Contacto no encontrado');
+            editingContactId = id;
+            document.getElementById('modal-title').textContent = 'Editar contacto';
+            document.getElementById('contact-name').value = c.name||'';
+            document.getElementById('contact-email').value = c.email||'';
+            document.getElementById('contact-phone').value = c.phone||'';
+            document.getElementById('contact-company').value = c.company||'';
+            document.getElementById('contact-stage').value = c.stage||'Lead';
+            document.getElementById('contact-location').value = c.location||'';
+            document.getElementById('contact-email-opened').checked = !!c.emailOpened;
+            document.getElementById('contact-purchased').checked = !!c.purchased;
+            show(modalAdd);
+        }
+
+        function deleteContact(id){
+            contacts = contacts.filter(c=>c.id!==id);
+            // also remove related deals, communications, tickets
+            deals = deals.filter(d=>d.contactId!==id);
+            communications = communications.filter(m=>m.contactId!==id);
+            tickets = tickets.filter(t=>t.contactId!==id);
+            saveAll();
+        }
+
+        // contact details modal
+        function openContactDetails(id){
+            const c = contacts.find(x=>x.id===id);
+            if(!c) return;
+            const detailName = document.getElementById('detail-name');
+            const detailContent = document.getElementById('detail-content');
+            detailName.textContent = c.name;
+            let html = `<div class="small" style="margin-bottom:8px">
+                <div><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div>
+                <div><strong>Tel:</strong> ${escapeHtml(c.phone||'-')}</div>
+                <div><strong>Empresa:</strong> ${escapeHtml(c.company||'-')}</div>
+                <div><strong>Ubicación:</strong> ${escapeHtml(c.location||'-')}</div>
+                <div><strong>Etapa:</strong> ${escapeHtml(c.stage||'-')}</div>
+                <div><strong>Compró:</strong> ${c.purchased? 'Sí' : 'No'}</div>
+                <div><strong>Abrió email:</strong> ${c.emailOpened? 'Sí' : 'No'}</div>
+            </div>`;
+
+            // interactions
+            const comms = communications.filter(m=>m.contactId===c.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
+            html += `<h4>Interacciones (${comms.length})</h4>`;
+            if(comms.length===0) html += '<div class="muted">No hay interacciones</div>';
+            else {
+                html += '<ul>';
+                comms.forEach(it=>{
+                    html += `<li class="small">${escapeHtml(it.type)} — ${escapeHtml(it.summary)} <span class="muted">(${formatDate(it.date)})</span></li>`;
+                });
+                html += '</ul>';
+            }
+
+            // quick add communication
+            html += `<hr/><h4>Agregar interacción</h4>
+                <div class="form-row mb8"><div class="col"><select id="new-comm-type" class="input"><option>Email</option><option>Call</option><option>Meeting</option><option>Form</option></select></div><div class="col"><input id="new-comm-summary" class="input" placeholder="Resumen"></div></div>
+                <div style="display:flex;gap:8px;justify-content:flex-end"><button id="add-comm-cancel" class="btn">Cancelar</button><button id="add-comm-save" class="btn btn-primary">Guardar</button></div>`;
+
+            detailContent.innerHTML = html;
+            show(modalDetails);
+
+            document.getElementById('add-comm-cancel').addEventListener('click', ()=> hide(modalDetails));
+            document.getElementById('add-comm-save').addEventListener('click', ()=>{
+                const type = document.getElementById('new-comm-type').value;
+                const summary = document.getElementById('new-comm-summary').value.trim();
+                if(!summary) return alert('Agregá un resumen');
+                communications.unshift({ id:uid(), contactId:c.id, type, summary, date:new Date().toISOString() });
+                // update lastInteraction and emailOpened if it's Email and open flag included (we don't record open here)
+                const idx = contacts.findIndex(x=>x.id===c.id);
+                if(idx>-1) { contacts[idx].lastInteraction = new Date().toISOString(); }
+                saveAll();
+                hide(modalDetails);
+            });
+        }
+
+        document.getElementById('close-details').addEventListener('click', ()=> hide(modalDetails));
+
+        // Communications render
+        function renderCommunications(){
+            communicationsTbody.innerHTML = '';
+            if(communications.length===0){ communicationsTbody.innerHTML = '<tr><td colspan="3" class="muted">No hay registros.</td></tr>'; return; }
+            communications.slice(0,50).forEach(m=>{
+                const c = contacts.find(x=>x.id===m.contactId);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(c?c.name:'-')}</td><td>${escapeHtml(m.type)}</td><td>${escapeHtml(m.summary)}</td><td>${formatDate(m.date)}</td>`;
+                communicationsTbody.appendChild(tr);
+            });
+        }
+
+        // Tickets render
+        function renderTickets(){
+            ticketsTbody.innerHTML = '';
+            if(tickets.length===0){ ticketsTbody.innerHTML = '<tr><td colspan="4" class="muted">No hay tickets.</td></tr>'; return; }
+            tickets.forEach(t=>{
+                const c = contacts.find(x=>x.id===t.contactId);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${escapeHtml(t.id)}</td><td>${escapeHtml(t.title)}</td><td>${escapeHtml(c?c.name:'-')}</td><td>${escapeHtml(t.state)}</td>`;
+                ticketsTbody.appendChild(tr);
+            });
+        }
+
+        // Pipeline render and drag/drop
+        function renderPipeline(){
+            const container = document.getElementById('pipeline');
+            container.innerHTML = '';
+            STAGES.forEach(stage=>{
+                const col = document.createElement('div');
+                col.className = 'stage';
+                col.setAttribute('data-stage', stage);
+                col.innerHTML = `<h4>${escapeHtml(stage)} <span class="muted">(${deals.filter(d=>d.stage===stage).length})</span></h4>`;
+                const stageDeals = deals.filter(d=>d.stage===stage);
+                stageDeals.forEach(d=>{
+                    const card = document.createElement('div');
+                    card.className = 'deal';
+                    card.draggable = true;
+                    card.innerHTML = `<div><strong>${escapeHtml(d.title)}</strong></div><div class="meta">${escapeHtml(d.value?('$'+d.value):'')}${d.contactId? ' • ' + escapeHtml((contacts.find(c=>c.id===d.contactId)||{}).name||'') : ''}</div>`;
+                    card.dataset.id = d.id;
+                    // drag events
+                    card.addEventListener('dragstart', e=>{
+                        e.dataTransfer.setData('text/plain', d.id);
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+                    // double click: open quick edit
+                    card.addEventListener('dblclick', ()=>{
+                        const newTitle = prompt('Editar título', d.title);
+                        if(newTitle!==null){ d.title = newTitle; saveAll(); }
+                    });
+                    col.appendChild(card);
+                });
+
+                // allow drop
+                col.addEventListener('dragover', e=>{ e.preventDefault(); col.style.background = '#f6fbff'; });
+                col.addEventListener('dragleave', ()=>{ col.style.background = ''; });
+                col.addEventListener('drop', e=>{
+                    e.preventDefault();
+                    col.style.background = '';
+                    const id = e.dataTransfer.getData('text/plain');
+                    const idx = deals.findIndex(x=>x.id===id);
+                    if(idx>-1){
+                        deals[idx].stage = col.getAttribute('data-stage');
+                        saveAll();
+                    }
+                });
+
+                container.appendChild(col);
+            });
+        }
+
+        // Filters and segmentation
+        document.getElementById('btn-filter').addEventListener('click', ()=>{
+            const q = document.getElementById('search-input').value.trim().toLowerCase();
+            const st = document.getElementById('filter-stage').value;
+            let res = contacts;
+            if(q) res = res.filter(c => (c.name && c.name.toLowerCase().includes(q)) || (c.email && c.email.toLowerCase().includes(q)) || (c.company && c.company.toLowerCase().includes(q)));
+            if(st) res = res.filter(c=>c.stage===st);
+            renderContacts(res);
+        });
+        document.getElementById('btn-reset').addEventListener('click', ()=>{
+            document.getElementById('search-input').value=''; document.getElementById('filter-stage').value='';
+            renderContacts(contacts);
+        });
+
+        document.getElementById('open-segment').addEventListener('click', ()=>{
+            // show right panel segment (we already have it visible) - could scroll
+            document.getElementById('segment-criteria').scrollIntoView({behavior:'smooth'});
+        });
+
+        document.getElementById('apply-segment').addEventListener('click', ()=>{
+            const criteria = document.getElementById('segment-criteria').value;
+            const val = document.getElementById('segment-value').value.trim().toLowerCase();
+            if(!val && (criteria!=='email-opened' && criteria!=='email-not-opened' && criteria!=='purchased' && criteria!=='not-purchased')) return alert('Introduce valor');
+            let res = [];
+            if(criteria==='location') res = contacts.filter(c => c.location && c.location.toLowerCase().includes(val));
+            else if(criteria==='funnel-stage') res = contacts.filter(c => c.stage && c.stage.toLowerCase().includes(val));
+            else if(criteria==='client-type') res = contacts.filter(c => c.clientType && c.clientType.toLowerCase().includes(val));
+            else if(criteria==='email-opened') res = contacts.filter(c => c.emailOpened === true && !c.purchased);
+            else if(criteria==='email-not-opened') res = contacts.filter(c => !c.emailOpened);
+            else if(criteria==='purchased') res = contacts.filter(c => c.purchased === true);
+            else if(criteria==='not-purchased') res = contacts.filter(c => !c.purchased);
+            else res = contacts.filter(c => (c.name && c.name.toLowerCase().includes(val)) || (c.company && c.company.toLowerCase().includes(val)));
+            if(res.length===0) alert('No se encontraron contactos con esos criterios');
+            renderContacts(res);
+        });
+        document.getElementById('cancel-segment').addEventListener('click', ()=> renderContacts(contacts));
+
+        // Export / Import / Clear
+        document.getElementById('export-data').addEventListener('click', exportAll);
+        document.getElementById('import-data').addEventListener('click', ()=> fileInput.click());
+        document.getElementById('clear-data').addEventListener('click', ()=> confirmAction(()=>{ localStorage.removeItem(KEY_CONTACTS); localStorage.removeItem(KEY_DEALS); localStorage.removeItem(KEY_COMM); localStorage.removeItem(KEY_TICKETS); contacts=[]; deals=[]; communications=[]; tickets=[]; saveAll(); }, 'Esto eliminará todos los datos locales. Continuar?'));
+
+        fileInput.addEventListener('change', (e)=>{
+            const f = e.target.files && e.target.files[0];
+            if(!f) return;
+            const reader = new FileReader();
+            reader.onload = evt=>{
+                try{
+                    const parsed = JSON.parse(evt.target.result);
+                    // Expect object with contacts,deals,communications,tickets arrays
+                    if(parsed.contacts && Array.isArray(parsed.contacts)) contacts = parsed.contacts;
+                    if(parsed.deals && Array.isArray(parsed.deals)) deals = parsed.deals;
+                    if(parsed.communications && Array.isArray(parsed.communications)) communications = parsed.communications;
+                    if(parsed.tickets && Array.isArray(parsed.tickets)) tickets = parsed.tickets;
+                    saveAll();
+                    alert('Importación completada');
+                }catch(err){
+                    alert('Archivo inválido');
+                }
+            };
+            reader.readAsText(f);
+            e.target.value = '';
+        });
+
+        function exportAll(){
+            const payload = { contacts, deals, communications, tickets, exportedAt: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'dataconecta_export_' + (new Date().toISOString().split('T')[0]) + '.json';
+            document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        }
+
+        // Confirm modal helpers
+        function confirmAction(fn, text){
+            document.getElementById('confirm-text').textContent = text || '¿Estás seguro?';
+            show(confirmModal);
+            pendingConfirm = fn;
+        }
+        document.getElementById('confirm-no').addEventListener('click', ()=> { pendingConfirm = null; hide(confirmModal); });
+        document.getElementById('confirm-yes').addEventListener('click', ()=> { if(typeof pendingConfirm === 'function') pendingConfirm(); pendingConfirm = null; hide(confirmModal); });
+
+        // Helpers and renderers
+        function renderAll(){
+            renderContacts(contacts);
+            renderPipeline();
+            renderCommunications();
+            renderTickets();
+            updateCards();
+        }
+        function updateCards(){
+            totalContactsEl.textContent = contacts.length;
+            activeDealsEl.textContent = deals.length;
+            openTicketsEl.textContent = tickets.filter(t=>t.state==='open').length;
+            monthlyRevenueEl.textContent = '$' + deals.reduce((s,d)=>s + (Number(d.value)||0), 0);
+        }
+
+        // escape
+        function escapeHtml(t){ if(t===null||t===undefined) return ''; return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+        // keyboard / accessibility
+        document.addEventListener('keydown', e=>{
+            if(e.key==='Escape'){ document.querySelectorAll('.modal').forEach(m=> hide(m)); }
+        });
+
+        // clicking overlay closes modals
+        document.querySelectorAll('.modal').forEach(m=>{
+            m.addEventListener('click', (ev)=>{
+                if(ev.target === m) hide(m);
+            });
+        });
+
+        // init
+        loadAll();
+        seed();
+        renderAll();
+
+        // expose for debugging
+        window.DataConecta = { contacts, deals, communications, tickets, saveAll, loadAll };
+
+    })();
     </script>
 </body>
 </html>
