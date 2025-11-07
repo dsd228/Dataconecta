@@ -3,681 +3,113 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DataConecta CRM — Local (Completo)</title>
+  <title>DataConecta CRM — Premium Local</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root{
-      --primary:#2b8fe6; --dark:#153043; --muted:#6b7280; --bg:#f6fbff; --card:#fff; --border:#e6eef6; --success:#2ecc71; --danger:#e74c3c;
-    }
-    *{box-sizing:border-box}
-    body{font-family:Inter, 'Segoe UI', Roboto, Arial; margin:0; background:var(--bg); color:#0f1724}
-    .wrap{max-width:1200px;margin:18px auto;padding:16px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-    .brand{display:flex;gap:10px;align-items:center}
-    .brand i{font-size:20px;color:var(--primary)}
-    nav{display:flex;gap:8px;align-items:center}
-    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
-    .btn-primary{background:var(--primary);color:#fff}
-    .btn-ghost{background:transparent;border:1px solid var(--border)}
-    .layout{display:grid;grid-template-columns:1fr 360px;gap:16px}
-    .panel{background:var(--card);border-radius:10px;padding:14px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(12,35,60,0.04)}
-    .controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-    input,input[type=text],select{padding:8px;border-radius:8px;border:1px solid var(--border);background:#fff}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid #f0f6fb;font-size:14px}
-    th{background:#fbfeff;color:var(--muted);text-align:left}
-    .muted{color:var(--muted);font-size:13px}
-    .status{padding:6px 10px;border-radius:999px;font-weight:600;font-size:12px}
-    .status.Lead{background:rgba(43,143,230,0.08);color:var(--primary)}
-    .status.Prospecto{background:rgba(46,204,113,0.08);color:var(--success)}
-    .pipeline{display:flex;gap:12px;overflow:auto;padding:10px}
-    .stage{min-width:220px;border-radius:8px;padding:8px;background:#fbfeff;border:1px dashed #e9f3fb}
-    .deal{background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;border:1px solid #eef7ff;cursor:grab}
-    .right-col{display:flex;flex-direction:column;gap:12px}
-    .small{font-size:13px;color:var(--muted)}
-    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-    /* modals */
-    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,10,20,0.45);z-index:1200}
-    .modal-card{background:#fff;padding:16px;border-radius:10px;width:100%;max-width:720px;box-shadow:0 12px 40px rgba(6,14,28,0.2)}
-    .form-row{display:flex;gap:8px}
-    .form-row .col{flex:1}
-    .toast-wrap{position:fixed;right:18px;bottom:18px;z-index:1300;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-    .toast{background:#111;color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.2)}
-    .save-indicator{font-size:13px;color:var(--muted);margin-left:10px}
-    .hidden{display:none}
-    @media (max-width:980px){ .layout{grid-template-columns:1fr} .right-col{order:2} }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Chart.js (analytics) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <script src="js/storage.js" defer></script>
+  <script src="js/analytics.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/main.js" defer></script>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand"><i class="fas fa-database"></i><div><strong>DataConecta</strong><div class="small muted">CRM local (localStorage)</div></div></div>
-      <nav>
-        <button id="btn-export" class="btn btn-ghost" title="Exportar JSON"><i class="fas fa-file-export"></i></button>
-        <button id="btn-export-csv" class="btn btn-ghost" title="Exportar CSV"><i class="fas fa-file-csv"></i></button>
-        <button id="btn-import" class="btn btn-ghost" title="Importar"><i class="fas fa-file-import"></i></button>
-        <button id="btn-clear" class="btn btn-ghost" title="Limpiar datos"><i class="fas fa-trash"></i></button>
-        <button id="btn-undo" class="btn btn-ghost" title="Deshacer última acción"><i class="fas fa-undo"></i></button>
-        <div id="save-state" class="save-indicator">—</div>
-      </nav>
-    </header>
+  <header class="topbar">
+    <div class="brand"><i class="fas fa-database"></i> DataConecta <span class="tag">Premium (Local)</span></div>
+    <div class="controls">
+      <button id="btn-export" class="btn" title="Exportar JSON"><i class="fas fa-file-export"></i></button>
+      <button id="btn-export-csv-contacts" class="btn" title="Exportar CSV contactos"><i class="fas fa-file-csv"></i></button>
+      <button id="btn-export-csv-deals" class="btn" title="Exportar CSV deals"><i class="fas fa-file-csv"></i></button>
+      <button id="btn-import" class="btn" title="Importar"><i class="fas fa-file-import"></i></button>
+      <button id="btn-undo" class="btn" title="Deshacer"><i class="fas fa-undo"></i></button>
+      <div id="save-indicator" class="save-indicator">—</div>
+    </div>
+  </header>
 
-    <main class="layout">
-      <section>
-        <div class="panel">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <h3 style="margin:0">Gestión de contactos</h3>
-              <div class="small muted">Guarda y organiza clientes, leads y empresas — historial, segmentación y pipeline</div>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <button id="btn-add-contact" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar</button>
-            </div>
-          </div>
+  <main class="container">
+    <section class="hero panel">
+      <h1>Gestión de contactos — DataConecta Premium (Local)</h1>
+      <p class="muted">Guarda y organiza tus contactos, leads y empresas. Historial de interacciones, pipeline visual, segmentación avanzada, analítica y automatizaciones simuladas — todo en localStorage.</p>
+      <div class="hero-actions">
+        <button id="btn-add-contact" class="btn primary"><i class="fas fa-plus"></i> Agregar contacto</button>
+        <button id="btn-add-deal" class="btn"><i class="fas fa-briefcase"></i> Nueva Oportunidad</button>
+      </div>
+    </section>
 
-          <div class="controls" style="margin-top:12px">
-            <input id="q" placeholder="Buscar por nombre, email o empresa" style="flex:1" />
+    <section class="layout">
+      <div class="left">
+        <div class="panel search-panel">
+          <div class="row">
+            <input id="q" placeholder="Buscar por nombre, email, empresa..." />
             <select id="filter-stage"><option value="">Todas las etapas</option><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select>
             <button id="btn-filter" class="btn">Filtrar</button>
             <button id="btn-reset" class="btn">Reset</button>
           </div>
+        </div>
 
-          <div style="overflow:auto">
-            <table aria-label="Lista de contactos">
-              <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Empresa</th><th>Etapa</th><th>Última</th><th>Acciones</th></tr></thead>
-              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">No hay contactos.</td></tr></tbody>
+        <div id="contacts-panel" class="panel">
+          <h3>Contactos</h3>
+          <div class="table-wrap">
+            <table id="contacts-table" aria-label="Lista de contactos">
+              <thead><tr><th>Nombre</th><th>Email</th><th>Tel</th><th>Empresa</th><th>Etapa</th><th>Última</th><th>Acciones</th></tr></thead>
+              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">Cargando...</td></tr></tbody>
             </table>
           </div>
         </div>
 
-        <div style="display:flex;gap:12px;margin-top:12px">
-          <div class="panel" style="flex:1">
-            <h4 style="margin:0">Comunicación y seguimiento</h4>
-            <div class="small muted">Emails, llamadas y reuniones vinculadas a contactos</div>
-            <div style="margin-top:8px;overflow:auto">
-              <table><thead><tr><th>Contacto</th><th>Tipo</th><th>Resumen</th><th>Fecha</th></tr></thead><tbody id="communications-tbody"><tr><td colspan="4" class="muted">Sin registros.</td></tr></tbody></table>
+        <div class="panel">
+          <h3>Comunicación</h3>
+          <div class="table-wrap">
+            <table><thead><tr><th>Contacto</th><th>Tipo</th><th>Resumen</th><th>Fecha</th></tr></thead>
+            <tbody id="communications-tbody"><tr><td colspan="4" class="muted">Sin registros</td></tr></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <aside class="right">
+        <div class="panel">
+          <h4>Segmentación Avanzada</h4>
+          <div class="stack">
+            <select id="segment-criteria">
+              <option value="location">Ubicación</option>
+              <option value="funnel-stage">Etapa del embudo</option>
+              <option value="client-type">Tipo de cliente</option>
+              <option value="email-opened">Abrió email</option>
+              <option value="email-not-opened">No abrió email</option>
+              <option value="purchased">Compró</option>
+              <option value="not-purchased">No compró</option>
+            </select>
+            <input id="segment-value" placeholder="Valor (ej: Madrid, Lead, VIP)"/>
+            <div class="row">
+              <button id="apply-segment" class="btn primary">Aplicar</button>
+              <button id="reset-segment" class="btn">Reset</button>
             </div>
           </div>
-
-          <div class="panel" style="width:320px">
-            <h4 style="margin:0">Pipeline</h4>
-            <div class="small muted">Arrastrá oportunidades entre etapas</div>
-            <div class="pipeline" id="pipeline"></div>
-            <div style="margin-top:8px;display:flex;gap:8px">
-              <button id="btn-add-deal" class="btn btn-primary">Nueva Oportunidad</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <aside class="right-col">
-        <div class="panel">
-          <h4 style="margin:0">Segmentación rápida</h4>
-          <div class="small muted" style="margin-top:8px">Filtra por ubicación, etapa y comportamiento</div>
-          <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
-            <select id="segment-criteria" class="input"><option value="location">Ubicación</option><option value="funnel-stage">Etapa</option><option value="client-type">Tipo</option><option value="email-opened">Abrió email</option><option value="email-not-opened">No abrió</option><option value="purchased">Compró</option><option value="not-purchased">No compró</option></select>
-            <input id="segment-value" placeholder="Ej: Madrid, Lead, VIP" />
-            <div style="display:flex;gap:8px"><button id="btn-apply-seg" class="btn btn-primary" style="flex:1">Aplicar</button><button id="btn-clear-seg" class="btn" style="flex:1">Reset</button></div>
-          </div>
         </div>
 
         <div class="panel">
-          <h4 style="margin:0">Tickets</h4>
-          <div class="small muted">Soporte y cases</div>
-          <div style="margin-top:8px"><table><thead><tr><th>ID</th><th>Título</th><th>Contacto</th><th>Estado</th></tr></thead><tbody id="tickets-tbody"><tr><td colspan="4" class="muted">Sin tickets.</td></tr></tbody></table></div>
-          <div style="margin-top:8px"><button id="btn-add-ticket" class="btn btn-primary">Nuevo Ticket</button></div>
+          <h4>Pipeline</h4>
+          <div id="pipeline" class="pipeline"></div>
+          <div class="small muted">Arrastra y suelta las oportunidades entre etapas.</div>
         </div>
 
         <div class="panel">
-          <h4 style="margin:0">Acciones</h4>
-          <div style="margin-top:8px;display:flex;gap:8px">
-            <button id="btn-export-csv-contacts" class="btn btn-ghost">CSV contactos</button>
-            <button id="btn-export-csv-deals" class="btn btn-ghost">CSV deals</button>
-          </div>
+          <h4>Analítica</h4>
+          <canvas id="chart-conversions" width="320" height="200"></canvas>
+          <canvas id="chart-revenue" width="320" height="200" style="margin-top:12px"></canvas>
         </div>
       </aside>
-    </main>
+    </section>
+  </main>
 
-    <footer class="muted">DataConecta — Demo local. Todo se guarda en localStorage. Puedo subir esto al repo si querés.</footer>
-  </div>
+  <footer class="muted">Demo premium local — todo persiste en localStorage. Puedo subir la rama al repo y abrir PR si querés.</footer>
 
-  <!-- Modales -->
-  <div id="modal-contact" class="modal hidden" aria-hidden="true">
-    <div class="modal-card">
-      <h3 id="contact-modal-title">Agregar contacto</h3>
-      <div class="form-row"><div class="col"><input id="c-name" placeholder="Nombre*" /></div><div class="col"><input id="c-email" placeholder="Email" /></div></div>
-      <div class="form-row" style="margin-top:8px"><div class="col"><input id="c-phone" placeholder="Teléfono" /></div><div class="col"><input id="c-company" placeholder="Empresa" /></div></div>
-      <div class="form-row" style="margin-top:8px"><div class="col"><select id="c-stage"><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select></div><div class="col"><input id="c-location" placeholder="Ubicación" /></div></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="c-cancel" class="btn">Cancelar</button><button id="c-save" class="btn btn-primary">Guardar</button></div>
-    </div>
-  </div>
-
-  <div id="modal-deal" class="modal hidden" aria-hidden="true">
-    <div class="modal-card">
-      <h3 id="deal-modal-title">Nueva oportunidad</h3>
-      <div class="form-row"><div class="col"><input id="d-title" placeholder="Título*" /></div><div class="col"><input id="d-value" placeholder="Valor" type="number" /></div></div>
-      <div class="form-row" style="margin-top:8px"><div class="col"><select id="d-stage"></select></div><div class="col"><select id="d-contact"></select></div></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="d-cancel" class="btn">Cancelar</button><button id="d-save" class="btn btn-primary">Guardar</button></div>
-    </div>
-  </div>
-
-  <div id="modal-ticket" class="modal hidden" aria-hidden="true">
-    <div class="modal-card">
-      <h3 id="ticket-modal-title">Nuevo ticket</h3>
-      <div><input id="t-title" placeholder="Título*" /></div>
-      <div style="margin-top:8px"><select id="t-contact"></select></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="t-cancel" class="btn">Cancelar</button><button id="t-save" class="btn btn-primary">Guardar</button></div>
-    </div>
-  </div>
-
-  <div id="confirm-modal" class="modal hidden" aria-hidden="true">
-    <div class="modal-card">
-      <p id="confirm-text">¿Estás seguro?</p>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button id="confirm-no" class="btn">Cancelar</button><button id="confirm-yes" class="btn btn-primary">Sí</button></div>
-    </div>
-  </div>
-
+  <!-- Hidden file input -->
   <input id="import-file" type="file" accept="application/json" class="hidden" />
-  <div class="toast-wrap" id="toast-wrap"></div>
 
-  <script>
-  (function(){
-    // Keys
-    const K_CONTACTS = 'dataconecta_contacts_v2';
-    const K_DEALS = 'dataconecta_deals_v2';
-    const K_COM = 'dataconecta_comms_v2';
-    const K_TICKETS = 'dataconecta_tickets_v2';
+  <!-- Modals and Toast container -->
+  <div id="modal-root"></div>
+  <div id="toast-wrap" class="toast-wrap"></div>
 
-    // DOM
-    const contactsTbody = document.getElementById('contacts-tbody');
-    const commsTbody = document.getElementById('communications-tbody');
-    const ticketsTbody = document.getElementById('tickets-tbody');
-    const pipelineEl = document.getElementById('pipeline');
-    const saveState = document.getElementById('save-state');
-    const toastWrap = document.getElementById('toast-wrap');
-
-    // modals
-    const modalContact = document.getElementById('modal-contact');
-    const modalDeal = document.getElementById('modal-deal');
-    const modalTicket = document.getElementById('modal-ticket');
-    const confirmModal = document.getElementById('confirm-modal');
-
-    // buttons
-    const btnAddContact = document.getElementById('btn-add-contact');
-    const btnAddDeal = document.getElementById('btn-add-deal');
-    const btnAddTicket = document.getElementById('btn-add-ticket');
-    const btnExport = document.getElementById('btn-export');
-    const btnExportCSV = document.getElementById('btn-export-csv');
-    const btnExportCSVContacts = document.getElementById('btn-export-csv-contacts');
-    const btnExportCSVDeals = document.getElementById('btn-export-csv-deals');
-    const btnImport = document.getElementById('btn-import');
-    const importFile = document.getElementById('import-file');
-    const btnClear = document.getElementById('btn-clear');
-    const btnUndo = document.getElementById('btn-undo');
-
-    // inputs
-    const q = document.getElementById('q');
-    const filterStage = document.getElementById('filter-stage');
-    const btnFilter = document.getElementById('btn-filter');
-    const btnReset = document.getElementById('btn-reset');
-
-    const segCrit = document.getElementById('segment-criteria');
-    const segVal = document.getElementById('segment-value');
-    const btnApplySeg = document.getElementById('btn-apply-seg');
-    const btnClearSeg = document.getElementById('btn-clear-seg');
-
-    // contact modal inputs
-    const cName = document.getElementById('c-name');
-    const cEmail = document.getElementById('c-email');
-    const cPhone = document.getElementById('c-phone');
-    const cCompany = document.getElementById('c-company');
-    const cStage = document.getElementById('c-stage');
-    const cLocation = document.getElementById('c-location');
-    const cCancel = document.getElementById('c-cancel');
-    const cSave = document.getElementById('c-save');
-
-    // deal modal inputs
-    const dTitle = document.getElementById('d-title');
-    const dValue = document.getElementById('d-value');
-    const dStage = document.getElementById('d-stage');
-    const dContact = document.getElementById('d-contact');
-    const dCancel = document.getElementById('d-cancel');
-    const dSave = document.getElementById('d-save');
-
-    // ticket modal inputs
-    const tTitle = document.getElementById('t-title');
-    const tContact = document.getElementById('t-contact');
-    const tCancel = document.getElementById('t-cancel');
-    const tSave = document.getElementById('t-save');
-
-    // confirm
-    const confirmText = document.getElementById('confirm-text');
-    const confirmNo = document.getElementById('confirm-no');
-    const confirmYes = document.getElementById('confirm-yes');
-
-    // state
-    let contacts = [];
-    let deals = [];
-    let comms = [];
-    let tickets = [];
-
-    let editingContact = null;
-    let editingDeal = null;
-    let editingTicket = null;
-    let pendingConfirm = null;
-
-    // Undo stack (simple last-action)
-    let lastAction = null;
-
-    // BroadcastChannel for sync
-    let bc = null;
-    try { bc = new BroadcastChannel('dataconecta_sync_v1'); bc.onmessage = e => { if(e.data && e.data.type === 'sync') { loadAll(false); showToast('Datos sincronizados desde otra pestaña','info'); } } } catch(err){ /* not available */ }
-
-    // utils
-    const uid = ()=>'id_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-    function showToast(msg, type='default', ttl=3000){
-      const t = document.createElement('div'); t.className='toast'; t.textContent = msg;
-      if(type==='error'){ t.style.background='#b91c1c' } else if(type==='success'){ t.style.background='#059669' } else if(type==='info'){ t.style.background='#0ea5e9' }
-      toastWrap.appendChild(t);
-      setTimeout(()=> t.remove(), ttl);
-    }
-    function show(el){ el.classList.remove('hidden'); el.setAttribute('aria-hidden','false') }
-    function hide(el){ el.classList.add('hidden'); el.setAttribute('aria-hidden','true') }
-
-    // validation
-    function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) }
-    function validPhone(p){ return p.trim() === '' || /^[\d\s+()-]{6,20}$/.test(p) }
-
-    // debounced save state indicator
-    let saveTimer = null;
-    function setSaving(state){
-      if(state){ saveState.textContent = 'Guardando...'; } else { saveState.textContent = 'Guardado'; setTimeout(()=> saveState.textContent = '—', 1200) }
-    }
-
-    // persistence
-    function saveAll(broadcast=true){
-      setSaving(true);
-      localStorage.setItem(K_CONTACTS, JSON.stringify(contacts));
-      localStorage.setItem(K_DEALS, JSON.stringify(deals));
-      localStorage.setItem(K_COM, JSON.stringify(comms));
-      localStorage.setItem(K_TICKETS, JSON.stringify(tickets));
-      // debounce done
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(()=>{ setSaving(false); if(broadcast && bc) bc.postMessage({type:'sync'}); }, 600);
-    }
-    function loadAll(render=true){
-      try{ contacts = JSON.parse(localStorage.getItem(K_CONTACTS) || '[]') }catch{ contacts = [] }
-      try{ deals = JSON.parse(localStorage.getItem(K_DEALS) || '[]') }catch{ deals = [] }
-      try{ comms = JSON.parse(localStorage.getItem(K_COM) || '[]') }catch{ comms = [] }
-      try{ tickets = JSON.parse(localStorage.getItem(K_TICKETS) || '[]') }catch{ tickets = [] }
-      if(render) renderAll();
-    }
-
-    // seed
-    function seedIfEmpty(){
-      if(contacts.length===0){
-        contacts.push({id:uid(),name:'María González',email:'maria@example.com',phone:'+34 600111222',company:'ACME S.A.',stage:'Lead',location:'Madrid',lastInteraction:new Date().toISOString(),emailOpened:true,purchased:false});
-        contacts.push({id:uid(),name:'Juan Pérez',email:'juan@example.com',phone:'+34 655222333',company:'Beta SRL',stage:'Prospecto',location:'Barcelona',lastInteraction:new Date().toISOString(),emailOpened:false,purchased:false});
-      }
-      if(deals.length===0){
-        deals.push({id:uid(),title:'Oferta ACME',value:1200,stage:'Lead',contactId:contacts[0].id});
-        deals.push({id:uid(),title:'Demo Beta',value:4500,stage:'Prospecto',contactId:contacts[1].id});
-      }
-      if(comms.length===0){
-        comms.push({id:uid(),contactId:contacts[0].id,type:'Email',summary:'Email de bienvenida',date:new Date().toISOString(),opened:true});
-      }
-      if(tickets.length===0){
-        tickets.push({id:uid(),title:'Error facturación',contactId:contacts[1].id,state:'open'});
-      }
-      saveAll();
-    }
-
-    // rendering
-    function renderContacts(list){
-      const data = list || contacts;
-      contactsTbody.innerHTML = '';
-      if(!data.length) return contactsTbody.innerHTML = '<tr><td colspan="7" class="muted">No hay contactos.</td></tr>';
-      data.forEach(c=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td><a href="#" data-id="${c.id}" class="link-contact">${escape(c.name)}</a></td>
-          <td>${escape(c.email||'')}</td><td>${escape(c.phone||'')}</td><td>${escape(c.company||'')}</td>
-          <td><span class="status ${escape(c.stage||'')}">${escape(c.stage||'-')}</span></td>
-          <td>${c.lastInteraction?new Date(c.lastInteraction).toLocaleString():'-'}</td>
-          <td>
-            <button class="btn btn-ghost" data-action="edit" data-id="${c.id}" title="Editar"><i class="fas fa-edit"></i></button>
-            <button class="btn btn-ghost" data-action="delete" data-id="${c.id}" title="Eliminar"><i class="fas fa-trash"></i></button>
-          </td>`;
-        contactsTbody.appendChild(tr);
-      });
-      // bind links and actions
-      document.querySelectorAll('.link-contact').forEach(a=> a.addEventListener('click', e=>{ e.preventDefault(); openContactDetails(a.dataset.id); }));
-      document.querySelectorAll('button[data-action]').forEach(b=> b.addEventListener('click', ()=> {
-        const id = b.getAttribute('data-id'); const action = b.getAttribute('data-action');
-        if(action==='edit') openEditContact(id); if(action==='delete') confirm(()=>{ removeContact(id) }, 'Eliminar contacto permanentemente?');
-      }));
-    }
-
-    function renderComms(){
-      commsTbody.innerHTML = '';
-      if(!comms.length) return commsTbody.innerHTML = '<tr><td colspan="4" class="muted">Sin registros.</td></tr>';
-      comms.slice().sort((a,b)=> new Date(b.date)-new Date(a.date)).forEach(m=>{
-        const c = contacts.find(x=>x.id===m.contactId) || {name:'-'};
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${escape(c.name)}</td><td>${escape(m.type)}</td><td>${escape(m.summary)}</td><td>${new Date(m.date).toLocaleString()}</td>`;
-        commsTbody.appendChild(tr);
-      });
-    }
-
-    function renderTickets(){
-      ticketsTbody.innerHTML = '';
-      if(!tickets.length) return ticketsTbody.innerHTML = '<tr><td colspan="4" class="muted">Sin tickets.</td></tr>';
-      tickets.forEach(t=>{
-        const c = contacts.find(x=>x.id===t.contactId) || {name:'-'};
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${escape(t.id)}</td><td>${escape(t.title)}</td><td>${escape(c.name)}</td><td>${escape(t.state||'')}</td>`;
-        ticketsTbody.appendChild(tr);
-      });
-    }
-
-    function renderPipeline(){
-      const STAGES = ['Lead','Contacto','Prospecto','Cliente'];
-      pipelineEl.innerHTML = '';
-      STAGES.forEach(stage=>{
-        const col = document.createElement('div'); col.className = 'stage'; col.dataset.stage = stage;
-        col.innerHTML = `<h4>${stage} <span class="small muted">(${deals.filter(d=>d.stage===stage).length})</span></h4>`;
-        const stageDeals = deals.filter(d=>d.stage===stage);
-        stageDeals.forEach(d=>{
-          const el = document.createElement('div'); el.className='deal'; el.draggable=true; el.dataset.id = d.id;
-          const contact = contacts.find(c=>c.id===d.contactId) || {};
-          el.innerHTML = `<div><strong>${escape(d.title)}</strong></div><div class="meta small muted">${d.value?('$'+d.value):''} ${contact.name? ' • '+escape(contact.name):''}</div>`;
-          el.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', d.id); e.dataTransfer.effectAllowed='move'; });
-          el.addEventListener('dblclick', ()=> openEditDeal(d.id));
-          col.appendChild(el);
-        });
-        // drop handling
-        col.addEventListener('dragover', e=>{ e.preventDefault(); col.style.background='#f0fbff' });
-        col.addEventListener('dragleave', ()=> col.style.background='');
-        col.addEventListener('drop', e=>{
-          e.preventDefault(); col.style.background='';
-          const id = e.dataTransfer.getData('text/plain');
-          const idx = deals.findIndex(x=>x.id===id);
-          if(idx>-1){ const prev = Object.assign({}, deals[idx]); deals[idx].stage = col.dataset.stage; saveAll(); lastAction = {type:'deal-move',payload:prev,undo:()=>{ const i = deals.findIndex(x=>x.id===prev.id); if(i>-1){ deals[i] = prev; saveAll(); } }}; showToast('Deal movido','success'); }
-        });
-        pipelineEl.appendChild(col);
-      });
-    }
-
-    function renderAll(){
-      renderContacts();
-      renderComms();
-      renderTickets();
-      renderPipeline();
-      updateCards();
-    }
-
-    function updateCards(){
-      // small summary in header or later; here we set save state handled elsewhere
-    }
-
-    // helpers
-    function escape(s){ if(s==null) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-    // CRUD contact
-    function openNewContact(){
-      editingContact = null; document.getElementById('contact-modal-title').textContent='Agregar contacto';
-      cName.value=''; cEmail.value=''; cPhone.value=''; cCompany.value=''; cStage.value='Lead'; cLocation.value='';
-      show(modalContact);
-    }
-    function openEditContact(id){
-      const c = contacts.find(x=>x.id===id); if(!c) return showToast('Contacto no encontrado','error');
-      editingContact = id; document.getElementById('contact-modal-title').textContent='Editar contacto';
-      cName.value=c.name||''; cEmail.value=c.email||''; cPhone.value=c.phone||''; cCompany.value=c.company||''; cStage.value=c.stage||'Lead'; cLocation.value=c.location||'';
-      show(modalContact);
-    }
-    function saveContact(){
-      const name = cName.value.trim(); const email = cEmail.value.trim(); const phone = cPhone.value.trim();
-      if(!name){ return showToast('El nombre es obligatorio','error'); }
-      if(email && !validEmail(email)) return showToast('Email inválido','error');
-      if(phone && !validPhone(phone)) return showToast('Teléfono inválido','error');
-      const obj = { name, email, phone, company: cCompany.value.trim(), stage: cStage.value, location: cLocation.value.trim(), lastInteraction: new Date().toISOString() };
-      if(editingContact){
-        const idx = contacts.findIndex(x=>x.id===editingContact);
-        if(idx>-1){ const prev = Object.assign({}, contacts[idx]); contacts[idx]=Object.assign({id:editingContact}, prev, obj); saveAll(); lastAction = {type:'contact-edit',payload:prev,undo:()=>{ const i=contacts.findIndex(x=>x.id===prev.id); if(i>-1){ contacts[i]=prev; saveAll(); } }}; showToast('Contacto actualizado','success'); }
-      } else {
-        const newC = Object.assign({id:uid()}, obj); contacts.unshift(newC); saveAll(); lastAction = {type:'contact-add',payload:newC,undo:()=>{ contacts = contacts.filter(x=>x.id!==newC.id); saveAll(); }}; showToast('Contacto agregado','success');
-      }
-      hide(modalContact);
-    }
-    function removeContact(id){
-      const prev = contacts.find(x=>x.id===id);
-      contacts = contacts.filter(x=>x.id!==id);
-      // remove associated data
-      const oldDeals = deals.filter(d=>d.contactId===id);
-      deals = deals.filter(d=>d.contactId!==id);
-      comms = comms.filter(m=>m.contactId!==id);
-      tickets = tickets.filter(t=>t.contactId!==id);
-      saveAll();
-      lastAction = { type:'contact-delete', payload:{contact:prev,deals:oldDeals}, undo:()=>{ contacts.unshift(prev); deals = oldDeals.concat(deals); saveAll(); } };
-      showToast('Contacto eliminado','info');
-    }
-
-    // contact details + add communication
-    function openContactDetails(id){
-      const c = contacts.find(x=>x.id===id); if(!c) return showToast('No encontrado','error');
-      // build simple details modal using confirm modal area (reusing confirm as quick modal) to keep code concise
-      const html = `<div style="margin-bottom:8px"><strong>${escape(c.name)}</strong></div>
-        <div class="small muted">Email: ${escape(c.email||'-')} • Tel: ${escape(c.phone||'-')}</div>
-        <hr/>
-        <h4>Interacciones</h4>`;
-      // show interactions list + add form
-      const items = comms.filter(m=>m.contactId===c.id).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(it=>`<div class="small">${escape(it.type)} — ${escape(it.summary)} <span class="muted">(${new Date(it.date).toLocaleString()})</span></div>`).join('') || '<div class="muted">Sin interacciones</div>';
-      const body = html + items + `<hr/><div><select id="new-comm-type"><option>Email</option><option>Call</option><option>Meeting</option><option>Form</option></select><input id="new-comm-summary" placeholder="Resumen" style="margin-left:8px;padding:6px;border-radius:6px;border:1px solid var(--border)" /></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button id="close-detail" class="btn">Cerrar</button><button id="save-comm" class="btn btn-primary">Guardar</button></div>`;
-      // show in modal-deal temporarily (we'll reuse modalDeal element)
-      const modal = document.createElement('div');
-      modal.className = 'modal'; modal.innerHTML = `<div class="modal-card">${body}</div>`; document.body.appendChild(modal);
-      modal.addEventListener('click', e=>{ if(e.target===modal) modal.remove(); });
-      document.getElementById('close-detail').addEventListener('click', ()=> modal.remove());
-      document.getElementById('save-comm').addEventListener('click', ()=>{
-        const type = document.getElementById('new-comm-type').value; const summary = document.getElementById('new-comm-summary').value.trim();
-        if(!summary) return showToast('Resumen requerido','error');
-        const newC = { id:uid(), contactId:c.id, type, summary, date:new Date().toISOString() };
-        comms.unshift(newC); // update lastInteraction
-        const idx = contacts.findIndex(x=>x.id===c.id); if(idx>-1) contacts[idx].lastInteraction = new Date().toISOString();
-        saveAll(); lastAction = {type:'comm-add',payload:newC,undo:()=>{ comms = comms.filter(x=>x.id!==newC.id); saveAll(); }}; showToast('Interacción guardada','success');
-        modal.remove();
-      });
-    }
-
-    // deals CRUD
-    function openNewDeal(){
-      editingDeal = null; document.getElementById('deal-modal-title').textContent='Nueva oportunidad';
-      dTitle.value=''; dValue.value=''; fillDealSelects(); show(modalDeal);
-    }
-    function openEditDeal(id){
-      const dd = deals.find(x=>x.id===id); if(!dd) return showToast('No encontrado','error');
-      editingDeal = id; document.getElementById('deal-modal-title').textContent='Editar oportunidad';
-      dTitle.value = dd.title || ''; dValue.value = dd.value || 0; fillDealSelects(dd.stage, dd.contactId); show(modalDeal);
-    }
-    function fillDealSelects(selectStage, selectContact){
-      // fill stage options and contact options
-      const stages = ['Lead','Contacto','Prospecto','Cliente'];
-      dStage.innerHTML = stages.map(s=>`<option ${s===selectStage?'selected':''}>${s}</option>`).join('');
-      dContact.innerHTML = '<option value="">(sin asignar)</option>' + contacts.map(c=>`<option value="${c.id}" ${c.id===selectContact?'selected':''}>${escape(c.name)}</option>`).join('');
-    }
-    function saveDeal(){
-      const title = dTitle.value.trim(); const value = Number(dValue.value)||0; const stage = dStage.value; const contactId = dContact.value || null;
-      if(!title) return showToast('Título requerido','error');
-      const obj = { title, value, stage, contactId };
-      if(editingDeal){
-        const idx = deals.findIndex(x=>x.id===editingDeal);
-        if(idx>-1){ const prev = Object.assign({}, deals[idx]); deals[idx]=Object.assign({id:editingDeal}, prev, obj); saveAll(); lastAction = {type:'deal-edit', payload:prev, undo:()=>{ const i=deals.findIndex(x=>x.id===prev.id); if(i>-1){ deals[i]=prev; saveAll(); }}}; showToast('Oportunidad actualizada','success'); }
-      } else {
-        const newD = Object.assign({id:uid()}, obj); deals.unshift(newD); saveAll(); lastAction = {type:'deal-add', payload:newD, undo:()=>{ deals = deals.filter(x=>x.id!==newD.id); saveAll(); }}; showToast('Oportunidad creada','success');
-      }
-      hide(modalDeal);
-    }
-
-    // tickets
-    function openNewTicket(){
-      editingTicket = null; document.getElementById('ticket-modal-title').textContent='Nuevo ticket';
-      tTitle.value=''; tContact.innerHTML = '<option value="">(sin asignar)</option>' + contacts.map(c=>`<option value="${c.id}">${escape(c.name)}</option>`).join(''); show(modalTicket);
-    }
-    function saveTicket(){
-      const title = tTitle.value.trim(); const contactIdVal = tContact.value || null;
-      if(!title) return showToast('Título requerido','error');
-      const obj = { id: uid(), title, contactId: contactIdVal, state:'open' };
-      tickets.unshift(obj); saveAll(); lastAction = {type:'ticket-add',payload:obj,undo:()=>{ tickets = tickets.filter(x=>x.id!==obj.id); saveAll(); }}; showToast('Ticket creado','success');
-      hide(modalTicket);
-    }
-
-    // remove helpers
-    function confirm(fn, text='¿Estás seguro?'){ pendingConfirm = fn; confirmText.textContent = text; show(confirmModal); }
-    confirmNo.addEventListener('click', ()=>{ pendingConfirm = null; hide(confirmModal); });
-    confirmYes.addEventListener('click', ()=>{ if(typeof pendingConfirm === 'function') pendingConfirm(); pendingConfirm = null; hide(confirmModal); });
-
-    // remove functions
-    function removeContact(id){ // implemented earlier
-      const prev = contacts.find(x=>x.id===id);
-      contacts = contacts.filter(x=>x.id!==id);
-      const removedDeals = deals.filter(d=>d.contactId===id);
-      deals = deals.filter(d=>d.contactId!==id);
-      comms = comms.filter(m=>m.contactId!==id);
-      tickets = tickets.filter(t=>t.contactId!==id);
-      saveAll();
-      lastAction = {type:'contact-delete', payload:{contact:prev,deals:removedDeals}, undo:()=>{ contacts.unshift(prev); deals=removedDeals.concat(deals); saveAll(); }};
-      showToast('Contacto eliminado','success');
-    }
-
-    // Export / Import
-    function exportAll(){
-      const payload = { contacts, deals, comms, tickets, exportedAt: new Date().toISOString() };
-      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `dataconecta_export_${(new Date()).toISOString().split('T')[0]}.json`; document.body.appendChild(a); a.click(); a.remove();
-      showToast('Exportado JSON','success');
-    }
-    function importAll(file){
-      const reader = new FileReader();
-      reader.onload = e=>{
-        try{
-          const parsed = JSON.parse(e.target.result);
-          if(!parsed) return showToast('Archivo inválido','error');
-          confirm(()=>{ contacts = parsed.contacts||[]; deals = parsed.deals||[]; comms = parsed.comms||[]; tickets = parsed.tickets||[]; saveAll(); renderAll(); showToast('Importación realizada','success'); }, 'Importar reemplazará los datos locales. Continuar?');
-        }catch(err){ showToast('Error leyendo JSON','error'); }
-      };
-      reader.readAsText(file);
-    }
-
-    // CSV helpers
-    function toCSV(arr, fields){
-      const esc = v => `"${String(v||'').replace(/"/g,'""')}"`;
-      const head = fields.join(',');
-      const rows = arr.map(r => fields.map(f=>esc(r[f])).join(',')).join('\n');
-      return head + '\n' + rows;
-    }
-    function exportCSVContacts(){
-      const fields = ['id','name','email','phone','company','stage','location','lastInteraction'];
-      const csv = toCSV(contacts, fields);
-      const blob = new Blob([csv],{type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='dataconecta_contacts.csv'; document.body.appendChild(a); a.click(); a.remove(); showToast('CSV contactos descargado','success');
-    }
-    function exportCSVDeals(){
-      const fields = ['id','title','value','stage','contactId'];
-      const csv = toCSV(deals, fields); const blob = new Blob([csv],{type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='dataconecta_deals.csv'; document.body.appendChild(a); a.click(); a.remove(); showToast('CSV deals descargado','success');
-    }
-
-    // Undo
-    btnUndo.addEventListener('click', ()=> {
-      if(!lastAction) return showToast('Nada para deshacer','info');
-      try{
-        if(typeof lastAction.undo === 'function'){ lastAction.undo(); lastAction = null; showToast('Acción deshecha','success'); }
-        else showToast('No se puede deshacer','error');
-      }catch(err){ showToast('Error al deshacer','error'); }
-    });
-
-    // search/filter
-    btnFilter.addEventListener('click', ()=> {
-      const qv = q.value.trim().toLowerCase(); const st = filterStage.value;
-      let res = contacts.filter(c => !qv || (c.name&&c.name.toLowerCase().includes(qv)) || (c.email&&c.email.toLowerCase().includes(qv)) || (c.company&&c.company.toLowerCase().includes(qv)));
-      if(st) res = res.filter(c => c.stage === st);
-      renderContacts(res);
-    });
-    btnReset.addEventListener('click', ()=> { q.value=''; filterStage.value=''; renderContacts(); });
-
-    // segmentation
-    btnApplySeg.addEventListener('click', ()=> {
-      const crit = segCrit.value; const v = segVal.value.trim().toLowerCase();
-      let res = [];
-      if(crit==='location') res = contacts.filter(c => c.location && c.location.toLowerCase().includes(v));
-      else if(crit==='funnel-stage') res = contacts.filter(c => c.stage && c.stage.toLowerCase().includes(v));
-      else if(crit==='email-opened') res = contacts.filter(c => c.emailOpened === true && !c.purchased);
-      else if(crit==='email-not-opened') res = contacts.filter(c => !c.emailOpened);
-      else if(crit==='purchased') res = contacts.filter(c => c.purchased === true);
-      else if(crit==='not-purchased') res = contacts.filter(c => !c.purchased);
-      else res = contacts.filter(c => (c.name && c.name.toLowerCase().includes(v)) || (c.company && c.company.toLowerCase().includes(v)));
-      if(!res.length) showToast('No se encontraron contactos','info');
-      renderContacts(res);
-    });
-    btnClearSeg.addEventListener('click', ()=> renderContacts());
-
-    // export/import buttons
-    btnExport.addEventListener('click', exportAll);
-    btnExportCSVContacts.addEventListener('click', exportCSVContacts);
-    btnExportCSVDeals.addEventListener('click', exportCSVDeals);
-    btnImport.addEventListener('click', ()=> importFile.click());
-    importFile.addEventListener('change', e=> { const f = e.target.files && e.target.files[0]; if(!f) return; importAll(f); e.target.value=''; });
-
-    // clear
-    btnClear.addEventListener('click', ()=> confirm(()=>{ localStorage.removeItem(K_CONTACTS); localStorage.removeItem(K_DEALS); localStorage.removeItem(K_COM); localStorage.removeItem(K_TICKETS); contacts=[]; deals=[]; comms=[]; tickets=[]; saveAll(); renderAll(); showToast('Datos limpiados','success'); }, 'Eliminar todos los datos locales?'));
-
-    // Add UI event bindings
-    btnAddContact.addEventListener('click', openNewContact);
-    cCancel.addEventListener('click', ()=> hide(modalContact));
-    cSave.addEventListener('click', saveContact);
-
-    btnAddDeal.addEventListener('click', ()=> { fillDealSelects(); openNewDeal(); });
-    dCancel.addEventListener('click', ()=> hide(modalDeal));
-    dSave.addEventListener('click', saveDeal);
-
-    btnAddTicket.addEventListener('click', openNewTicket);
-    tCancel.addEventListener('click', ()=> hide(modalTicket));
-    tSave.addEventListener('click', saveTicket);
-
-    // modal outside click closes
-    document.querySelectorAll('.modal').forEach(m => { m.addEventListener('click', e=>{ if(e.target === m) hide(m); }) });
-
-    // keyboard shortcuts
-    document.addEventListener('keydown', e=>{
-      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); saveAll(); showToast('Guardado manual','success'); }
-      if(e.key === 'Escape'){ document.querySelectorAll('.modal').forEach(m=> hide(m)); }
-      if(e.key === 'Delete' && document.activeElement && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){ /* optional */ }
-    });
-
-    // expose for debugging
-    window.DataConecta = { get state(){ return {contacts,deals,comms,tickets} }, saveAll, loadAll };
-
-    // init
-    loadAll(false);
-    seedIfEmpty();
-    loadAll();
-    renderAll();
-
-    // small helpers used inside modal functions (declared later to keep code tidy)
-    function openNewDeal(){ editingDeal=null; document.getElementById('deal-modal-title').textContent='Nueva oportunidad'; fillDealSelects(); show(modalDeal); }
-    function fillDealSelects(stage, contactId){
-      const stages = ['Lead','Contacto','Prospecto','Cliente'];
-      dStage.innerHTML = stages.map(s=>`<option ${s===stage?'selected':''}>${s}</option>`).join('');
-      dContact.innerHTML = '<option value="">(sin asignar)</option>' + contacts.map(c=>`<option value="${c.id}" ${c.id===contactId?'selected':''}>${escape(c.name)}</option>`).join('');
-    }
-    function openEditDeal(id){
-      const dd = deals.find(x=>x.id===id); if(!dd) return;
-      editingDeal = id; document.getElementById('deal-modal-title').textContent='Editar oportunidad';
-      dTitle.value = dd.title||''; dValue.value = dd.value||0; fillDealSelects(dd.stage, dd.contactId); show(modalDeal);
-    }
-
-    // small initial render functions referenced above
-    function renderAll(){ renderContacts(); renderComms(); renderTickets(); renderPipeline(); updateCardsUI(); }
-    function updateCardsUI(){ /* could update summary area if implemented */ }
-
-  })();
-  </script>
 </body>
 </html>
