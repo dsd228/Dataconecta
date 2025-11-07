@@ -3,7 +3,6 @@
 // Añade export CSV y export PNG (descarga de imagen del canvas).
 
 (function () {
-  // Helpers
   function monthKey(date) {
     const d = new Date(date);
     const y = d.getFullYear();
@@ -18,7 +17,6 @@
   }
 
   function aggregateRevenueByMonth(deals) {
-    // Ensure deals have createdAt; if not, fallback to now
     const map = {};
     deals.forEach(d => {
       const key = d.createdAt ? monthKey(d.createdAt) : monthKey(new Date());
@@ -50,7 +48,6 @@
     a.remove();
   }
 
-  // Chart instances (kept global)
   let funnelChart = null;
   let revenueChart = null;
 
@@ -59,21 +56,8 @@
     if (funnelChart) funnelChart.destroy();
     funnelChart = new Chart(ctx, {
       type: 'bar',
-      data: {
-        labels: stages,
-        datasets: [
-          {
-            label: 'Oportunidades',
-            data: counts,
-            backgroundColor: ['#2b8fe6', '#16a34a', '#f59e0b', '#ef4444'],
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
-      },
+      data: { labels: stages, datasets: [{ label:'Oportunidades', data: counts, backgroundColor: ['#2b8fe6', '#16a34a', '#f59e0b', '#ef4444'] }] },
+      options: { responsive:true, plugins:{legend:{display:false}}, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } }
     });
     return funnelChart;
   }
@@ -83,42 +67,22 @@
     if (revenueChart) revenueChart.destroy();
     revenueChart = new Chart(ctx, {
       type: 'line',
-      data: {
-        labels: months,
-        datasets: [
-          {
-            label: 'Ingresos',
-            data: values,
-            borderColor: '#16a34a',
-            backgroundColor: 'rgba(22,163,74,0.08)',
-            fill: true,
-            tension: 0.3,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-      },
+      data: { labels: months, datasets: [{ label:'Ingresos', data: values, borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,0.08)', fill:true, tension:0.3 }] },
+      options:{ responsive:true, plugins:{legend:{display:false}} }
     });
     return revenueChart;
   }
 
-  // Public API
   window.Analytics = {
     renderAll: function () {
       try {
         const ds = window.DataStore.load();
         const deals = ds.deals || [];
-
         const funnelCtx = document.getElementById('chart-conversions');
         const revCtx = document.getElementById('chart-revenue');
-
         if (funnelCtx) renderFunnel(funnelCtx, deals);
         if (revCtx) renderRevenue(revCtx, deals);
-      } catch (err) {
-        console.error('Analytics render error:', err);
-      }
+      } catch (err) { console.error('Analytics render error:', err); }
     },
 
     exportFunnelCSV: function () {
@@ -137,17 +101,10 @@
       downloadCSV('revenue.csv', lines.join('\n'));
     },
 
-    exportFunnelPNG: function () {
-      const canvas = document.getElementById('chart-conversions');
-      if (canvas) downloadCanvasPNG(canvas, 'funnel.png');
-    },
-
-    exportRevenuePNG: function () {
-      const canvas = document.getElementById('chart-revenue');
-      if (canvas) downloadCanvasPNG(canvas, 'revenue.png');
-    }
+    exportFunnelPNG: function () { const canvas = document.getElementById('chart-conversions'); if (canvas) downloadCanvasPNG(canvas, 'funnel.png'); },
+    exportRevenuePNG: function () { const canvas = document.getElementById('chart-revenue'); if (canvas) downloadCanvasPNG(canvas, 'revenue.png'); }
   };
 
-  // Backwards compatibility: some code calls Analytics.render()
+  // compatibility alias
   window.Analytics.render = window.Analytics.renderAll;
 })();
