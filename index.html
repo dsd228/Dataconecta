@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataConecta | Plataforma Integral CRM para Gestión de Datos, Marketing y UX</title>
+    <title>DataConecta CRM | Plataforma Integral con Almacenamiento Local</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -121,159 +121,101 @@
             color: var(--secondary);
         }
         
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        .btn-success {
+            background-color: var(--success);
             color: white;
-            padding: 100px 0;
-            text-align: center;
         }
         
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            line-height: 1.2;
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
         }
         
-        .hero p {
-            font-size: 20px;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            opacity: 0.9;
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
         }
         
-        .hero-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 30px;
+        /* Dashboard */
+        .dashboard {
+            padding: 40px 0;
         }
         
-        /* Features Section */
-        .features {
-            padding: 80px 0;
-            background-color: white;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-        
-        .section-title h2 {
-            font-size: 36px;
-            color: var(--secondary);
-            margin-bottom: 15px;
-        }
-        
-        .section-title p {
-            font-size: 18px;
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .features-grid {
+        .dashboard-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .feature-card {
-            background-color: #f9fbfd;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-align: center;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 30px;
-        }
-        
-        .feature-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: var(--secondary);
-        }
-        
-        .feature-card p {
-            color: var(--text-light);
-        }
-        
-        /* Dashboard Preview */
-        .dashboard-preview {
-            padding: 80px 0;
-            background-color: #f5f7fa;
-        }
-        
-        .dashboard-container {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-        
-        .dashboard-content {
-            flex: 1;
-        }
-        
-        .dashboard-content h2 {
-            font-size: 36px;
-            color: var(--secondary);
-            margin-bottom: 20px;
-        }
-        
-        .dashboard-content p {
-            font-size: 18px;
-            color: var(--text-light);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             margin-bottom: 30px;
         }
         
-        .dashboard-image {
-            flex: 1;
-            background-color: var(--secondary);
-            border-radius: 10px;
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             padding: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         
-        .dashboard-placeholder {
-            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
             border-radius: 8px;
-            height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 18px;
         }
         
-        /* Platform Capabilities */
-        .capabilities {
-            padding: 80px 0;
-            background-color: white;
+        .card-icon.primary {
+            background-color: var(--primary);
         }
         
+        .card-icon.success {
+            background-color: var(--success);
+        }
+        
+        .card-icon.warning {
+            background-color: var(--warning);
+        }
+        
+        .card-icon.danger {
+            background-color: var(--danger);
+        }
+        
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .card-description {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        /* Tabs */
         .tabs {
             display: flex;
-            justify-content: center;
-            margin-bottom: 40px;
             border-bottom: 1px solid var(--light);
+            margin-bottom: 20px;
         }
         
         .tab {
@@ -304,268 +246,182 @@
             to { opacity: 1; }
         }
         
-        .capability-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        
-        .capability-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        
-        .capability-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            background-color: rgba(52, 152, 219, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-        
-        .capability-content h3 {
-            margin-bottom: 10px;
-            color: var(--secondary);
-        }
-        
-        .capability-content p {
-            color: var(--text-light);
-        }
-        
-        /* Pricing */
-        .pricing {
-            padding: 80px 0;
-            background-color: #f5f7fa;
-        }
-        
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .pricing-card {
+        /* Tables */
+        .table-container {
             background-color: white;
             border-radius: 8px;
-            padding: 40px 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: transform 0.3s;
-            position: relative;
-        }
-        
-        .pricing-card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .pricing-card.featured {
-            border: 2px solid var(--primary);
-            transform: scale(1.05);
-        }
-        
-        .pricing-card.featured:hover {
-            transform: scale(1.05) translateY(-10px);
-        }
-        
-        .pricing-badge {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--primary);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-        
-        .pricing-header {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
             margin-bottom: 30px;
         }
         
-        .pricing-name {
-            font-size: 24px;
-            color: var(--secondary);
-            margin-bottom: 10px;
-        }
-        
-        .pricing-price {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .pricing-period {
-            color: var(--text-light);
-            font-size: 16px;
-        }
-        
-        .pricing-features {
-            list-style: none;
-            margin-bottom: 30px;
-        }
-        
-        .pricing-features li {
-            padding: 10px 0;
+        .table-header {
+            padding: 20px;
             border-bottom: 1px solid var(--light);
-            color: var(--text-light);
-        }
-        
-        .pricing-features li:last-child {
-            border-bottom: none;
-        }
-        
-        .pricing-features li i {
-            color: var(--success);
-            margin-right: 10px;
-        }
-        
-        /* Testimonials */
-        .testimonials {
-            padding: 80px 0;
-            background-color: white;
-        }
-        
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .testimonial-card {
-            background-color: #f9fbfd;
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-        
-        .testimonial-content {
-            margin-bottom: 20px;
-            font-style: italic;
-            color: var(--text);
-        }
-        
-        .testimonial-author {
             display: flex;
+            justify-content: space-between;
             align-items: center;
         }
         
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        .table-title {
+            font-size: 18px;
             font-weight: 600;
-            margin-right: 15px;
         }
         
-        .author-info h4 {
-            color: var(--secondary);
-            margin-bottom: 5px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
         }
         
-        .author-info p {
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
             color: var(--text-light);
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status.active {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+        
+        .status.inactive {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        /* Forms */
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--light);
+            border-radius: 4px;
             font-size: 14px;
         }
         
-        /* CTA Section */
-        .cta {
-            padding: 80px 0;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-            color: white;
-            text-align: center;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
         }
         
-        .cta h2 {
-            font-size: 36px;
-            margin-bottom: 20px;
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
         }
         
-        .cta p {
-            font-size: 18px;
-            max-width: 600px;
-            margin: 0 auto 30px;
-            opacity: 0.9;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: var(--secondary);
-            color: white;
-            padding: 60px 0 30px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-column h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-        
-        .footer-column ul {
-            list-style: none;
-        }
-        
-        .footer-column ul li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-column a {
-            color: #bdc3c7;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .footer-column a:hover {
-            color: white;
-        }
-        
-        .social-links {
+        .form-actions {
             display: flex;
-            gap: 15px;
+            justify-content: flex-end;
+            gap: 10px;
             margin-top: 20px;
         }
         
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            display: flex;
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: rgba(46, 204, 113, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .alert-error {
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            color: white;
-            transition: background-color 0.3s;
         }
         
-        .social-links a:hover {
-            background-color: var(--primary);
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #bdc3c7;
-            font-size: 14px;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .close:hover {
+            color: var(--text);
         }
         
         /* Responsive */
@@ -585,34 +441,17 @@
                 margin: 5px 10px;
             }
             
-            .hero h1 {
-                font-size: 36px;
-            }
-            
-            .hero p {
-                font-size: 18px;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .dashboard-container {
-                flex-direction: column;
-            }
-            
             .tabs {
                 flex-direction: column;
-                align-items: center;
             }
             
-            .pricing-card.featured {
-                transform: none;
+            .tab {
+                padding: 10px 20px;
             }
             
-            .pricing-card.featured:hover {
-                transform: translateY(-10px);
+            .form-row {
+                flex-direction: column;
+                gap: 0;
             }
         }
     </style>
@@ -623,534 +462,997 @@
         <div class="container header-container">
             <div class="logo">
                 <i class="fas fa-database"></i>
-                <span>DataConecta</span>
+                <span>DataConecta CRM</span>
             </div>
             <ul class="nav-menu">
-                <li><a href="#features">Características</a></li>
-                <li><a href="#capabilities">Funcionalidades</a></li>
-                <li><a href="#pricing">Precios</a></li>
-                <li><a href="#testimonials">Testimonios</a></li>
-                <li><a href="#" class="btn btn-outline">Iniciar Sesión</a></li>
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="#" id="export-data">Exportar Datos</a></li>
+                <li><a href="#" id="import-data">Importar Datos</a></li>
+                <li><a href="#" id="clear-data">Limpiar Datos</a></li>
             </ul>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
+    <!-- Dashboard -->
+    <section class="dashboard">
         <div class="container">
-            <h1>Plataforma Integral para Gestión de Datos, Marketing y UX</h1>
-            <p>DataConecta conecta todas tus fuentes de datos, herramientas de marketing y análisis de experiencia de usuario en una sola plataforma CRM.</p>
-            <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Comenzar Prueba Gratuita</a>
-                <a href="#" class="btn btn-outline">Solicitar Demo</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>Todo lo que necesitas en una sola plataforma</h2>
-                <p>DataConecta integra todas las herramientas esenciales para gestionar tu negocio de manera eficiente</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-database"></i>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Total Clientes</div>
+                        <div class="card-icon primary">
+                            <i class="fas fa-users"></i>
+                        </div>
                     </div>
-                    <h3>Gestión de Bases de Datos</h3>
-                    <p>Conecta, gestiona y analiza múltiples bases de datos desde una interfaz unificada con herramientas avanzadas de consulta y reporting.</p>
+                    <div class="card-value" id="total-clients">0</div>
+                    <div class="card-description">Clientes registrados en el sistema</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Campañas Activas</div>
+                        <div class="card-icon success">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
                     </div>
-                    <h3>Marketing Automation</h3>
-                    <p>Crea campañas de marketing personalizadas, segmenta tu audiencia y automatiza tus estrategias de captación y fidelización.</p>
+                    <div class="card-value" id="active-campaigns">0</div>
+                    <div class="card-description">Campañas de marketing activas</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Feedback Recibido</div>
+                        <div class="card-icon warning">
+                            <i class="fas fa-comments"></i>
+                        </div>
                     </div>
-                    <h3>Análisis de Experiencia de Usuario</h3>
-                    <p>Mide, analiza y mejora la experiencia de usuario con herramientas avanzadas de seguimiento y retroalimentación.</p>
+                    <div class="card-value" id="total-feedback">0</div>
+                    <div class="card-description">Comentarios de experiencia de usuario</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cogs"></i>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Tasa de Satisfacción</div>
+                        <div class="card-icon danger">
+                            <i class="fas fa-star"></i>
+                        </div>
                     </div>
-                    <h3>Integraciones</h3>
-                    <p>Conecta DataConecta con tus herramientas favoritas como Salesforce, Google Analytics, Mailchimp y muchas más.</p>
+                    <div class="card-value" id="satisfaction-rate">0%</div>
+                    <div class="card-description">Promedio de satisfacción del usuario</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Seguridad Avanzada</h3>
-                    <p>Protege tus datos con encriptación de grado empresarial, controles de acceso y cumplimiento de normativas.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-rocket"></i>
-                    </div>
-                    <h3>Escalabilidad</h3>
-                    <p>Crece sin límites con una infraestructura escalable que se adapta a las necesidades de tu negocio.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Dashboard Preview -->
-    <section class="dashboard-preview" id="dashboard">
-        <div class="container dashboard-container">
-            <div class="dashboard-content">
-                <h2>Dashboard Unificado e Intuitivo</h2>
-                <p>Nuestro dashboard centralizado te permite visualizar todos tus datos importantes en tiempo real, con widgets personalizables y reportes automatizados.</p>
-                <p>Monitorea el rendimiento de tus campañas, analiza el comportamiento de tus usuarios y toma decisiones basadas en datos concretos desde una única interfaz.</p>
-                <a href="#" class="btn btn-primary">Explorar Características</a>
-            </div>
-            <div class="dashboard-image">
-                <div class="dashboard-placeholder">
-                    <div style="text-align: center;">
-                        <i class="fas fa-chart-bar" style="font-size: 48px; margin-bottom: 15px;"></i>
-                        <p>Dashboard Interactivo DataConecta</p>
-                        <p style="font-size: 14px; margin-top: 10px;">Visualización en tiempo real de métricas clave</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Platform Capabilities -->
-    <section class="capabilities" id="capabilities">
-        <div class="container">
-            <div class="section-title">
-                <h2>Funcionalidades Avanzadas</h2>
-                <p>Descubre todas las capacidades de DataConecta para potenciar tu negocio</p>
             </div>
             
+            <!-- Tabs -->
             <div class="tabs">
-                <div class="tab active" data-tab="crm">CRM</div>
-                <div class="tab" data-tab="databases">Bases de Datos</div>
-                <div class="tab" data-tab="marketing">Marketing</div>
-                <div class="tab" data-tab="ux">Experiencia de Usuario</div>
+                <div class="tab active" data-tab="clients">Clientes</div>
+                <div class="tab" data-tab="campaigns">Campañas</div>
+                <div class="tab" data-tab="feedback">Feedback UX</div>
             </div>
             
-            <div class="tab-content active" id="crm-content">
-                <div class="capability-grid">
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-user-friends"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Gestión de Contactos</h3>
-                            <p>Administra todos tus contactos, clientes y prospectos en una base de datos centralizada con segmentación avanzada.</p>
-                        </div>
+            <!-- Alerts -->
+            <div class="alert alert-success" id="success-alert">
+                Operación realizada con éxito.
+            </div>
+            
+            <div class="alert alert-error" id="error-alert">
+                Ha ocurrido un error. Por favor, intente nuevamente.
+            </div>
+            
+            <!-- Clients Tab -->
+            <div class="tab-content active" id="clients-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Gestión de Clientes</div>
+                        <button class="btn btn-primary" id="add-client-btn">Agregar Cliente</button>
                     </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-funnel-dollar"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Embudos de Ventas</h3>
-                            <p>Diseña y automatiza embudos de ventas personalizados con seguimiento de cada etapa del proceso.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Gestión de Tareas</h3>
-                            <p>Asigna y realiza seguimiento a tareas, recordatorios y actividades con notificaciones en tiempo real.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-chart-pie"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Reportes Avanzados</h3>
-                            <p>Genera reportes personalizados con métricas de rendimiento, conversión y efectividad de tu equipo.</p>
-                        </div>
-                    </div>
+                    <table id="clients-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Empresa</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-tbody">
+                            <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
-            <div class="tab-content" id="databases-content">
-                <div class="capability-grid">
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-plug"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Conexión Multiplataforma</h3>
-                            <p>Conecta con MySQL, PostgreSQL, MongoDB, SQL Server y más desde una interfaz unificada.</p>
-                        </div>
+            <!-- Campaigns Tab -->
+            <div class="tab-content" id="campaigns-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Gestión de Campañas</div>
+                        <button class="btn btn-primary" id="add-campaign-btn">Nueva Campaña</button>
                     </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Consultas Avanzadas</h3>
-                            <p>Ejecuta consultas SQL y NoSQL con nuestro editor intuitivo y visualiza resultados en tiempo real.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-sync"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Sincronización en Tiempo Real</h3>
-                            <p>Mantén tus datos sincronizados automáticamente entre diferentes sistemas y bases de datos.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Backup Automatizado</h3>
-                            <p>Realiza backups automáticos de tus bases de datos con políticas de retención personalizables.</p>
-                        </div>
-                    </div>
+                    <table id="campaigns-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Canal</th>
+                                <th>Presupuesto</th>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaigns-tbody">
+                            <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
-            <div class="tab-content" id="marketing-content">
-                <div class="capability-grid">
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Email Marketing</h3>
-                            <p>Crea y envía campañas de email marketing segmentadas con plantillas responsivas y análisis de rendimiento.</p>
-                        </div>
+            <!-- Feedback Tab -->
+            <div class="tab-content" id="feedback-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Feedback de Experiencia de Usuario</div>
+                        <button class="btn btn-primary" id="add-feedback-btn">Agregar Feedback</button>
                     </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Automatización de Campañas</h3>
-                            <p>Diseña flujos de automatización basados en comportamientos de usuarios y desencadenantes específicos.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Análisis de ROI</h3>
-                            <p>Mide el retorno de inversión de tus campañas con seguimiento de conversiones y atribución multicanal.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-user-tag"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Segmentación Avanzada</h3>
-                            <p>Crea segmentos de audiencia dinámicos basados en comportamientos, datos demográficos y historial de interacciones.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="ux-content">
-                <div class="capability-grid">
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Mapas de Calor</h3>
-                            <p>Visualiza el comportamiento de los usuarios en tu sitio web con mapas de calor de clics, desplazamiento y movimiento.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Grabaciones de Sesiones</h3>
-                            <p>Observa grabaciones de sesiones reales de usuarios para identificar puntos de fricción y oportunidades de mejora.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-poll"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Encuestas de Satisfacción</h3>
-                            <p>Implementa encuestas de satisfacción (NPS, CSAT) en puntos clave de la experiencia del usuario.</p>
-                        </div>
-                    </div>
-                    <div class="capability-item">
-                        <div class="capability-icon">
-                            <i class="fas fa-road"></i>
-                        </div>
-                        <div class="capability-content">
-                            <h3>Análisis de Embudos</h3>
-                            <p>Identifica cuellos de botella en tus embudos de conversión y optimiza la experiencia del usuario.</p>
-                        </div>
-                    </div>
+                    <table id="feedback-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Puntuación</th>
+                                <th>Comentarios</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedback-tbody">
+                            <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing -->
-    <section class="pricing" id="pricing">
-        <div class="container">
-            <div class="section-title">
-                <h2>Planes y Precios</h2>
-                <p>Elige el plan que mejor se adapte a las necesidades de tu empresa</p>
+    <!-- Client Modal -->
+    <div class="modal" id="client-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="client-modal-title">Agregar Cliente</h3>
+                <span class="close">&times;</span>
             </div>
-            
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Básico</h3>
-                        <div class="pricing-price">$29<span class="pricing-period">/mes</span></div>
+            <form id="client-form">
+                <input type="hidden" id="client-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="client-name">Nombre</label>
+                        <input type="text" class="form-control" id="client-name" required>
                     </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Hasta 1,000 contactos</li>
-                        <li><i class="fas fa-check"></i> 1 Base de datos conectada</li>
-                        <li><i class="fas fa-check"></i> Email marketing básico</li>
-                        <li><i class="fas fa-check"></i> Dashboard estándar</li>
-                        <li><i class="fas fa-times"></i> Análisis de UX</li>
-                        <li><i class="fas fa-times"></i> Automatizaciones</li>
-                    </ul>
-                    <a href="#" class="btn btn-primary">Comenzar Prueba</a>
-                </div>
-                
-                <div class="pricing-card featured">
-                    <div class="pricing-badge">Más Popular</div>
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Profesional</h3>
-                        <div class="pricing-price">$79<span class="pricing-period">/mes</span></div>
+                    <div class="form-group">
+                        <label class="form-label" for="client-email">Email</label>
+                        <input type="email" class="form-control" id="client-email" required>
                     </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Hasta 10,000 contactos</li>
-                        <li><i class="fas fa-check"></i> 5 Bases de datos conectadas</li>
-                        <li><i class="fas fa-check"></i> Email marketing avanzado</li>
-                        <li><i class="fas fa-check"></i> Dashboard personalizable</li>
-                        <li><i class="fas fa-check"></i> Análisis básico de UX</li>
-                        <li><i class="fas fa-check"></i> Automatizaciones limitadas</li>
-                    </ul>
-                    <a href="#" class="btn btn-primary">Comenzar Prueba</a>
                 </div>
-                
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Empresarial</h3>
-                        <div class="pricing-price">$199<span class="pricing-period">/mes</span></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="client-phone">Teléfono</label>
+                        <input type="text" class="form-control" id="client-phone">
                     </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Contactos ilimitados</li>
-                        <li><i class="fas fa-check"></i> Bases de datos ilimitadas</li>
-                        <li><i class="fas fa-check"></i> Marketing automation completo</li>
-                        <li><i class="fas fa-check"></i> Dashboard avanzado</li>
-                        <li><i class="fas fa-check"></i> Análisis completo de UX</li>
-                        <li><i class="fas fa-check"></i> Automatizaciones ilimitadas</li>
-                    </ul>
-                    <a href="#" class="btn btn-primary">Comenzar Prueba</a>
+                    <div class="form-group">
+                        <label class="form-label" for="client-company">Empresa</label>
+                        <input type="text" class="form-control" id="client-company">
+                    </div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label class="form-label" for="client-status">Estado</label>
+                    <select class="form-control" id="client-status">
+                        <option value="active">Activo</option>
+                        <option value="inactive">Inactivo</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-client">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
         </div>
-    </section>
+    </div>
 
-    <!-- Testimonials -->
-    <section class="testimonials" id="testimonials">
-        <div class="container">
-            <div class="section-title">
-                <h2>Lo que dicen nuestros clientes</h2>
-                <p>Descubre cómo DataConecta ha transformado la gestión de datos en empresas como la tuya</p>
+    <!-- Campaign Modal -->
+    <div class="modal" id="campaign-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="campaign-modal-title">Nueva Campaña</h3>
+                <span class="close">&times;</span>
             </div>
-            
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        "DataConecta ha revolucionado nuestra forma de gestionar clientes. La integración con nuestras bases de datos existentes fue impecable y el dashboard unificado nos permite tomar decisiones basadas en datos en tiempo real."
+            <form id="campaign-form">
+                <input type="hidden" id="campaign-id">
+                <div class="form-group">
+                    <label class="form-label" for="campaign-name">Nombre</label>
+                    <input type="text" class="form-control" id="campaign-name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="campaign-channel">Canal</label>
+                        <select class="form-control" id="campaign-channel" required>
+                            <option value="email">Email Marketing</option>
+                            <option value="social">Redes Sociales</option>
+                            <option value="seo">SEO</option>
+                            <option value="ads">Publicidad Pagada</option>
+                            <option value="content">Marketing de Contenidos</option>
+                        </select>
                     </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">ML</div>
-                        <div class="author-info">
-                            <h4>María López</h4>
-                            <p>Directora de Marketing, TechSolutions</p>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label" for="campaign-budget">Presupuesto</label>
+                        <input type="number" class="form-control" id="campaign-budget" min="0" step="0.01" required>
                     </div>
                 </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        "Como startup, necesitábamos una solución todo-en-uno que escalara con nosotros. DataConecta no solo cumplió con nuestras expectativas, sino que nos ha permitido crecer de forma más eficiente y data-driven."
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="campaign-start">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="campaign-start" required>
                     </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">CR</div>
-                        <div class="author-info">
-                            <h4>Carlos Rodríguez</h4>
-                            <p>CEO, Innovación Digital</p>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label" for="campaign-end">Fecha Fin</label>
+                        <input type="date" class="form-control" id="campaign-end" required>
                     </div>
                 </div>
-                
-                <div class="testimonial-card">
-                    <div class="testimonial-content">
-                        "Las herramientas de análisis de UX nos han permitido identificar puntos de fricción que no habíamos detectado antes. Hemos mejorado nuestra tasa de conversión en un 28% desde que implementamos DataConecta."
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">AM</div>
-                        <div class="author-info">
-                            <h4>Ana Martínez</h4>
-                            <p>Directora de Producto, EcommercePlus</p>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label" for="campaign-status">Estado</label>
+                    <select class="form-control" id="campaign-status">
+                        <option value="active">Activa</option>
+                        <option value="inactive">Inactiva</option>
+                        <option value="completed">Completada</option>
+                    </select>
                 </div>
-            </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-campaign">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
         </div>
-    </section>
+    </div>
 
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <h2>¿Listo para transformar tu gestión de datos?</h2>
-            <p>Únete a miles de empresas que ya utilizan DataConecta para optimizar sus operaciones y tomar mejores decisiones.</p>
-            <a href="#" class="btn btn-outline">Comenzar Prueba Gratuita</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>DataConecta</h3>
-                    <p>La plataforma integral para gestión de datos, marketing y experiencia de usuario.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                    </div>
-                </div>
-                <div class="footer-column">
-                    <h3>Producto</h3>
-                    <ul>
-                        <li><a href="#">Características</a></li>
-                        <li><a href="#">Precios</a></li>
-                        <li><a href="#">Casos de Éxito</a></li>
-                        <li><a href="#">Seguridad</a></li>
-                        <li><a href="#">API</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Recursos</h3>
-                    <ul>
-                        <li><a href="#">Documentación</a></li>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Centro de Ayuda</a></li>
-                        <li><a href="#">Community</a></li>
-                        <li><a href="#">Webinars</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Empresa</h3>
-                    <ul>
-                        <li><a href="#">Nosotros</a></li>
-                        <li><a href="#">Carreras</a></li>
-                        <li><a href="#">Contacto</a></li>
-                        <li><a href="#">Socios</a></li>
-                        <li><a href="#">Prensa</a></li>
-                    </ul>
-                </div>
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedback-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="feedback-modal-title">Agregar Feedback</h3>
+                <span class="close">&times;</span>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2023 DataConecta. Todos los derechos reservados. | <a href="#">Términos de Servicio</a> | <a href="#">Política de Privacidad</a></p>
-            </div>
+            <form id="feedback-form">
+                <input type="hidden" id="feedback-id">
+                <div class="form-group">
+                    <label class="form-label" for="feedback-user">Usuario</label>
+                    <input type="text" class="form-control" id="feedback-user" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="feedback-rating">Puntuación (1-10)</label>
+                    <input type="number" class="form-control" id="feedback-rating" min="1" max="10" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="feedback-comments">Comentarios</label>
+                    <textarea class="form-control" id="feedback-comments" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="feedback-date">Fecha</label>
+                    <input type="date" class="form-control" id="feedback-date" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="feedback-status">Estado</label>
+                    <select class="form-control" id="feedback-status">
+                        <option value="reviewed">Revisado</option>
+                        <option value="pending">Pendiente</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-feedback">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
         </div>
-    </footer>
+    </div>
 
     <script>
-        // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
+        // Datos iniciales de ejemplo
+        const initialData = {
+            clients: [
+                {
+                    id: 1,
+                    name: "María González",
+                    email: "maria.gonzalez@empresa.com",
+                    phone: "+34 612 345 678",
+                    company: "Tech Solutions",
+                    status: "active"
+                },
+                {
+                    id: 2,
+                    name: "Carlos Rodríguez",
+                    email: "carlos.rodriguez@consultores.com",
+                    phone: "+34 623 456 789",
+                    company: "Consultores Asociados",
+                    status: "active"
+                },
+                {
+                    id: 3,
+                    name: "Ana Martínez",
+                    email: "ana.martinez@innovacion.com",
+                    phone: "+34 634 567 890",
+                    company: "Innovación Digital",
+                    status: "inactive"
                 }
-            });
-        });
-        
-        // Tab functionality
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                
-                // Add active class to clicked tab
-                tab.classList.add('active');
-                
-                // Hide all tab contents
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                
-                // Show the corresponding tab content
-                const tabId = tab.getAttribute('data-tab');
-                document.getElementById(`${tabId}-content`).classList.add('active');
-            });
-        });
-        
-        // Simple animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            ],
+            campaigns: [
+                {
+                    id: 1,
+                    name: "Lanzamiento Producto X",
+                    channel: "email",
+                    budget: 5000,
+                    start: "2023-05-01",
+                    end: "2023-06-30",
+                    status: "active"
+                },
+                {
+                    id: 2,
+                    name: "Webinar UX Avanzado",
+                    channel: "social",
+                    budget: 2500,
+                    start: "2023-04-15",
+                    end: "2023-05-15",
+                    status: "completed"
+                }
+            ],
+            feedback: [
+                {
+                    id: 1,
+                    user: "Usuario Anónimo",
+                    rating: 9,
+                    comments: "Interfaz intuitiva y fácil de usar",
+                    date: "2023-05-18",
+                    status: "reviewed"
+                },
+                {
+                    id: 2,
+                    user: "Carlos López",
+                    rating: 7,
+                    comments: "Funcionalidades útiles pero lenta en móvil",
+                    date: "2023-05-16",
+                    status: "reviewed"
+                },
+                {
+                    id: 3,
+                    user: "Usuario Anónimo",
+                    rating: 8,
+                    comments: "Buen diseño pero falta opción de exportación",
+                    date: "2023-05-14",
+                    status: "pending"
+                }
+            ]
         };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+
+        // Estado de la aplicación
+        let appState = {
+            clients: [],
+            campaigns: [],
+            feedback: [],
+            nextId: {
+                clients: 1,
+                campaigns: 1,
+                feedback: 1
+            }
+        };
+
+        // Inicializar la aplicación
+        function initApp() {
+            loadData();
+            renderDashboard();
+            renderClients();
+            renderCampaigns();
+            renderFeedback();
+            setupEventListeners();
+        }
+
+        // Cargar datos del localStorage o inicializar con datos de ejemplo
+        function loadData() {
+            const savedData = localStorage.getItem('dataconecta-crm');
+            
+            if (savedData) {
+                appState = JSON.parse(savedData);
+            } else {
+                appState.clients = initialData.clients;
+                appState.campaigns = initialData.campaigns;
+                appState.feedback = initialData.feedback;
+                
+                // Calcular el siguiente ID para cada tipo
+                appState.nextId.clients = Math.max(...appState.clients.map(c => c.id)) + 1;
+                appState.nextId.campaigns = Math.max(...appState.campaigns.map(c => c.id)) + 1;
+                appState.nextId.feedback = Math.max(...appState.feedback.map(f => f.id)) + 1;
+                
+                saveData();
+            }
+        }
+
+        // Guardar datos en localStorage
+        function saveData() {
+            localStorage.setItem('dataconecta-crm', JSON.stringify(appState));
+        }
+
+        // Renderizar el dashboard con estadísticas
+        function renderDashboard() {
+            document.getElementById('total-clients').textContent = appState.clients.length;
+            
+            const activeCampaigns = appState.campaigns.filter(c => c.status === 'active').length;
+            document.getElementById('active-campaigns').textContent = activeCampaigns;
+            
+            document.getElementById('total-feedback').textContent = appState.feedback.length;
+            
+            if (appState.feedback.length > 0) {
+                const avgRating = appState.feedback.reduce((sum, f) => sum + f.rating, 0) / appState.feedback.length;
+                const satisfactionRate = (avgRating / 10 * 100).toFixed(0);
+                document.getElementById('satisfaction-rate').textContent = `${satisfactionRate}%`;
+            } else {
+                document.getElementById('satisfaction-rate').textContent = '0%';
+            }
+        }
+
+        // Renderizar la tabla de clientes
+        function renderClients() {
+            const tbody = document.getElementById('clients-tbody');
+            tbody.innerHTML = '';
+            
+            appState.clients.forEach(client => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${client.name}</td>
+                    <td>${client.email}</td>
+                    <td>${client.phone}</td>
+                    <td>${client.company}</td>
+                    <td><span class="status ${client.status}">${client.status === 'active' ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn btn-outline edit-client" data-id="${client.id}">Editar</button>
+                        <button class="btn btn-danger delete-client" data-id="${client.id}">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Renderizar la tabla de campañas
+        function renderCampaigns() {
+            const tbody = document.getElementById('campaigns-tbody');
+            tbody.innerHTML = '';
+            
+            appState.campaigns.forEach(campaign => {
+                const tr = document.createElement('tr');
+                const channelNames = {
+                    email: 'Email Marketing',
+                    social: 'Redes Sociales',
+                    seo: 'SEO',
+                    ads: 'Publicidad Pagada',
+                    content: 'Marketing de Contenidos'
+                };
+                
+                const statusNames = {
+                    active: 'Activa',
+                    inactive: 'Inactiva',
+                    completed: 'Completada'
+                };
+                
+                tr.innerHTML = `
+                    <td>${campaign.name}</td>
+                    <td>${channelNames[campaign.channel]}</td>
+                    <td>$${campaign.budget.toLocaleString()}</td>
+                    <td>${formatDate(campaign.start)}</td>
+                    <td>${formatDate(campaign.end)}</td>
+                    <td><span class="status ${campaign.status}">${statusNames[campaign.status]}</span></td>
+                    <td>
+                        <button class="btn btn-outline edit-campaign" data-id="${campaign.id}">Editar</button>
+                        <button class="btn btn-danger delete-campaign" data-id="${campaign.id}">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Renderizar la tabla de feedback
+        function renderFeedback() {
+            const tbody = document.getElementById('feedback-tbody');
+            tbody.innerHTML = '';
+            
+            appState.feedback.forEach(feedback => {
+                const tr = document.createElement('tr');
+                const statusNames = {
+                    reviewed: 'Revisado',
+                    pending: 'Pendiente'
+                };
+                
+                // Crear estrellas para la puntuación
+                let stars = '';
+                for (let i = 1; i <= 10; i++) {
+                    stars += i <= feedback.rating ? '★' : '☆';
+                }
+                
+                tr.innerHTML = `
+                    <td>${feedback.user}</td>
+                    <td>${stars} (${feedback.rating}/10)</td>
+                    <td>${feedback.comments}</td>
+                    <td>${formatDate(feedback.date)}</td>
+                    <td><span class="status ${feedback.status}">${statusNames[feedback.status]}</span></td>
+                    <td>
+                        <button class="btn btn-outline edit-feedback" data-id="${feedback.id}">Editar</button>
+                        <button class="btn btn-danger delete-feedback" data-id="${feedback.id}">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Formatear fecha para mostrar
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('es-ES', options);
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}-content`).classList.add('active');
+                });
+            });
+            
+            // Botones para agregar
+            document.getElementById('add-client-btn').addEventListener('click', () => openClientModal());
+            document.getElementById('add-campaign-btn').addEventListener('click', () => openCampaignModal());
+            document.getElementById('add-feedback-btn').addEventListener('click', () => openFeedbackModal());
+            
+            // Formularios
+            document.getElementById('client-form').addEventListener('submit', handleClientSubmit);
+            document.getElementById('campaign-form').addEventListener('submit', handleCampaignSubmit);
+            document.getElementById('feedback-form').addEventListener('submit', handleFeedbackSubmit);
+            
+            // Botones de cancelar
+            document.getElementById('cancel-client').addEventListener('click', () => closeModal('client-modal'));
+            document.getElementById('cancel-campaign').addEventListener('click', () => closeModal('campaign-modal'));
+            document.getElementById('cancel-feedback').addEventListener('click', () => closeModal('feedback-modal'));
+            
+            // Cerrar modales con la X
+            document.querySelectorAll('.close').forEach(closeBtn => {
+                closeBtn.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Cerrar modales al hacer clic fuera
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
                 }
             });
-        }, observerOptions);
-        
-        // Observe feature cards for animation
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.5s, transform 0.5s';
-            observer.observe(card);
-        });
-        
-        // Observe pricing cards for animation
-        document.querySelectorAll('.pricing-card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.5s, transform 0.5s';
-            observer.observe(card);
-        });
-        
-        // Observe testimonial cards for animation
-        document.querySelectorAll('.testimonial-card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.5s, transform 0.5s';
-            observer.observe(card);
+            
+            // Delegación de eventos para botones de editar y eliminar
+            document.getElementById('clients-tbody').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-client')) {
+                    const id = parseInt(e.target.dataset.id);
+                    editClient(id);
+                } else if (e.target.classList.contains('delete-client')) {
+                    const id = parseInt(e.target.dataset.id);
+                    deleteClient(id);
+                }
+            });
+            
+            document.getElementById('campaigns-tbody').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-campaign')) {
+                    const id = parseInt(e.target.dataset.id);
+                    editCampaign(id);
+                } else if (e.target.classList.contains('delete-campaign')) {
+                    const id = parseInt(e.target.dataset.id);
+                    deleteCampaign(id);
+                }
+            });
+            
+            document.getElementById('feedback-tbody').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-feedback')) {
+                    const id = parseInt(e.target.dataset.id);
+                    editFeedback(id);
+                } else if (e.target.classList.contains('delete-feedback')) {
+                    const id = parseInt(e.target.dataset.id);
+                    deleteFeedback(id);
+                }
+            });
+            
+            // Exportar datos
+            document.getElementById('export-data').addEventListener('click', exportData);
+            
+            // Importar datos
+            document.getElementById('import-data').addEventListener('click', () => {
+                document.getElementById('import-file').click();
+            });
+            
+            // Limpiar datos
+            document.getElementById('clear-data').addEventListener('click', clearData);
+        }
+
+        // Funciones para abrir modales
+        function openClientModal(client = null) {
+            const modal = document.getElementById('client-modal');
+            const title = document.getElementById('client-modal-title');
+            const form = document.getElementById('client-form');
+            
+            if (client) {
+                title.textContent = 'Editar Cliente';
+                document.getElementById('client-id').value = client.id;
+                document.getElementById('client-name').value = client.name;
+                document.getElementById('client-email').value = client.email;
+                document.getElementById('client-phone').value = client.phone;
+                document.getElementById('client-company').value = client.company;
+                document.getElementById('client-status').value = client.status;
+            } else {
+                title.textContent = 'Agregar Cliente';
+                form.reset();
+                document.getElementById('client-id').value = '';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function openCampaignModal(campaign = null) {
+            const modal = document.getElementById('campaign-modal');
+            const title = document.getElementById('campaign-modal-title');
+            const form = document.getElementById('campaign-form');
+            
+            if (campaign) {
+                title.textContent = 'Editar Campaña';
+                document.getElementById('campaign-id').value = campaign.id;
+                document.getElementById('campaign-name').value = campaign.name;
+                document.getElementById('campaign-channel').value = campaign.channel;
+                document.getElementById('campaign-budget').value = campaign.budget;
+                document.getElementById('campaign-start').value = campaign.start;
+                document.getElementById('campaign-end').value = campaign.end;
+                document.getElementById('campaign-status').value = campaign.status;
+            } else {
+                title.textContent = 'Nueva Campaña';
+                form.reset();
+                document.getElementById('campaign-id').value = '';
+                
+                // Establecer fechas por defecto
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('campaign-start').value = today;
+                
+                const nextMonth = new Date();
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                document.getElementById('campaign-end').value = nextMonth.toISOString().split('T')[0];
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function openFeedbackModal(feedback = null) {
+            const modal = document.getElementById('feedback-modal');
+            const title = document.getElementById('feedback-modal-title');
+            const form = document.getElementById('feedback-form');
+            
+            if (feedback) {
+                title.textContent = 'Editar Feedback';
+                document.getElementById('feedback-id').value = feedback.id;
+                document.getElementById('feedback-user').value = feedback.user;
+                document.getElementById('feedback-rating').value = feedback.rating;
+                document.getElementById('feedback-comments').value = feedback.comments;
+                document.getElementById('feedback-date').value = feedback.date;
+                document.getElementById('feedback-status').value = feedback.status;
+            } else {
+                title.textContent = 'Agregar Feedback';
+                form.reset();
+                document.getElementById('feedback-id').value = '';
+                
+                // Establecer fecha por defecto (hoy)
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('feedback-date').value = today;
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        // Funciones para cerrar modales
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Manejadores de formularios
+        function handleClientSubmit(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('client-id').value;
+            const clientData = {
+                name: document.getElementById('client-name').value,
+                email: document.getElementById('client-email').value,
+                phone: document.getElementById('client-phone').value,
+                company: document.getElementById('client-company').value,
+                status: document.getElementById('client-status').value
+            };
+            
+            if (id) {
+                // Editar cliente existente
+                updateClient(parseInt(id), clientData);
+            } else {
+                // Agregar nuevo cliente
+                addClient(clientData);
+            }
+            
+            closeModal('client-modal');
+        }
+
+        function handleCampaignSubmit(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('campaign-id').value;
+            const campaignData = {
+                name: document.getElementById('campaign-name').value,
+                channel: document.getElementById('campaign-channel').value,
+                budget: parseFloat(document.getElementById('campaign-budget').value),
+                start: document.getElementById('campaign-start').value,
+                end: document.getElementById('campaign-end').value,
+                status: document.getElementById('campaign-status').value
+            };
+            
+            if (id) {
+                // Editar campaña existente
+                updateCampaign(parseInt(id), campaignData);
+            } else {
+                // Agregar nueva campaña
+                addCampaign(campaignData);
+            }
+            
+            closeModal('campaign-modal');
+        }
+
+        function handleFeedbackSubmit(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('feedback-id').value;
+            const feedbackData = {
+                user: document.getElementById('feedback-user').value,
+                rating: parseInt(document.getElementById('feedback-rating').value),
+                comments: document.getElementById('feedback-comments').value,
+                date: document.getElementById('feedback-date').value,
+                status: document.getElementById('feedback-status').value
+            };
+            
+            if (id) {
+                // Editar feedback existente
+                updateFeedback(parseInt(id), feedbackData);
+            } else {
+                // Agregar nuevo feedback
+                addFeedback(feedbackData);
+            }
+            
+            closeModal('feedback-modal');
+        }
+
+        // Funciones CRUD para clientes
+        function addClient(clientData) {
+            const newClient = {
+                id: appState.nextId.clients++,
+                ...clientData
+            };
+            
+            appState.clients.push(newClient);
+            saveData();
+            renderClients();
+            renderDashboard();
+            showAlert('success', 'Cliente agregado correctamente');
+        }
+
+        function editClient(id) {
+            const client = appState.clients.find(c => c.id === id);
+            if (client) {
+                openClientModal(client);
+            }
+        }
+
+        function updateClient(id, clientData) {
+            const index = appState.clients.findIndex(c => c.id === id);
+            if (index !== -1) {
+                appState.clients[index] = { id, ...clientData };
+                saveData();
+                renderClients();
+                renderDashboard();
+                showAlert('success', 'Cliente actualizado correctamente');
+            }
+        }
+
+        function deleteClient(id) {
+            if (confirm('¿Está seguro de que desea eliminar este cliente?')) {
+                appState.clients = appState.clients.filter(c => c.id !== id);
+                saveData();
+                renderClients();
+                renderDashboard();
+                showAlert('success', 'Cliente eliminado correctamente');
+            }
+        }
+
+        // Funciones CRUD para campañas
+        function addCampaign(campaignData) {
+            const newCampaign = {
+                id: appState.nextId.campaigns++,
+                ...campaignData
+            };
+            
+            appState.campaigns.push(newCampaign);
+            saveData();
+            renderCampaigns();
+            renderDashboard();
+            showAlert('success', 'Campaña agregada correctamente');
+        }
+
+        function editCampaign(id) {
+            const campaign = appState.campaigns.find(c => c.id === id);
+            if (campaign) {
+                openCampaignModal(campaign);
+            }
+        }
+
+        function updateCampaign(id, campaignData) {
+            const index = appState.campaigns.findIndex(c => c.id === id);
+            if (index !== -1) {
+                appState.campaigns[index] = { id, ...campaignData };
+                saveData();
+                renderCampaigns();
+                renderDashboard();
+                showAlert('success', 'Campaña actualizada correctamente');
+            }
+        }
+
+        function deleteCampaign(id) {
+            if (confirm('¿Está seguro de que desea eliminar esta campaña?')) {
+                appState.campaigns = appState.campaigns.filter(c => c.id !== id);
+                saveData();
+                renderCampaigns();
+                renderDashboard();
+                showAlert('success', 'Campaña eliminada correctamente');
+            }
+        }
+
+        // Funciones CRUD para feedback
+        function addFeedback(feedbackData) {
+            const newFeedback = {
+                id: appState.nextId.feedback++,
+                ...feedbackData
+            };
+            
+            appState.feedback.push(newFeedback);
+            saveData();
+            renderFeedback();
+            renderDashboard();
+            showAlert('success', 'Feedback agregado correctamente');
+        }
+
+        function editFeedback(id) {
+            const feedback = appState.feedback.find(f => f.id === id);
+            if (feedback) {
+                openFeedbackModal(feedback);
+            }
+        }
+
+        function updateFeedback(id, feedbackData) {
+            const index = appState.feedback.findIndex(f => f.id === id);
+            if (index !== -1) {
+                appState.feedback[index] = { id, ...feedbackData };
+                saveData();
+                renderFeedback();
+                renderDashboard();
+                showAlert('success', 'Feedback actualizado correctamente');
+            }
+        }
+
+        function deleteFeedback(id) {
+            if (confirm('¿Está seguro de que desea eliminar este feedback?')) {
+                appState.feedback = appState.feedback.filter(f => f.id !== id);
+                saveData();
+                renderFeedback();
+                renderDashboard();
+                showAlert('success', 'Feedback eliminado correctamente');
+            }
+        }
+
+        // Mostrar alertas
+        function showAlert(type, message) {
+            const alert = document.getElementById(`${type}-alert`);
+            alert.textContent = message;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Exportar datos
+        function exportData() {
+            const dataStr = JSON.stringify(appState, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'dataconecta-crm-backup.json';
+            link.click();
+            
+            showAlert('success', 'Datos exportados correctamente');
+        }
+
+        // Importar datos
+        function setupImport() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json';
+            fileInput.id = 'import-file';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+            
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const importedData = JSON.parse(event.target.result);
+                            
+                            if (confirm('¿Está seguro de que desea importar estos datos? Se sobrescribirán los datos actuales.')) {
+                                appState = importedData;
+                                saveData();
+                                renderClients();
+                                renderCampaigns();
+                                renderFeedback();
+                                renderDashboard();
+                                showAlert('success', 'Datos importados correctamente');
+                            }
+                        } catch (error) {
+                            showAlert('error', 'Error al importar los datos. El archivo puede estar corrupto.');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+                
+                // Resetear el input
+                fileInput.value = '';
+            });
+        }
+
+        // Limpiar datos
+        function clearData() {
+            if (confirm('¿Está seguro de que desea eliminar todos los datos? Esta acción no se puede deshacer.')) {
+                localStorage.removeItem('dataconecta-crm');
+                appState = {
+                    clients: [],
+                    campaigns: [],
+                    feedback: [],
+                    nextId: {
+                        clients: 1,
+                        campaigns: 1,
+                        feedback: 1
+                    }
+                };
+                
+                renderClients();
+                renderCampaigns();
+                renderFeedback();
+                renderDashboard();
+                showAlert('success', 'Todos los datos han sido eliminados');
+            }
+        }
+
+        // Inicializar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            setupImport();
         });
     </script>
 </body>
