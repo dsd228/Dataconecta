@@ -1,689 +1,683 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>DataConecta CRM | Gestión de contactos</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root{
-            --primary:#3498db; --primary-dark:#2b83c6; --accent:#9b59b6;
-            --bg:#f7fbff; --card:#ffffff; --muted:#7f8c8d; --border:#e6eef6;
-            --success:#2ecc71; --danger:#e74c3c;
-        }
-        *{box-sizing:border-box}
-        body{font-family:Inter, "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial; margin:0; background:var(--bg); color:#263238}
-        .container{max-width:1200px;margin:0 auto;padding:18px}
-        header{background:linear-gradient(135deg,#2c3e50,#203140);color:#fff;padding:14px 0;position:sticky;top:0;z-index:50;box-shadow:0 4px 14px rgba(8,20,30,0.08)}
-        .header-inner{max-width:1200px;margin:0 auto;padding:0 18px;display:flex;align-items:center;justify-content:space-between}
-        .brand{display:flex;align-items:center;gap:10px;font-weight:700}
-        .brand i{color:var(--primary);font-size:20px}
-        nav{display:flex;gap:8px;align-items:center}
-        nav a{color:#fff;text-decoration:none;padding:8px 10px;border-radius:6px;font-size:14px}
-        nav a.active, nav a:hover{background:rgba(255,255,255,0.06)}
-        .btn{display:inline-block;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
-        .btn-primary{background:var(--primary);color:#fff}
-        .btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.12);color:#fff}
-        .hero{background:var(--card);border-radius:12px;padding:20px;margin-top:18px;box-shadow:0 8px 32px rgba(27,40,54,0.06);display:flex;gap:20px}
-        .hero-left{flex:1}
-        .hero-title{font-size:22px;margin-bottom:6px;color:#123}
-        .hero-sub{color:var(--muted);margin-bottom:12px}
-        .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
-        .panel{background:var(--card);padding:14px;border-radius:10px;border:1px solid var(--border);box-shadow:0 6px 24px rgba(20,40,60,0.04)}
-        .panel h3{margin:0 0 10px 0}
-        .controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
-        .input, select{padding:10px;border-radius:8px;border:1px solid var(--border);background:white;min-width:0}
-        table{width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden}
-        th,td{padding:10px;border-bottom:1px solid #f0f6fb;text-align:left;font-size:14px}
-        th{background:#fbfeff;color:var(--muted);font-weight:600}
-        .muted{color:var(--muted);font-size:13px}
-        .actions button{margin-right:6px}
-        .status{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:600;font-size:12px}
-        .status.lead{background:rgba(52,152,219,0.08);color:var(--primary)}
-        .status.prospect{background:rgba(46,204,113,0.08);color:var(--success)}
-        .right-col{display:flex;flex-direction:column;gap:12px}
-        .small{font-size:13px;color:var(--muted)}
-        .segment-controls{display:flex;flex-direction:column;gap:8px}
-        .pipeline{display:flex;gap:12px;overflow:auto;padding:12px 6px}
-        .stage{min-width:220px;background:#fbfeff;padding:10px;border-radius:8px;border:1px dashed #e9f3fb;flex:0 0 220px}
-        .stage h4{margin:0 0 8px 0;font-size:14px}
-        .deal{background:white;padding:8px;border-radius:6px;margin-bottom:8px;border:1px solid #eef7ff;cursor:grab}
-        .deal .meta{font-size:13px;color:var(--muted)}
-        .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,10,20,0.45);z-index:200}
-        .modal-box{background:white;padding:18px;border-radius:10px;max-width:720px;width:100%;box-shadow:0 12px 40px rgba(6,14,28,0.2)}
-        .form-row{display:flex;gap:10px}
-        .form-row .col{flex:1}
-        .mb8{margin-bottom:8px}
-        .hidden{display:none}
-        footer{max-width:1200px;margin:18px auto;padding:0 18px 40px;color:var(--muted);font-size:13px}
-        @media (max-width:980px){ .grid{grid-template-columns:1fr} .hero{flex-direction:column} .pipeline{flex-direction:row;overflow:auto} .stage{min-width:180px} }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DataConecta CRM — Local (Completo)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{
+      --primary:#2b8fe6; --dark:#153043; --muted:#6b7280; --bg:#f6fbff; --card:#fff; --border:#e6eef6; --success:#2ecc71; --danger:#e74c3c;
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, 'Segoe UI', Roboto, Arial; margin:0; background:var(--bg); color:#0f1724}
+    .wrap{max-width:1200px;margin:18px auto;padding:16px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+    .brand{display:flex;gap:10px;align-items:center}
+    .brand i{font-size:20px;color:var(--primary)}
+    nav{display:flex;gap:8px;align-items:center}
+    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-ghost{background:transparent;border:1px solid var(--border)}
+    .layout{display:grid;grid-template-columns:1fr 360px;gap:16px}
+    .panel{background:var(--card);border-radius:10px;padding:14px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(12,35,60,0.04)}
+    .controls{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+    input,input[type=text],select{padding:8px;border-radius:8px;border:1px solid var(--border);background:#fff}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #f0f6fb;font-size:14px}
+    th{background:#fbfeff;color:var(--muted);text-align:left}
+    .muted{color:var(--muted);font-size:13px}
+    .status{padding:6px 10px;border-radius:999px;font-weight:600;font-size:12px}
+    .status.Lead{background:rgba(43,143,230,0.08);color:var(--primary)}
+    .status.Prospecto{background:rgba(46,204,113,0.08);color:var(--success)}
+    .pipeline{display:flex;gap:12px;overflow:auto;padding:10px}
+    .stage{min-width:220px;border-radius:8px;padding:8px;background:#fbfeff;border:1px dashed #e9f3fb}
+    .deal{background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;border:1px solid #eef7ff;cursor:grab}
+    .right-col{display:flex;flex-direction:column;gap:12px}
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+    /* modals */
+    .modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,10,20,0.45);z-index:1200}
+    .modal-card{background:#fff;padding:16px;border-radius:10px;width:100%;max-width:720px;box-shadow:0 12px 40px rgba(6,14,28,0.2)}
+    .form-row{display:flex;gap:8px}
+    .form-row .col{flex:1}
+    .toast-wrap{position:fixed;right:18px;bottom:18px;z-index:1300;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+    .toast{background:#111;color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.2)}
+    .save-indicator{font-size:13px;color:var(--muted);margin-left:10px}
+    .hidden{display:none}
+    @media (max-width:980px){ .layout{grid-template-columns:1fr} .right-col{order:2} }
+  </style>
 </head>
 <body>
+  <div class="wrap">
     <header>
-        <div class="header-inner">
-            <div class="brand"><i class="fas fa-database"></i><div>DataConecta</div></div>
-            <nav>
-                <a href="./index.html" class="active">CRM</a>
-                <a href="./editor.html">Editor</a>
-                <a href="./analitica.html">Analítica</a>
-                <button id="export-data" class="btn btn-outline">Exportar</button>
-                <button id="import-data" class="btn btn-outline">Importar</button>
-                <button id="clear-data" class="btn btn-outline" style="margin-left:6px;color:#ffdddd">Limpiar</button>
-            </nav>
-        </div>
+      <div class="brand"><i class="fas fa-database"></i><div><strong>DataConecta</strong><div class="small muted">CRM local (localStorage)</div></div></div>
+      <nav>
+        <button id="btn-export" class="btn btn-ghost" title="Exportar JSON"><i class="fas fa-file-export"></i></button>
+        <button id="btn-export-csv" class="btn btn-ghost" title="Exportar CSV"><i class="fas fa-file-csv"></i></button>
+        <button id="btn-import" class="btn btn-ghost" title="Importar"><i class="fas fa-file-import"></i></button>
+        <button id="btn-clear" class="btn btn-ghost" title="Limpiar datos"><i class="fas fa-trash"></i></button>
+        <button id="btn-undo" class="btn btn-ghost" title="Deshacer última acción"><i class="fas fa-undo"></i></button>
+        <div id="save-state" class="save-indicator">—</div>
+      </nav>
     </header>
 
-    <div class="container">
-        <section class="hero">
-            <div class="hero-left">
-                <div class="hero-title">Gestión de contactos</div>
-                <div class="hero-sub">Guarda y organiza todos los datos de tus clientes, leads y empresas. Permite ver historial de interacciones (emails, llamadas, reuniones, formularios) y segmentar por criterios (ubicación, etapa, tipo de cliente, comportamiento).</div>
-                <div style="display:flex;gap:8px">
-                    <button id="add-contact-btn" class="btn btn-primary">Agregar contacto</button>
-                    <button id="open-segment" class="btn">Segmentar</button>
-                </div>
+    <main class="layout">
+      <section>
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <h3 style="margin:0">Gestión de contactos</h3>
+              <div class="small muted">Guarda y organiza clientes, leads y empresas — historial, segmentación y pipeline</div>
             </div>
-            <aside style="width:360px">
-                <div class="panel">
-                    <strong>Resumen</strong>
-                    <div class="mb8 small" style="margin-top:10px">
-                        Total contactos: <strong id="total-contacts">0</strong><br>
-                        Oportunidades: <strong id="active-deals">0</strong><br>
-                        Tickets: <strong id="open-tickets">0</strong><br>
-                        Ingresos mes: <strong id="monthly-revenue">$0</strong>
-                    </div>
-                    <div class="small muted">Ej: Filtrar leads que abrieron email pero no compraron</div>
-                </div>
-            </aside>
-        </section>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="btn-add-contact" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar</button>
+            </div>
+          </div>
 
-        <div class="grid">
-            <main>
-                <div class="panel">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                        <h3>Gestión de Contactos</h3>
-                        <div class="small muted">CRUD + historial + segmentación</div>
-                    </div>
+          <div class="controls" style="margin-top:12px">
+            <input id="q" placeholder="Buscar por nombre, email o empresa" style="flex:1" />
+            <select id="filter-stage"><option value="">Todas las etapas</option><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select>
+            <button id="btn-filter" class="btn">Filtrar</button>
+            <button id="btn-reset" class="btn">Reset</button>
+          </div>
 
-                    <div class="controls" style="margin-top:12px">
-                        <input id="search-input" class="input" placeholder="Buscar por nombre, email, empresa" />
-                        <select id="filter-stage" class="input">
-                            <option value="">Todas las etapas</option>
-                            <option value="Lead">Lead</option>
-                            <option value="Contacto">Contacto</option>
-                            <option value="Prospecto">Prospecto</option>
-                            <option value="Cliente">Cliente</option>
-                        </select>
-                        <button id="btn-filter" class="btn">Aplicar</button>
-                        <button id="btn-reset" class="btn">Reset</button>
-                    </div>
-
-                    <div style="margin-top:12px; overflow:auto">
-                        <table id="contacts-table" role="table" aria-label="Lista de contactos">
-                            <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Empresa</th><th>Etapa</th><th>Última interacción</th><th>Acciones</th></tr></thead>
-                            <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">No hay contactos aún.</td></tr></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div style="display:flex;gap:12px;margin-top:12px">
-                    <div class="panel" style="flex:1">
-                        <h4>Comunicación y seguimiento</h4>
-                        <p class="muted">Email tracking, plantillas, chat y registros de llamadas/reuniones.</p>
-                        <div style="margin-top:8px">
-                            <table>
-                                <thead><tr><th>Contacto</th><th>Tipo</th><th>Resumen</th><th>Fecha</th></tr></thead>
-                                <tbody id="communications-tbody"><tr><td colspan="4" class="muted">No hay comunicaciones.</td></tr></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="panel" style="width:320px">
-                        <h4>Pipeline (vista rápida)</h4>
-                        <div class="small muted">Arrastra y suelta oportunidades entre etapas</div>
-                        <div style="margin-top:8px">
-                            <div class="pipeline" id="pipeline">
-                                <!-- stages injected here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </main>
-
-            <aside class="right-col">
-                <div class="panel">
-                    <h4>Segmentación</h4>
-                    <div class="segment-controls">
-                        <label class="small">Criterio</label>
-                        <select id="segment-criteria" class="input">
-                            <option value="location">Ubicación</option>
-                            <option value="funnel-stage">Etapa del Embudo</option>
-                            <option value="client-type">Tipo de Cliente</option>
-                            <option value="email-opened">Abrió Email</option>
-                            <option value="email-not-opened">No Abrió Email</option>
-                            <option value="purchased">Compró</option>
-                            <option value="not-purchased">No Compró</option>
-                        </select>
-                        <input id="segment-value" class="input" placeholder="Ej: Madrid, Lead, Cliente VIP" />
-                        <div style="display:flex;gap:8px">
-                            <button id="apply-segment" class="btn btn-primary" style="flex:1">Aplicar</button>
-                            <button id="cancel-segment" class="btn" style="flex:1">Reset</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <h4>Automatizaciones</h4>
-                    <p class="muted small">Crear flujos según comportamiento (emails, tareas, recordatorios).</p>
-                </div>
-
-                <div class="panel">
-                    <h4>Analítica</h4>
-                    <p class="muted small">Paneles personalizables con métricas de marketing, ventas y atención.</p>
-                </div>
-            </aside>
+          <div style="overflow:auto">
+            <table aria-label="Lista de contactos">
+              <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Empresa</th><th>Etapa</th><th>Última</th><th>Acciones</th></tr></thead>
+              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">No hay contactos.</td></tr></tbody>
+            </table>
+          </div>
         </div>
 
-        <section style="margin-top:18px" class="panel">
-            <h4>Soporte / Service Hub</h4>
-            <p class="muted small">Tickets, base de conocimiento y encuestas de satisfacción.</p>
-            <div style="margin-top:12px">
-                <table>
-                    <thead><tr><th>ID</th><th>Título</th><th>Contacto</th><th>Estado</th></tr></thead>
-                    <tbody id="tickets-tbody"><tr><td colspan="4" class="muted">No hay tickets.</td></tr></tbody>
-                </table>
+        <div style="display:flex;gap:12px;margin-top:12px">
+          <div class="panel" style="flex:1">
+            <h4 style="margin:0">Comunicación y seguimiento</h4>
+            <div class="small muted">Emails, llamadas y reuniones vinculadas a contactos</div>
+            <div style="margin-top:8px;overflow:auto">
+              <table><thead><tr><th>Contacto</th><th>Tipo</th><th>Resumen</th><th>Fecha</th></tr></thead><tbody id="communications-tbody"><tr><td colspan="4" class="muted">Sin registros.</td></tr></tbody></table>
             </div>
-        </section>
-    </div>
+          </div>
 
-    <footer>DataConecta — Demo local (Almacenamiento en localStorage). Puedo integrar un backend si lo deseás.</footer>
-
-    <!-- Modales -->
-    <div id="modal-add-contact" class="modal hidden" aria-hidden="true">
-        <div class="modal-box">
-            <h3 id="modal-title">Agregar contacto</h3>
-            <div class="form-row mb8">
-                <div class="col"><input id="contact-name" class="input" placeholder="Nombre completo"></div>
-                <div class="col"><input id="contact-email" class="input" placeholder="email@ejemplo.com"></div>
+          <div class="panel" style="width:320px">
+            <h4 style="margin:0">Pipeline</h4>
+            <div class="small muted">Arrastrá oportunidades entre etapas</div>
+            <div class="pipeline" id="pipeline"></div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button id="btn-add-deal" class="btn btn-primary">Nueva Oportunidad</button>
             </div>
-            <div class="form-row mb8">
-                <div class="col"><input id="contact-phone" class="input" placeholder="Teléfono"></div>
-                <div class="col"><input id="contact-company" class="input" placeholder="Empresa"></div>
-            </div>
-            <div class="form-row mb8">
-                <div class="col">
-                    <select id="contact-stage" class="input">
-                        <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
-                    </select>
-                </div>
-                <div class="col"><input id="contact-location" class="input" placeholder="Ubicación (ciudad)"></div>
-            </div>
-            <div class="form-row mb8">
-                <div class="col"><label><input type="checkbox" id="contact-email-opened"> Abrió email</label></div>
-                <div class="col"><label><input type="checkbox" id="contact-purchased"> Compró</label></div>
-            </div>
-            <div style="display:flex;gap:8px;justify-content:flex-end">
-                <button id="cancel-contact" class="btn">Cancelar</button>
-                <button id="save-contact-btn" class="btn btn-primary">Guardar</button>
-            </div>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <div id="modal-contact-details" class="modal hidden" aria-hidden="true">
-        <div class="modal-box">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-                <h3 id="detail-name">Contacto</h3>
-                <div><button id="close-details" class="btn">Cerrar</button></div>
-            </div>
-            <div style="margin-top:8px" id="detail-content">
-                <!-- details injected -->
-            </div>
+      <aside class="right-col">
+        <div class="panel">
+          <h4 style="margin:0">Segmentación rápida</h4>
+          <div class="small muted" style="margin-top:8px">Filtra por ubicación, etapa y comportamiento</div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+            <select id="segment-criteria" class="input"><option value="location">Ubicación</option><option value="funnel-stage">Etapa</option><option value="client-type">Tipo</option><option value="email-opened">Abrió email</option><option value="email-not-opened">No abrió</option><option value="purchased">Compró</option><option value="not-purchased">No compró</option></select>
+            <input id="segment-value" placeholder="Ej: Madrid, Lead, VIP" />
+            <div style="display:flex;gap:8px"><button id="btn-apply-seg" class="btn btn-primary" style="flex:1">Aplicar</button><button id="btn-clear-seg" class="btn" style="flex:1">Reset</button></div>
+          </div>
         </div>
-    </div>
 
-    <!-- Confirm -->
-    <div id="confirm-modal" class="modal hidden" aria-hidden="true">
-        <div class="modal-box">
-            <p id="confirm-text">¿Estás seguro?</p>
-            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-                <button id="confirm-no" class="btn">Cancelar</button>
-                <button id="confirm-yes" class="btn btn-primary">Sí</button>
-            </div>
+        <div class="panel">
+          <h4 style="margin:0">Tickets</h4>
+          <div class="small muted">Soporte y cases</div>
+          <div style="margin-top:8px"><table><thead><tr><th>ID</th><th>Título</th><th>Contacto</th><th>Estado</th></tr></thead><tbody id="tickets-tbody"><tr><td colspan="4" class="muted">Sin tickets.</td></tr></tbody></table></div>
+          <div style="margin-top:8px"><button id="btn-add-ticket" class="btn btn-primary">Nuevo Ticket</button></div>
         </div>
+
+        <div class="panel">
+          <h4 style="margin:0">Acciones</h4>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button id="btn-export-csv-contacts" class="btn btn-ghost">CSV contactos</button>
+            <button id="btn-export-csv-deals" class="btn btn-ghost">CSV deals</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="muted">DataConecta — Demo local. Todo se guarda en localStorage. Puedo subir esto al repo si querés.</footer>
+  </div>
+
+  <!-- Modales -->
+  <div id="modal-contact" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <h3 id="contact-modal-title">Agregar contacto</h3>
+      <div class="form-row"><div class="col"><input id="c-name" placeholder="Nombre*" /></div><div class="col"><input id="c-email" placeholder="Email" /></div></div>
+      <div class="form-row" style="margin-top:8px"><div class="col"><input id="c-phone" placeholder="Teléfono" /></div><div class="col"><input id="c-company" placeholder="Empresa" /></div></div>
+      <div class="form-row" style="margin-top:8px"><div class="col"><select id="c-stage"><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select></div><div class="col"><input id="c-location" placeholder="Ubicación" /></div></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="c-cancel" class="btn">Cancelar</button><button id="c-save" class="btn btn-primary">Guardar</button></div>
     </div>
+  </div>
 
-    <input type="file" id="file-input" accept="application/json" class="hidden">
+  <div id="modal-deal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <h3 id="deal-modal-title">Nueva oportunidad</h3>
+      <div class="form-row"><div class="col"><input id="d-title" placeholder="Título*" /></div><div class="col"><input id="d-value" placeholder="Valor" type="number" /></div></div>
+      <div class="form-row" style="margin-top:8px"><div class="col"><select id="d-stage"></select></div><div class="col"><select id="d-contact"></select></div></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="d-cancel" class="btn">Cancelar</button><button id="d-save" class="btn btn-primary">Guardar</button></div>
+    </div>
+  </div>
 
-    <script>
-    (function(){
-        // LocalStorage keys
-        const KEY_CONTACTS = 'dataconecta_contacts_v1';
-        const KEY_DEALS = 'dataconecta_deals_v1';
-        const KEY_COMM = 'dataconecta_communications_v1';
-        const KEY_TICKETS = 'dataconecta_tickets_v1';
+  <div id="modal-ticket" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <h3 id="ticket-modal-title">Nuevo ticket</h3>
+      <div><input id="t-title" placeholder="Título*" /></div>
+      <div style="margin-top:8px"><select id="t-contact"></select></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button id="t-cancel" class="btn">Cancelar</button><button id="t-save" class="btn btn-primary">Guardar</button></div>
+    </div>
+  </div>
 
-        // DOM
-        const contactsTbody = document.getElementById('contacts-tbody');
-        const communicationsTbody = document.getElementById('communications-tbody');
-        const ticketsTbody = document.getElementById('tickets-tbody');
-        const totalContactsEl = document.getElementById('total-contacts');
-        const activeDealsEl = document.getElementById('active-deals');
-        const openTicketsEl = document.getElementById('open-tickets');
-        const monthlyRevenueEl = document.getElementById('monthly-revenue');
+  <div id="confirm-modal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <p id="confirm-text">¿Estás seguro?</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px"><button id="confirm-no" class="btn">Cancelar</button><button id="confirm-yes" class="btn btn-primary">Sí</button></div>
+    </div>
+  </div>
 
-        const addContactBtn = document.getElementById('add-contact-btn');
-        const modalAdd = document.getElementById('modal-add-contact');
-        const modalDetails = document.getElementById('modal-contact-details');
-        const confirmModal = document.getElementById('confirm-modal');
+  <input id="import-file" type="file" accept="application/json" class="hidden" />
+  <div class="toast-wrap" id="toast-wrap"></div>
 
-        const fileInput = document.getElementById('file-input');
+  <script>
+  (function(){
+    // Keys
+    const K_CONTACTS = 'dataconecta_contacts_v2';
+    const K_DEALS = 'dataconecta_deals_v2';
+    const K_COM = 'dataconecta_comms_v2';
+    const K_TICKETS = 'dataconecta_tickets_v2';
 
-        // pipeline stages
-        const STAGES = ['Lead','Contacto','Prospecto','Cliente'];
+    // DOM
+    const contactsTbody = document.getElementById('contacts-tbody');
+    const commsTbody = document.getElementById('communications-tbody');
+    const ticketsTbody = document.getElementById('tickets-tbody');
+    const pipelineEl = document.getElementById('pipeline');
+    const saveState = document.getElementById('save-state');
+    const toastWrap = document.getElementById('toast-wrap');
 
-        // in-memory
-        let contacts = [];
-        let deals = [];
-        let communications = [];
-        let tickets = [];
+    // modals
+    const modalContact = document.getElementById('modal-contact');
+    const modalDeal = document.getElementById('modal-deal');
+    const modalTicket = document.getElementById('modal-ticket');
+    const confirmModal = document.getElementById('confirm-modal');
 
-        // editing state
-        let editingContactId = null;
-        let pendingConfirm = null;
+    // buttons
+    const btnAddContact = document.getElementById('btn-add-contact');
+    const btnAddDeal = document.getElementById('btn-add-deal');
+    const btnAddTicket = document.getElementById('btn-add-ticket');
+    const btnExport = document.getElementById('btn-export');
+    const btnExportCSV = document.getElementById('btn-export-csv');
+    const btnExportCSVContacts = document.getElementById('btn-export-csv-contacts');
+    const btnExportCSVDeals = document.getElementById('btn-export-csv-deals');
+    const btnImport = document.getElementById('btn-import');
+    const importFile = document.getElementById('import-file');
+    const btnClear = document.getElementById('btn-clear');
+    const btnUndo = document.getElementById('btn-undo');
 
-        // utils
-        function uid(){ return 'id_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-        function saveAll(){
-            localStorage.setItem(KEY_CONTACTS, JSON.stringify(contacts));
-            localStorage.setItem(KEY_DEALS, JSON.stringify(deals));
-            localStorage.setItem(KEY_COMM, JSON.stringify(communications));
-            localStorage.setItem(KEY_TICKETS, JSON.stringify(tickets));
-            renderAll();
-        }
-        function loadAll(){
-            try{ contacts = JSON.parse(localStorage.getItem(KEY_CONTACTS) || '[]'); }catch(e){contacts=[]}
-            try{ deals = JSON.parse(localStorage.getItem(KEY_DEALS) || '[]'); }catch(e){deals=[]}
-            try{ communications = JSON.parse(localStorage.getItem(KEY_COMM) || '[]'); }catch(e){communications=[]}
-            try{ tickets = JSON.parse(localStorage.getItem(KEY_TICKETS) || '[]'); }catch(e){tickets=[]}
-        }
-        function show(el){ el.classList.remove('hidden'); el.setAttribute('aria-hidden','false'); }
-        function hide(el){ el.classList.add('hidden'); el.setAttribute('aria-hidden','true'); }
-        function formatDate(ts){ if(!ts) return '-'; const d = new Date(ts); return d.toLocaleString(); }
+    // inputs
+    const q = document.getElementById('q');
+    const filterStage = document.getElementById('filter-stage');
+    const btnFilter = document.getElementById('btn-filter');
+    const btnReset = document.getElementById('btn-reset');
 
-        // seed sample data if empty
-        function seed(){
-            if(contacts.length===0){
-                contacts.push({ id:uid(), name:'María González', email:'maria@example.com', phone:'+34 600 111 222', company:'ACME S.A.', stage:'Lead', lastInteraction:new Date().toISOString(), location:'Madrid', emailOpened:true, purchased:false });
-                contacts.push({ id:uid(), name:'Juan Pérez', email:'juan@example.com', phone:'+34 655 222 333', company:'Beta SRL', stage:'Prospecto', lastInteraction:new Date().toISOString(), location:'Barcelona', emailOpened:false, purchased:false });
-            }
-            if(deals.length===0){
-                deals.push({ id:uid(), title:'Oferta ACME', contactId:contacts[0].id, value:1200, stage:'Lead' });
-                deals.push({ id:uid(), title:'Demo Beta', contactId:contacts[1].id, value:4500, stage:'Prospecto' });
-            }
-            if(communications.length===0){
-                communications.push({ id:uid(), contactId:contacts[0].id, type:'Email', summary:'Email de bienvenida', date:new Date().toISOString(), opened:true });
-            }
-            if(tickets.length===0){
-                tickets.push({ id:uid(), title:'Error facturación', contactId:contacts[1].id, state:'open' });
-            }
-            saveAll();
-        }
+    const segCrit = document.getElementById('segment-criteria');
+    const segVal = document.getElementById('segment-value');
+    const btnApplySeg = document.getElementById('btn-apply-seg');
+    const btnClearSeg = document.getElementById('btn-clear-seg');
 
-        // render contacts
-        function renderContacts(list){
-            contactsTbody.innerHTML = '';
-            if(!list || list.length===0){
-                contactsTbody.innerHTML = '<tr><td colspan="7" class="muted">No hay contactos. Agregá uno.</td></tr>';
-                return;
-            }
-            list.forEach(c=>{
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><a href="#" data-id="${c.id}" class="link-contact">${escapeHtml(c.name)}</a></td>
-                    <td>${escapeHtml(c.email||'')}</td>
-                    <td>${escapeHtml(c.phone||'')}</td>
-                    <td>${escapeHtml(c.company||'')}</td>
-                    <td><span class="status ${stClass(c.stage)}">${escapeHtml(c.stage||'-')}</span></td>
-                    <td>${c.lastInteraction?formatDate(c.lastInteraction):'-'}</td>
-                    <td class="actions">
-                        <button class="btn" data-action="edit" data-id="${c.id}"><i class="fas fa-edit"></i></button>
-                        <button class="btn" data-action="delete" data-id="${c.id}"><i class="fas fa-trash-alt" style="color:#c0392b"></i></button>
-                    </td>
-                `;
-                contactsTbody.appendChild(tr);
-            });
-            // bind link and actions
-            document.querySelectorAll('.link-contact').forEach(a=>{
-                a.addEventListener('click', e=>{
-                    e.preventDefault();
-                    const id = a.getAttribute('data-id');
-                    openContactDetails(id);
-                });
-            });
-            document.querySelectorAll('button[data-action]').forEach(b=>{
-                b.addEventListener('click', ()=>{
-                    const id = b.getAttribute('data-id');
-                    const action = b.getAttribute('data-action');
-                    if(action==='edit') openEditContact(id);
-                    if(action==='delete') confirmAction(()=>{ deleteContact(id); }, 'Eliminar contacto permanentemente?');
-                });
-            });
-        }
+    // contact modal inputs
+    const cName = document.getElementById('c-name');
+    const cEmail = document.getElementById('c-email');
+    const cPhone = document.getElementById('c-phone');
+    const cCompany = document.getElementById('c-company');
+    const cStage = document.getElementById('c-stage');
+    const cLocation = document.getElementById('c-location');
+    const cCancel = document.getElementById('c-cancel');
+    const cSave = document.getElementById('c-save');
 
-        function stClass(stage){ if(!stage) return ''; const s = stage.toLowerCase(); if(s.includes('lead')) return 'lead'; if(s.includes('prospec')) return 'prospect'; return ''; }
+    // deal modal inputs
+    const dTitle = document.getElementById('d-title');
+    const dValue = document.getElementById('d-value');
+    const dStage = document.getElementById('d-stage');
+    const dContact = document.getElementById('d-contact');
+    const dCancel = document.getElementById('d-cancel');
+    const dSave = document.getElementById('d-save');
 
-        // contact modal
-        addContactBtn.addEventListener('click', ()=>{
-            editingContactId = null;
-            document.getElementById('modal-title').textContent = 'Agregar contacto';
-            document.getElementById('contact-name').value='';
-            document.getElementById('contact-email').value='';
-            document.getElementById('contact-phone').value='';
-            document.getElementById('contact-company').value='';
-            document.getElementById('contact-stage').value='Lead';
-            document.getElementById('contact-location').value='';
-            document.getElementById('contact-email-opened').checked=false;
-            document.getElementById('contact-purchased').checked=false;
-            show(modalAdd);
+    // ticket modal inputs
+    const tTitle = document.getElementById('t-title');
+    const tContact = document.getElementById('t-contact');
+    const tCancel = document.getElementById('t-cancel');
+    const tSave = document.getElementById('t-save');
+
+    // confirm
+    const confirmText = document.getElementById('confirm-text');
+    const confirmNo = document.getElementById('confirm-no');
+    const confirmYes = document.getElementById('confirm-yes');
+
+    // state
+    let contacts = [];
+    let deals = [];
+    let comms = [];
+    let tickets = [];
+
+    let editingContact = null;
+    let editingDeal = null;
+    let editingTicket = null;
+    let pendingConfirm = null;
+
+    // Undo stack (simple last-action)
+    let lastAction = null;
+
+    // BroadcastChannel for sync
+    let bc = null;
+    try { bc = new BroadcastChannel('dataconecta_sync_v1'); bc.onmessage = e => { if(e.data && e.data.type === 'sync') { loadAll(false); showToast('Datos sincronizados desde otra pestaña','info'); } } } catch(err){ /* not available */ }
+
+    // utils
+    const uid = ()=>'id_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    function showToast(msg, type='default', ttl=3000){
+      const t = document.createElement('div'); t.className='toast'; t.textContent = msg;
+      if(type==='error'){ t.style.background='#b91c1c' } else if(type==='success'){ t.style.background='#059669' } else if(type==='info'){ t.style.background='#0ea5e9' }
+      toastWrap.appendChild(t);
+      setTimeout(()=> t.remove(), ttl);
+    }
+    function show(el){ el.classList.remove('hidden'); el.setAttribute('aria-hidden','false') }
+    function hide(el){ el.classList.add('hidden'); el.setAttribute('aria-hidden','true') }
+
+    // validation
+    function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) }
+    function validPhone(p){ return p.trim() === '' || /^[\d\s+()-]{6,20}$/.test(p) }
+
+    // debounced save state indicator
+    let saveTimer = null;
+    function setSaving(state){
+      if(state){ saveState.textContent = 'Guardando...'; } else { saveState.textContent = 'Guardado'; setTimeout(()=> saveState.textContent = '—', 1200) }
+    }
+
+    // persistence
+    function saveAll(broadcast=true){
+      setSaving(true);
+      localStorage.setItem(K_CONTACTS, JSON.stringify(contacts));
+      localStorage.setItem(K_DEALS, JSON.stringify(deals));
+      localStorage.setItem(K_COM, JSON.stringify(comms));
+      localStorage.setItem(K_TICKETS, JSON.stringify(tickets));
+      // debounce done
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(()=>{ setSaving(false); if(broadcast && bc) bc.postMessage({type:'sync'}); }, 600);
+    }
+    function loadAll(render=true){
+      try{ contacts = JSON.parse(localStorage.getItem(K_CONTACTS) || '[]') }catch{ contacts = [] }
+      try{ deals = JSON.parse(localStorage.getItem(K_DEALS) || '[]') }catch{ deals = [] }
+      try{ comms = JSON.parse(localStorage.getItem(K_COM) || '[]') }catch{ comms = [] }
+      try{ tickets = JSON.parse(localStorage.getItem(K_TICKETS) || '[]') }catch{ tickets = [] }
+      if(render) renderAll();
+    }
+
+    // seed
+    function seedIfEmpty(){
+      if(contacts.length===0){
+        contacts.push({id:uid(),name:'María González',email:'maria@example.com',phone:'+34 600111222',company:'ACME S.A.',stage:'Lead',location:'Madrid',lastInteraction:new Date().toISOString(),emailOpened:true,purchased:false});
+        contacts.push({id:uid(),name:'Juan Pérez',email:'juan@example.com',phone:'+34 655222333',company:'Beta SRL',stage:'Prospecto',location:'Barcelona',lastInteraction:new Date().toISOString(),emailOpened:false,purchased:false});
+      }
+      if(deals.length===0){
+        deals.push({id:uid(),title:'Oferta ACME',value:1200,stage:'Lead',contactId:contacts[0].id});
+        deals.push({id:uid(),title:'Demo Beta',value:4500,stage:'Prospecto',contactId:contacts[1].id});
+      }
+      if(comms.length===0){
+        comms.push({id:uid(),contactId:contacts[0].id,type:'Email',summary:'Email de bienvenida',date:new Date().toISOString(),opened:true});
+      }
+      if(tickets.length===0){
+        tickets.push({id:uid(),title:'Error facturación',contactId:contacts[1].id,state:'open'});
+      }
+      saveAll();
+    }
+
+    // rendering
+    function renderContacts(list){
+      const data = list || contacts;
+      contactsTbody.innerHTML = '';
+      if(!data.length) return contactsTbody.innerHTML = '<tr><td colspan="7" class="muted">No hay contactos.</td></tr>';
+      data.forEach(c=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td><a href="#" data-id="${c.id}" class="link-contact">${escape(c.name)}</a></td>
+          <td>${escape(c.email||'')}</td><td>${escape(c.phone||'')}</td><td>${escape(c.company||'')}</td>
+          <td><span class="status ${escape(c.stage||'')}">${escape(c.stage||'-')}</span></td>
+          <td>${c.lastInteraction?new Date(c.lastInteraction).toLocaleString():'-'}</td>
+          <td>
+            <button class="btn btn-ghost" data-action="edit" data-id="${c.id}" title="Editar"><i class="fas fa-edit"></i></button>
+            <button class="btn btn-ghost" data-action="delete" data-id="${c.id}" title="Eliminar"><i class="fas fa-trash"></i></button>
+          </td>`;
+        contactsTbody.appendChild(tr);
+      });
+      // bind links and actions
+      document.querySelectorAll('.link-contact').forEach(a=> a.addEventListener('click', e=>{ e.preventDefault(); openContactDetails(a.dataset.id); }));
+      document.querySelectorAll('button[data-action]').forEach(b=> b.addEventListener('click', ()=> {
+        const id = b.getAttribute('data-id'); const action = b.getAttribute('data-action');
+        if(action==='edit') openEditContact(id); if(action==='delete') confirm(()=>{ removeContact(id) }, 'Eliminar contacto permanentemente?');
+      }));
+    }
+
+    function renderComms(){
+      commsTbody.innerHTML = '';
+      if(!comms.length) return commsTbody.innerHTML = '<tr><td colspan="4" class="muted">Sin registros.</td></tr>';
+      comms.slice().sort((a,b)=> new Date(b.date)-new Date(a.date)).forEach(m=>{
+        const c = contacts.find(x=>x.id===m.contactId) || {name:'-'};
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escape(c.name)}</td><td>${escape(m.type)}</td><td>${escape(m.summary)}</td><td>${new Date(m.date).toLocaleString()}</td>`;
+        commsTbody.appendChild(tr);
+      });
+    }
+
+    function renderTickets(){
+      ticketsTbody.innerHTML = '';
+      if(!tickets.length) return ticketsTbody.innerHTML = '<tr><td colspan="4" class="muted">Sin tickets.</td></tr>';
+      tickets.forEach(t=>{
+        const c = contacts.find(x=>x.id===t.contactId) || {name:'-'};
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${escape(t.id)}</td><td>${escape(t.title)}</td><td>${escape(c.name)}</td><td>${escape(t.state||'')}</td>`;
+        ticketsTbody.appendChild(tr);
+      });
+    }
+
+    function renderPipeline(){
+      const STAGES = ['Lead','Contacto','Prospecto','Cliente'];
+      pipelineEl.innerHTML = '';
+      STAGES.forEach(stage=>{
+        const col = document.createElement('div'); col.className = 'stage'; col.dataset.stage = stage;
+        col.innerHTML = `<h4>${stage} <span class="small muted">(${deals.filter(d=>d.stage===stage).length})</span></h4>`;
+        const stageDeals = deals.filter(d=>d.stage===stage);
+        stageDeals.forEach(d=>{
+          const el = document.createElement('div'); el.className='deal'; el.draggable=true; el.dataset.id = d.id;
+          const contact = contacts.find(c=>c.id===d.contactId) || {};
+          el.innerHTML = `<div><strong>${escape(d.title)}</strong></div><div class="meta small muted">${d.value?('$'+d.value):''} ${contact.name? ' • '+escape(contact.name):''}</div>`;
+          el.addEventListener('dragstart', e=>{ e.dataTransfer.setData('text/plain', d.id); e.dataTransfer.effectAllowed='move'; });
+          el.addEventListener('dblclick', ()=> openEditDeal(d.id));
+          col.appendChild(el);
         });
-
-        document.getElementById('cancel-contact').addEventListener('click', ()=> hide(modalAdd));
-        document.getElementById('save-contact-btn').addEventListener('click', ()=>{
-            const name = document.getElementById('contact-name').value.trim();
-            if(!name){ alert('Nombre requerido'); return; }
-            const obj = {
-                name,
-                email: document.getElementById('contact-email').value.trim(),
-                phone: document.getElementById('contact-phone').value.trim(),
-                company: document.getElementById('contact-company').value.trim(),
-                stage: document.getElementById('contact-stage').value,
-                location: document.getElementById('contact-location').value.trim(),
-                emailOpened: document.getElementById('contact-email-opened').checked,
-                purchased: document.getElementById('contact-purchased').checked,
-                lastInteraction: new Date().toISOString()
-            };
-            if(editingContactId){
-                const idx = contacts.findIndex(c=>c.id===editingContactId);
-                if(idx>-1){ contacts[idx] = Object.assign({id:editingContactId}, contacts[idx], obj); }
-            } else {
-                contacts.unshift(Object.assign({ id: uid() }, obj));
-            }
-            saveAll();
-            hide(modalAdd);
+        // drop handling
+        col.addEventListener('dragover', e=>{ e.preventDefault(); col.style.background='#f0fbff' });
+        col.addEventListener('dragleave', ()=> col.style.background='');
+        col.addEventListener('drop', e=>{
+          e.preventDefault(); col.style.background='';
+          const id = e.dataTransfer.getData('text/plain');
+          const idx = deals.findIndex(x=>x.id===id);
+          if(idx>-1){ const prev = Object.assign({}, deals[idx]); deals[idx].stage = col.dataset.stage; saveAll(); lastAction = {type:'deal-move',payload:prev,undo:()=>{ const i = deals.findIndex(x=>x.id===prev.id); if(i>-1){ deals[i] = prev; saveAll(); } }}; showToast('Deal movido','success'); }
         });
+        pipelineEl.appendChild(col);
+      });
+    }
 
-        function openEditContact(id){
-            const c = contacts.find(x=>x.id===id);
-            if(!c) return alert('Contacto no encontrado');
-            editingContactId = id;
-            document.getElementById('modal-title').textContent = 'Editar contacto';
-            document.getElementById('contact-name').value = c.name||'';
-            document.getElementById('contact-email').value = c.email||'';
-            document.getElementById('contact-phone').value = c.phone||'';
-            document.getElementById('contact-company').value = c.company||'';
-            document.getElementById('contact-stage').value = c.stage||'Lead';
-            document.getElementById('contact-location').value = c.location||'';
-            document.getElementById('contact-email-opened').checked = !!c.emailOpened;
-            document.getElementById('contact-purchased').checked = !!c.purchased;
-            show(modalAdd);
-        }
+    function renderAll(){
+      renderContacts();
+      renderComms();
+      renderTickets();
+      renderPipeline();
+      updateCards();
+    }
 
-        function deleteContact(id){
-            contacts = contacts.filter(c=>c.id!==id);
-            // also remove related deals, communications, tickets
-            deals = deals.filter(d=>d.contactId!==id);
-            communications = communications.filter(m=>m.contactId!==id);
-            tickets = tickets.filter(t=>t.contactId!==id);
-            saveAll();
-        }
+    function updateCards(){
+      // small summary in header or later; here we set save state handled elsewhere
+    }
 
-        // contact details modal
-        function openContactDetails(id){
-            const c = contacts.find(x=>x.id===id);
-            if(!c) return;
-            const detailName = document.getElementById('detail-name');
-            const detailContent = document.getElementById('detail-content');
-            detailName.textContent = c.name;
-            let html = `<div class="small" style="margin-bottom:8px">
-                <div><strong>Email:</strong> ${escapeHtml(c.email||'-')}</div>
-                <div><strong>Tel:</strong> ${escapeHtml(c.phone||'-')}</div>
-                <div><strong>Empresa:</strong> ${escapeHtml(c.company||'-')}</div>
-                <div><strong>Ubicación:</strong> ${escapeHtml(c.location||'-')}</div>
-                <div><strong>Etapa:</strong> ${escapeHtml(c.stage||'-')}</div>
-                <div><strong>Compró:</strong> ${c.purchased? 'Sí' : 'No'}</div>
-                <div><strong>Abrió email:</strong> ${c.emailOpened? 'Sí' : 'No'}</div>
-            </div>`;
+    // helpers
+    function escape(s){ if(s==null) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-            // interactions
-            const comms = communications.filter(m=>m.contactId===c.id).sort((a,b)=>new Date(b.date)-new Date(a.date));
-            html += `<h4>Interacciones (${comms.length})</h4>`;
-            if(comms.length===0) html += '<div class="muted">No hay interacciones</div>';
-            else {
-                html += '<ul>';
-                comms.forEach(it=>{
-                    html += `<li class="small">${escapeHtml(it.type)} — ${escapeHtml(it.summary)} <span class="muted">(${formatDate(it.date)})</span></li>`;
-                });
-                html += '</ul>';
-            }
+    // CRUD contact
+    function openNewContact(){
+      editingContact = null; document.getElementById('contact-modal-title').textContent='Agregar contacto';
+      cName.value=''; cEmail.value=''; cPhone.value=''; cCompany.value=''; cStage.value='Lead'; cLocation.value='';
+      show(modalContact);
+    }
+    function openEditContact(id){
+      const c = contacts.find(x=>x.id===id); if(!c) return showToast('Contacto no encontrado','error');
+      editingContact = id; document.getElementById('contact-modal-title').textContent='Editar contacto';
+      cName.value=c.name||''; cEmail.value=c.email||''; cPhone.value=c.phone||''; cCompany.value=c.company||''; cStage.value=c.stage||'Lead'; cLocation.value=c.location||'';
+      show(modalContact);
+    }
+    function saveContact(){
+      const name = cName.value.trim(); const email = cEmail.value.trim(); const phone = cPhone.value.trim();
+      if(!name){ return showToast('El nombre es obligatorio','error'); }
+      if(email && !validEmail(email)) return showToast('Email inválido','error');
+      if(phone && !validPhone(phone)) return showToast('Teléfono inválido','error');
+      const obj = { name, email, phone, company: cCompany.value.trim(), stage: cStage.value, location: cLocation.value.trim(), lastInteraction: new Date().toISOString() };
+      if(editingContact){
+        const idx = contacts.findIndex(x=>x.id===editingContact);
+        if(idx>-1){ const prev = Object.assign({}, contacts[idx]); contacts[idx]=Object.assign({id:editingContact}, prev, obj); saveAll(); lastAction = {type:'contact-edit',payload:prev,undo:()=>{ const i=contacts.findIndex(x=>x.id===prev.id); if(i>-1){ contacts[i]=prev; saveAll(); } }}; showToast('Contacto actualizado','success'); }
+      } else {
+        const newC = Object.assign({id:uid()}, obj); contacts.unshift(newC); saveAll(); lastAction = {type:'contact-add',payload:newC,undo:()=>{ contacts = contacts.filter(x=>x.id!==newC.id); saveAll(); }}; showToast('Contacto agregado','success');
+      }
+      hide(modalContact);
+    }
+    function removeContact(id){
+      const prev = contacts.find(x=>x.id===id);
+      contacts = contacts.filter(x=>x.id!==id);
+      // remove associated data
+      const oldDeals = deals.filter(d=>d.contactId===id);
+      deals = deals.filter(d=>d.contactId!==id);
+      comms = comms.filter(m=>m.contactId!==id);
+      tickets = tickets.filter(t=>t.contactId!==id);
+      saveAll();
+      lastAction = { type:'contact-delete', payload:{contact:prev,deals:oldDeals}, undo:()=>{ contacts.unshift(prev); deals = oldDeals.concat(deals); saveAll(); } };
+      showToast('Contacto eliminado','info');
+    }
 
-            // quick add communication
-            html += `<hr/><h4>Agregar interacción</h4>
-                <div class="form-row mb8"><div class="col"><select id="new-comm-type" class="input"><option>Email</option><option>Call</option><option>Meeting</option><option>Form</option></select></div><div class="col"><input id="new-comm-summary" class="input" placeholder="Resumen"></div></div>
-                <div style="display:flex;gap:8px;justify-content:flex-end"><button id="add-comm-cancel" class="btn">Cancelar</button><button id="add-comm-save" class="btn btn-primary">Guardar</button></div>`;
+    // contact details + add communication
+    function openContactDetails(id){
+      const c = contacts.find(x=>x.id===id); if(!c) return showToast('No encontrado','error');
+      // build simple details modal using confirm modal area (reusing confirm as quick modal) to keep code concise
+      const html = `<div style="margin-bottom:8px"><strong>${escape(c.name)}</strong></div>
+        <div class="small muted">Email: ${escape(c.email||'-')} • Tel: ${escape(c.phone||'-')}</div>
+        <hr/>
+        <h4>Interacciones</h4>`;
+      // show interactions list + add form
+      const items = comms.filter(m=>m.contactId===c.id).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(it=>`<div class="small">${escape(it.type)} — ${escape(it.summary)} <span class="muted">(${new Date(it.date).toLocaleString()})</span></div>`).join('') || '<div class="muted">Sin interacciones</div>';
+      const body = html + items + `<hr/><div><select id="new-comm-type"><option>Email</option><option>Call</option><option>Meeting</option><option>Form</option></select><input id="new-comm-summary" placeholder="Resumen" style="margin-left:8px;padding:6px;border-radius:6px;border:1px solid var(--border)" /></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button id="close-detail" class="btn">Cerrar</button><button id="save-comm" class="btn btn-primary">Guardar</button></div>`;
+      // show in modal-deal temporarily (we'll reuse modalDeal element)
+      const modal = document.createElement('div');
+      modal.className = 'modal'; modal.innerHTML = `<div class="modal-card">${body}</div>`; document.body.appendChild(modal);
+      modal.addEventListener('click', e=>{ if(e.target===modal) modal.remove(); });
+      document.getElementById('close-detail').addEventListener('click', ()=> modal.remove());
+      document.getElementById('save-comm').addEventListener('click', ()=>{
+        const type = document.getElementById('new-comm-type').value; const summary = document.getElementById('new-comm-summary').value.trim();
+        if(!summary) return showToast('Resumen requerido','error');
+        const newC = { id:uid(), contactId:c.id, type, summary, date:new Date().toISOString() };
+        comms.unshift(newC); // update lastInteraction
+        const idx = contacts.findIndex(x=>x.id===c.id); if(idx>-1) contacts[idx].lastInteraction = new Date().toISOString();
+        saveAll(); lastAction = {type:'comm-add',payload:newC,undo:()=>{ comms = comms.filter(x=>x.id!==newC.id); saveAll(); }}; showToast('Interacción guardada','success');
+        modal.remove();
+      });
+    }
 
-            detailContent.innerHTML = html;
-            show(modalDetails);
+    // deals CRUD
+    function openNewDeal(){
+      editingDeal = null; document.getElementById('deal-modal-title').textContent='Nueva oportunidad';
+      dTitle.value=''; dValue.value=''; fillDealSelects(); show(modalDeal);
+    }
+    function openEditDeal(id){
+      const dd = deals.find(x=>x.id===id); if(!dd) return showToast('No encontrado','error');
+      editingDeal = id; document.getElementById('deal-modal-title').textContent='Editar oportunidad';
+      dTitle.value = dd.title || ''; dValue.value = dd.value || 0; fillDealSelects(dd.stage, dd.contactId); show(modalDeal);
+    }
+    function fillDealSelects(selectStage, selectContact){
+      // fill stage options and contact options
+      const stages = ['Lead','Contacto','Prospecto','Cliente'];
+      dStage.innerHTML = stages.map(s=>`<option ${s===selectStage?'selected':''}>${s}</option>`).join('');
+      dContact.innerHTML = '<option value="">(sin asignar)</option>' + contacts.map(c=>`<option value="${c.id}" ${c.id===selectContact?'selected':''}>${escape(c.name)}</option>`).join('');
+    }
+    function saveDeal(){
+      const title = dTitle.value.trim(); const value = Number(dValue.value)||0; const stage = dStage.value; const contactId = dContact.value || null;
+      if(!title) return showToast('Título requerido','error');
+      const obj = { title, value, stage, contactId };
+      if(editingDeal){
+        const idx = deals.findIndex(x=>x.id===editingDeal);
+        if(idx>-1){ const prev = Object.assign({}, deals[idx]); deals[idx]=Object.assign({id:editingDeal}, prev, obj); saveAll(); lastAction = {type:'deal-edit', payload:prev, undo:()=>{ const i=deals.findIndex(x=>x.id===prev.id); if(i>-1){ deals[i]=prev; saveAll(); }}}; showToast('Oportunidad actualizada','success'); }
+      } else {
+        const newD = Object.assign({id:uid()}, obj); deals.unshift(newD); saveAll(); lastAction = {type:'deal-add', payload:newD, undo:()=>{ deals = deals.filter(x=>x.id!==newD.id); saveAll(); }}; showToast('Oportunidad creada','success');
+      }
+      hide(modalDeal);
+    }
 
-            document.getElementById('add-comm-cancel').addEventListener('click', ()=> hide(modalDetails));
-            document.getElementById('add-comm-save').addEventListener('click', ()=>{
-                const type = document.getElementById('new-comm-type').value;
-                const summary = document.getElementById('new-comm-summary').value.trim();
-                if(!summary) return alert('Agregá un resumen');
-                communications.unshift({ id:uid(), contactId:c.id, type, summary, date:new Date().toISOString() });
-                // update lastInteraction and emailOpened if it's Email and open flag included (we don't record open here)
-                const idx = contacts.findIndex(x=>x.id===c.id);
-                if(idx>-1) { contacts[idx].lastInteraction = new Date().toISOString(); }
-                saveAll();
-                hide(modalDetails);
-            });
-        }
+    // tickets
+    function openNewTicket(){
+      editingTicket = null; document.getElementById('ticket-modal-title').textContent='Nuevo ticket';
+      tTitle.value=''; tContact.innerHTML = '<option value="">(sin asignar)</option>' + contacts.map(c=>`<option value="${c.id}">${escape(c.name)}</option>`).join(''); show(modalTicket);
+    }
+    function saveTicket(){
+      const title = tTitle.value.trim(); const contactIdVal = tContact.value || null;
+      if(!title) return showToast('Título requerido','error');
+      const obj = { id: uid(), title, contactId: contactIdVal, state:'open' };
+      tickets.unshift(obj); saveAll(); lastAction = {type:'ticket-add',payload:obj,undo:()=>{ tickets = tickets.filter(x=>x.id!==obj.id); saveAll(); }}; showToast('Ticket creado','success');
+      hide(modalTicket);
+    }
 
-        document.getElementById('close-details').addEventListener('click', ()=> hide(modalDetails));
+    // remove helpers
+    function confirm(fn, text='¿Estás seguro?'){ pendingConfirm = fn; confirmText.textContent = text; show(confirmModal); }
+    confirmNo.addEventListener('click', ()=>{ pendingConfirm = null; hide(confirmModal); });
+    confirmYes.addEventListener('click', ()=>{ if(typeof pendingConfirm === 'function') pendingConfirm(); pendingConfirm = null; hide(confirmModal); });
 
-        // Communications render
-        function renderCommunications(){
-            communicationsTbody.innerHTML = '';
-            if(communications.length===0){ communicationsTbody.innerHTML = '<tr><td colspan="3" class="muted">No hay registros.</td></tr>'; return; }
-            communications.slice(0,50).forEach(m=>{
-                const c = contacts.find(x=>x.id===m.contactId);
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${escapeHtml(c?c.name:'-')}</td><td>${escapeHtml(m.type)}</td><td>${escapeHtml(m.summary)}</td><td>${formatDate(m.date)}</td>`;
-                communicationsTbody.appendChild(tr);
-            });
-        }
+    // remove functions
+    function removeContact(id){ // implemented earlier
+      const prev = contacts.find(x=>x.id===id);
+      contacts = contacts.filter(x=>x.id!==id);
+      const removedDeals = deals.filter(d=>d.contactId===id);
+      deals = deals.filter(d=>d.contactId!==id);
+      comms = comms.filter(m=>m.contactId!==id);
+      tickets = tickets.filter(t=>t.contactId!==id);
+      saveAll();
+      lastAction = {type:'contact-delete', payload:{contact:prev,deals:removedDeals}, undo:()=>{ contacts.unshift(prev); deals=removedDeals.concat(deals); saveAll(); }};
+      showToast('Contacto eliminado','success');
+    }
 
-        // Tickets render
-        function renderTickets(){
-            ticketsTbody.innerHTML = '';
-            if(tickets.length===0){ ticketsTbody.innerHTML = '<tr><td colspan="4" class="muted">No hay tickets.</td></tr>'; return; }
-            tickets.forEach(t=>{
-                const c = contacts.find(x=>x.id===t.contactId);
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${escapeHtml(t.id)}</td><td>${escapeHtml(t.title)}</td><td>${escapeHtml(c?c.name:'-')}</td><td>${escapeHtml(t.state)}</td>`;
-                ticketsTbody.appendChild(tr);
-            });
-        }
+    // Export / Import
+    function exportAll(){
+      const payload = { contacts, deals, comms, tickets, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `dataconecta_export_${(new Date()).toISOString().split('T')[0]}.json`; document.body.appendChild(a); a.click(); a.remove();
+      showToast('Exportado JSON','success');
+    }
+    function importAll(file){
+      const reader = new FileReader();
+      reader.onload = e=>{
+        try{
+          const parsed = JSON.parse(e.target.result);
+          if(!parsed) return showToast('Archivo inválido','error');
+          confirm(()=>{ contacts = parsed.contacts||[]; deals = parsed.deals||[]; comms = parsed.comms||[]; tickets = parsed.tickets||[]; saveAll(); renderAll(); showToast('Importación realizada','success'); }, 'Importar reemplazará los datos locales. Continuar?');
+        }catch(err){ showToast('Error leyendo JSON','error'); }
+      };
+      reader.readAsText(file);
+    }
 
-        // Pipeline render and drag/drop
-        function renderPipeline(){
-            const container = document.getElementById('pipeline');
-            container.innerHTML = '';
-            STAGES.forEach(stage=>{
-                const col = document.createElement('div');
-                col.className = 'stage';
-                col.setAttribute('data-stage', stage);
-                col.innerHTML = `<h4>${escapeHtml(stage)} <span class="muted">(${deals.filter(d=>d.stage===stage).length})</span></h4>`;
-                const stageDeals = deals.filter(d=>d.stage===stage);
-                stageDeals.forEach(d=>{
-                    const card = document.createElement('div');
-                    card.className = 'deal';
-                    card.draggable = true;
-                    card.innerHTML = `<div><strong>${escapeHtml(d.title)}</strong></div><div class="meta">${escapeHtml(d.value?('$'+d.value):'')}${d.contactId? ' • ' + escapeHtml((contacts.find(c=>c.id===d.contactId)||{}).name||'') : ''}</div>`;
-                    card.dataset.id = d.id;
-                    // drag events
-                    card.addEventListener('dragstart', e=>{
-                        e.dataTransfer.setData('text/plain', d.id);
-                        e.dataTransfer.effectAllowed = 'move';
-                    });
-                    // double click: open quick edit
-                    card.addEventListener('dblclick', ()=>{
-                        const newTitle = prompt('Editar título', d.title);
-                        if(newTitle!==null){ d.title = newTitle; saveAll(); }
-                    });
-                    col.appendChild(card);
-                });
+    // CSV helpers
+    function toCSV(arr, fields){
+      const esc = v => `"${String(v||'').replace(/"/g,'""')}"`;
+      const head = fields.join(',');
+      const rows = arr.map(r => fields.map(f=>esc(r[f])).join(',')).join('\n');
+      return head + '\n' + rows;
+    }
+    function exportCSVContacts(){
+      const fields = ['id','name','email','phone','company','stage','location','lastInteraction'];
+      const csv = toCSV(contacts, fields);
+      const blob = new Blob([csv],{type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='dataconecta_contacts.csv'; document.body.appendChild(a); a.click(); a.remove(); showToast('CSV contactos descargado','success');
+    }
+    function exportCSVDeals(){
+      const fields = ['id','title','value','stage','contactId'];
+      const csv = toCSV(deals, fields); const blob = new Blob([csv],{type:'text/csv'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='dataconecta_deals.csv'; document.body.appendChild(a); a.click(); a.remove(); showToast('CSV deals descargado','success');
+    }
 
-                // allow drop
-                col.addEventListener('dragover', e=>{ e.preventDefault(); col.style.background = '#f6fbff'; });
-                col.addEventListener('dragleave', ()=>{ col.style.background = ''; });
-                col.addEventListener('drop', e=>{
-                    e.preventDefault();
-                    col.style.background = '';
-                    const id = e.dataTransfer.getData('text/plain');
-                    const idx = deals.findIndex(x=>x.id===id);
-                    if(idx>-1){
-                        deals[idx].stage = col.getAttribute('data-stage');
-                        saveAll();
-                    }
-                });
+    // Undo
+    btnUndo.addEventListener('click', ()=> {
+      if(!lastAction) return showToast('Nada para deshacer','info');
+      try{
+        if(typeof lastAction.undo === 'function'){ lastAction.undo(); lastAction = null; showToast('Acción deshecha','success'); }
+        else showToast('No se puede deshacer','error');
+      }catch(err){ showToast('Error al deshacer','error'); }
+    });
 
-                container.appendChild(col);
-            });
-        }
+    // search/filter
+    btnFilter.addEventListener('click', ()=> {
+      const qv = q.value.trim().toLowerCase(); const st = filterStage.value;
+      let res = contacts.filter(c => !qv || (c.name&&c.name.toLowerCase().includes(qv)) || (c.email&&c.email.toLowerCase().includes(qv)) || (c.company&&c.company.toLowerCase().includes(qv)));
+      if(st) res = res.filter(c => c.stage === st);
+      renderContacts(res);
+    });
+    btnReset.addEventListener('click', ()=> { q.value=''; filterStage.value=''; renderContacts(); });
 
-        // Filters and segmentation
-        document.getElementById('btn-filter').addEventListener('click', ()=>{
-            const q = document.getElementById('search-input').value.trim().toLowerCase();
-            const st = document.getElementById('filter-stage').value;
-            let res = contacts;
-            if(q) res = res.filter(c => (c.name && c.name.toLowerCase().includes(q)) || (c.email && c.email.toLowerCase().includes(q)) || (c.company && c.company.toLowerCase().includes(q)));
-            if(st) res = res.filter(c=>c.stage===st);
-            renderContacts(res);
-        });
-        document.getElementById('btn-reset').addEventListener('click', ()=>{
-            document.getElementById('search-input').value=''; document.getElementById('filter-stage').value='';
-            renderContacts(contacts);
-        });
+    // segmentation
+    btnApplySeg.addEventListener('click', ()=> {
+      const crit = segCrit.value; const v = segVal.value.trim().toLowerCase();
+      let res = [];
+      if(crit==='location') res = contacts.filter(c => c.location && c.location.toLowerCase().includes(v));
+      else if(crit==='funnel-stage') res = contacts.filter(c => c.stage && c.stage.toLowerCase().includes(v));
+      else if(crit==='email-opened') res = contacts.filter(c => c.emailOpened === true && !c.purchased);
+      else if(crit==='email-not-opened') res = contacts.filter(c => !c.emailOpened);
+      else if(crit==='purchased') res = contacts.filter(c => c.purchased === true);
+      else if(crit==='not-purchased') res = contacts.filter(c => !c.purchased);
+      else res = contacts.filter(c => (c.name && c.name.toLowerCase().includes(v)) || (c.company && c.company.toLowerCase().includes(v)));
+      if(!res.length) showToast('No se encontraron contactos','info');
+      renderContacts(res);
+    });
+    btnClearSeg.addEventListener('click', ()=> renderContacts());
 
-        document.getElementById('open-segment').addEventListener('click', ()=>{
-            // show right panel segment (we already have it visible) - could scroll
-            document.getElementById('segment-criteria').scrollIntoView({behavior:'smooth'});
-        });
+    // export/import buttons
+    btnExport.addEventListener('click', exportAll);
+    btnExportCSVContacts.addEventListener('click', exportCSVContacts);
+    btnExportCSVDeals.addEventListener('click', exportCSVDeals);
+    btnImport.addEventListener('click', ()=> importFile.click());
+    importFile.addEventListener('change', e=> { const f = e.target.files && e.target.files[0]; if(!f) return; importAll(f); e.target.value=''; });
 
-        document.getElementById('apply-segment').addEventListener('click', ()=>{
-            const criteria = document.getElementById('segment-criteria').value;
-            const val = document.getElementById('segment-value').value.trim().toLowerCase();
-            if(!val && (criteria!=='email-opened' && criteria!=='email-not-opened' && criteria!=='purchased' && criteria!=='not-purchased')) return alert('Introduce valor');
-            let res = [];
-            if(criteria==='location') res = contacts.filter(c => c.location && c.location.toLowerCase().includes(val));
-            else if(criteria==='funnel-stage') res = contacts.filter(c => c.stage && c.stage.toLowerCase().includes(val));
-            else if(criteria==='client-type') res = contacts.filter(c => c.clientType && c.clientType.toLowerCase().includes(val));
-            else if(criteria==='email-opened') res = contacts.filter(c => c.emailOpened === true && !c.purchased);
-            else if(criteria==='email-not-opened') res = contacts.filter(c => !c.emailOpened);
-            else if(criteria==='purchased') res = contacts.filter(c => c.purchased === true);
-            else if(criteria==='not-purchased') res = contacts.filter(c => !c.purchased);
-            else res = contacts.filter(c => (c.name && c.name.toLowerCase().includes(val)) || (c.company && c.company.toLowerCase().includes(val)));
-            if(res.length===0) alert('No se encontraron contactos con esos criterios');
-            renderContacts(res);
-        });
-        document.getElementById('cancel-segment').addEventListener('click', ()=> renderContacts(contacts));
+    // clear
+    btnClear.addEventListener('click', ()=> confirm(()=>{ localStorage.removeItem(K_CONTACTS); localStorage.removeItem(K_DEALS); localStorage.removeItem(K_COM); localStorage.removeItem(K_TICKETS); contacts=[]; deals=[]; comms=[]; tickets=[]; saveAll(); renderAll(); showToast('Datos limpiados','success'); }, 'Eliminar todos los datos locales?'));
 
-        // Export / Import / Clear
-        document.getElementById('export-data').addEventListener('click', exportAll);
-        document.getElementById('import-data').addEventListener('click', ()=> fileInput.click());
-        document.getElementById('clear-data').addEventListener('click', ()=> confirmAction(()=>{ localStorage.removeItem(KEY_CONTACTS); localStorage.removeItem(KEY_DEALS); localStorage.removeItem(KEY_COMM); localStorage.removeItem(KEY_TICKETS); contacts=[]; deals=[]; communications=[]; tickets=[]; saveAll(); }, 'Esto eliminará todos los datos locales. Continuar?'));
+    // Add UI event bindings
+    btnAddContact.addEventListener('click', openNewContact);
+    cCancel.addEventListener('click', ()=> hide(modalContact));
+    cSave.addEventListener('click', saveContact);
 
-        fileInput.addEventListener('change', (e)=>{
-            const f = e.target.files && e.target.files[0];
-            if(!f) return;
-            const reader = new FileReader();
-            reader.onload = evt=>{
-                try{
-                    const parsed = JSON.parse(evt.target.result);
-                    // Expect object with contacts,deals,communications,tickets arrays
-                    if(parsed.contacts && Array.isArray(parsed.contacts)) contacts = parsed.contacts;
-                    if(parsed.deals && Array.isArray(parsed.deals)) deals = parsed.deals;
-                    if(parsed.communications && Array.isArray(parsed.communications)) communications = parsed.communications;
-                    if(parsed.tickets && Array.isArray(parsed.tickets)) tickets = parsed.tickets;
-                    saveAll();
-                    alert('Importación completada');
-                }catch(err){
-                    alert('Archivo inválido');
-                }
-            };
-            reader.readAsText(f);
-            e.target.value = '';
-        });
+    btnAddDeal.addEventListener('click', ()=> { fillDealSelects(); openNewDeal(); });
+    dCancel.addEventListener('click', ()=> hide(modalDeal));
+    dSave.addEventListener('click', saveDeal);
 
-        function exportAll(){
-            const payload = { contacts, deals, communications, tickets, exportedAt: new Date().toISOString() };
-            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'dataconecta_export_' + (new Date().toISOString().split('T')[0]) + '.json';
-            document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-        }
+    btnAddTicket.addEventListener('click', openNewTicket);
+    tCancel.addEventListener('click', ()=> hide(modalTicket));
+    tSave.addEventListener('click', saveTicket);
 
-        // Confirm modal helpers
-        function confirmAction(fn, text){
-            document.getElementById('confirm-text').textContent = text || '¿Estás seguro?';
-            show(confirmModal);
-            pendingConfirm = fn;
-        }
-        document.getElementById('confirm-no').addEventListener('click', ()=> { pendingConfirm = null; hide(confirmModal); });
-        document.getElementById('confirm-yes').addEventListener('click', ()=> { if(typeof pendingConfirm === 'function') pendingConfirm(); pendingConfirm = null; hide(confirmModal); });
+    // modal outside click closes
+    document.querySelectorAll('.modal').forEach(m => { m.addEventListener('click', e=>{ if(e.target === m) hide(m); }) });
 
-        // Helpers and renderers
-        function renderAll(){
-            renderContacts(contacts);
-            renderPipeline();
-            renderCommunications();
-            renderTickets();
-            updateCards();
-        }
-        function updateCards(){
-            totalContactsEl.textContent = contacts.length;
-            activeDealsEl.textContent = deals.length;
-            openTicketsEl.textContent = tickets.filter(t=>t.state==='open').length;
-            monthlyRevenueEl.textContent = '$' + deals.reduce((s,d)=>s + (Number(d.value)||0), 0);
-        }
+    // keyboard shortcuts
+    document.addEventListener('keydown', e=>{
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); saveAll(); showToast('Guardado manual','success'); }
+      if(e.key === 'Escape'){ document.querySelectorAll('.modal').forEach(m=> hide(m)); }
+      if(e.key === 'Delete' && document.activeElement && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA'){ /* optional */ }
+    });
 
-        // escape
-        function escapeHtml(t){ if(t===null||t===undefined) return ''; return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    // expose for debugging
+    window.DataConecta = { get state(){ return {contacts,deals,comms,tickets} }, saveAll, loadAll };
 
-        // keyboard / accessibility
-        document.addEventListener('keydown', e=>{
-            if(e.key==='Escape'){ document.querySelectorAll('.modal').forEach(m=> hide(m)); }
-        });
+    // init
+    loadAll(false);
+    seedIfEmpty();
+    loadAll();
+    renderAll();
 
-        // clicking overlay closes modals
-        document.querySelectorAll('.modal').forEach(m=>{
-            m.addEventListener('click', (ev)=>{
-                if(ev.target === m) hide(m);
-            });
-        });
+    // small helpers used inside modal functions (declared later to keep code tidy)
+    function openNewDeal(){ editingDeal=null; document.getElementById('deal-modal-title').textContent='Nueva oportunidad'; fillDealSelects(); show(modalDeal); }
+    function fillDealSelects(stage, contactId){
+      const stages = ['Lead','Contacto','Prospecto','Cliente'];
+      dStage.innerHTML = stages.map(s=>`<option ${s===stage?'selected':''}>${s}</option>`).join('');
+      dContact.innerHTML = '<option value="">(sin asignar)</option>' + contacts.map(c=>`<option value="${c.id}" ${c.id===contactId?'selected':''}>${escape(c.name)}</option>`).join('');
+    }
+    function openEditDeal(id){
+      const dd = deals.find(x=>x.id===id); if(!dd) return;
+      editingDeal = id; document.getElementById('deal-modal-title').textContent='Editar oportunidad';
+      dTitle.value = dd.title||''; dValue.value = dd.value||0; fillDealSelects(dd.stage, dd.contactId); show(modalDeal);
+    }
 
-        // init
-        loadAll();
-        seed();
-        renderAll();
+    // small initial render functions referenced above
+    function renderAll(){ renderContacts(); renderComms(); renderTickets(); renderPipeline(); updateCardsUI(); }
+    function updateCardsUI(){ /* could update summary area if implemented */ }
 
-        // expose for debugging
-        window.DataConecta = { contacts, deals, communications, tickets, saveAll, loadAll };
-
-    })();
-    </script>
+  })();
+  </script>
 </body>
 </html>
