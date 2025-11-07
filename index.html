@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataConecta | Plataforma Integral CRM para Gestión de Datos, Marketing y UX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #2c3e50;
+            --accent: #9b59b6;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --text: #333;
+            --text-light: #7f8c8d;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --bg-light: #f9fbfd;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-menu li {
+            margin-left: 25px;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            color: var(--primary);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+        
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--secondary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            font-size: 18px;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: #f9fbfd;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 30px;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .feature-card p {
+            color: var(--text-light);
+        }
+        
+        /* Dashboard Preview */
+        .dashboard-preview {
+            padding: 80px 0;
+            background-color: #f5f7fa;
+        }
+        
+        .dashboard-container {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        
+        .dashboard-content {
+            flex: 1;
+        }
+        
+        .dashboard-content h2 {
+            font-size: 36px;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .dashboard-content p {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-image {
+            flex: 1;
+            background-color: var(--secondary);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-placeholder {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            border-radius: 8px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        /* Platform Capabilities */
+        .capabilities {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .capability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .capability-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .capability-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background-color: rgba(52, 152, 219, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .capability-content h3 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .capability-content p {
+            color: var(--text-light);
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 80px 0;
+            background-color: #f5f7fa;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .pricing-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .pricing-header {
+            margin-bottom: 30px;
+        }
+        
+        .pricing-name {
+            font-size: 24px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .pricing-period {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .pricing-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light);
+            color: var(--text-light);
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .pricing-features li i {
+            color: var(--success);
+            margin-right: 10px;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            background-color: #f9fbfd;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .testimonial-content {
+            margin-bottom: 20px;
+            font-style: italic;
+            color: var(--text);
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 15px;
+        }
+        
+        .author-info h4 {
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+        
+        .author-info p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: white;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--primary);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .nav-menu {
+                margin-top: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-menu li {
+                margin: 5px 10px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .pricing-card.featured {
+                transform: none;
+            }
+            
+            .pricing-card.featured:hover {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-database"></i>
+                <span>DataConecta</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#features">Características</a></li>
+                <li><a href="#capabilities">Funcionalidades</a></li>
+                <li><a href="#pricing">Precios</a></li>
+                <li><a href="#testimonials">Testimonios</a></li>
+                <li><a href="#" class="btn btn-outline">Iniciar Sesión</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Plataforma Integral para Gestión de Datos, Marketing y UX</h1>
+            <p>DataConecta conecta todas tus fuentes de datos, herramientas de marketing y análisis de experiencia de usuario en una sola plataforma CRM.</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn btn-primary">Comenzar Prueba Gratuita</a>
+                <a href="#" class="btn btn-outline">Solicitar Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Todo lo que necesitas en una sola plataforma</h2>
+                <p>DataConecta integra todas las herramientas esenciales para gestionar tu negocio de manera eficiente</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Gestión de Bases de Datos</h3>
+                    <p>Conecta, gestiona y analiza múltiples bases de datos desde una interfaz unificada con herramientas avanzadas de consulta y reporting.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Marketing Automation</h3>
+                    <p>Crea campañas de marketing personalizadas, segmenta tu audiencia y automatiza tus estrategias de captación y fidelización.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Análisis de Experiencia de Usuario</h3>
+                    <p>Mide, analiza y mejora la experiencia de usuario con herramientas avanzadas de seguimiento y retroalimentación.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Integraciones</h3>
+                    <p>Conecta DataConecta con tus herramientas favoritas como Salesforce, Google Analytics, Mailchimp y muchas más.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Seguridad Avanzada</h3>
+                    <p>Protege tus datos con encriptación de grado empresarial, controles de acceso y cumplimiento de normativas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Escalabilidad</h3>
+                    <p>Crece sin límites con una infraestructura escalable que se adapta a las necesidades de tu negocio.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Preview -->
+    <section class="dashboard-preview" id="dashboard">
+        <div class="container dashboard-container">
+            <div class="dashboard-content">
+                <h2>Dashboard Unificado e Intuitivo</h2>
+                <p>Nuestro dashboard centralizado te permite visualizar todos tus datos importantes en tiempo real, con widgets personalizables y reportes automatizados.</p>
+                <p>Monitorea el rendimiento de tus campañas, analiza el comportamiento de tus usuarios y toma decisiones basadas en datos concretos desde una única interfaz.</p>
+                <a href="#" class="btn btn-primary">Explorar Características</a>
+            </div>
+            <div class="dashboard-image">
+                <div class="dashboard-placeholder">
+                    <div style="text-align: center;">
+                        <i class="fas fa-chart-bar" style="font-size: 48px; margin-bottom: 15px;"></i>
+                        <p>Dashboard Interactivo DataConecta</p>
+                        <p style="font-size: 14px; margin-top: 10px;">Visualización en tiempo real de métricas clave</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Capabilities -->
+    <section class="capabilities" id="capabilities">
+        <div class="container">
+            <div class="section-title">
+                <h2>Funcionalidades Avanzadas</h2>
+                <p>Descubre todas las capacidades de DataConecta para potenciar tu negocio</p>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="crm">CRM</div>
+                <div class="tab" data-tab="databases">Bases de Datos</div>
+                <div class="tab" data-tab="marketing">Marketing</div>
+                <div class="tab" data-tab="ux">Experiencia de Usuario</div>
+            </div>
+            
+            <div class="tab-content active" id="crm-content">
+                <div class="capability-grid">
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Gestión de Contactos</h3>
+                            <p>Administra todos tus contactos, clientes y prospectos en una base de datos centralizada con segmentación avanzada.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-funnel-dollar"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Embudos de Ventas</h3>
+                            <p>Diseña y automatiza embudos de ventas personalizados con seguimiento de cada etapa del proceso.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Gestión de Tareas</h3>
+                            <p>Asigna y realiza seguimiento a tareas, recordatorios y actividades con notificaciones en tiempo real.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Reportes Avanzados</h3>
+                            <p>Genera reportes personalizados con métricas de rendimiento, conversión y efectividad de tu equipo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="databases-content">
+                <div class="capability-grid">
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Conexión Multiplataforma</h3>
+                            <p>Conecta con MySQL, PostgreSQL, MongoDB, SQL Server y más desde una interfaz unificada.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Consultas Avanzadas</h3>
+                            <p>Ejecuta consultas SQL y NoSQL con nuestro editor intuitivo y visualiza resultados en tiempo real.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-sync"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Sincronización en Tiempo Real</h3>
+                            <p>Mantén tus datos sincronizados automáticamente entre diferentes sistemas y bases de datos.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Backup Automatizado</h3>
+                            <p>Realiza backups automáticos de tus bases de datos con políticas de retención personalizables.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="marketing-content">
+                <div class="capability-grid">
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Email Marketing</h3>
+                            <p>Crea y envía campañas de email marketing segmentadas con plantillas responsivas y análisis de rendimiento.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Automatización de Campañas</h3>
+                            <p>Diseña flujos de automatización basados en comportamientos de usuarios y desencadenantes específicos.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Análisis de ROI</h3>
+                            <p>Mide el retorno de inversión de tus campañas con seguimiento de conversiones y atribución multicanal.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-user-tag"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Segmentación Avanzada</h3>
+                            <p>Crea segmentos de audiencia dinámicos basados en comportamientos, datos demográficos y historial de interacciones.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="ux-content">
+                <div class="capability-grid">
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Mapas de Calor</h3>
+                            <p>Visualiza el comportamiento de los usuarios en tu sitio web con mapas de calor de clics, desplazamiento y movimiento.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Grabaciones de Sesiones</h3>
+                            <p>Observa grabaciones de sesiones reales de usuarios para identificar puntos de fricción y oportunidades de mejora.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-poll"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Encuestas de Satisfacción</h3>
+                            <p>Implementa encuestas de satisfacción (NPS, CSAT) en puntos clave de la experiencia del usuario.</p>
+                        </div>
+                    </div>
+                    <div class="capability-item">
+                        <div class="capability-icon">
+                            <i class="fas fa-road"></i>
+                        </div>
+                        <div class="capability-content">
+                            <h3>Análisis de Embudos</h3>
+                            <p>Identifica cuellos de botella en tus embudos de conversión y optimiza la experiencia del usuario.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Planes y Precios</h2>
+                <p>Elige el plan que mejor se adapte a las necesidades de tu empresa</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Básico</h3>
+                        <div class="pricing-price">$29<span class="pricing-period">/mes</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Hasta 1,000 contactos</li>
+                        <li><i class="fas fa-check"></i> 1 Base de datos conectada</li>
+                        <li><i class="fas fa-check"></i> Email marketing básico</li>
+                        <li><i class="fas fa-check"></i> Dashboard estándar</li>
+                        <li><i class="fas fa-times"></i> Análisis de UX</li>
+                        <li><i class="fas fa-times"></i> Automatizaciones</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Comenzar Prueba</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Más Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Profesional</h3>
+                        <div class="pricing-price">$79<span class="pricing-period">/mes</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Hasta 10,000 contactos</li>
+                        <li><i class="fas fa-check"></i> 5 Bases de datos conectadas</li>
+                        <li><i class="fas fa-check"></i> Email marketing avanzado</li>
+                        <li><i class="fas fa-check"></i> Dashboard personalizable</li>
+                        <li><i class="fas fa-check"></i> Análisis básico de UX</li>
+                        <li><i class="fas fa-check"></i> Automatizaciones limitadas</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Comenzar Prueba</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Empresarial</h3>
+                        <div class="pricing-price">$199<span class="pricing-period">/mes</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Contactos ilimitados</li>
+                        <li><i class="fas fa-check"></i> Bases de datos ilimitadas</li>
+                        <li><i class="fas fa-check"></i> Marketing automation completo</li>
+                        <li><i class="fas fa-check"></i> Dashboard avanzado</li>
+                        <li><i class="fas fa-check"></i> Análisis completo de UX</li>
+                        <li><i class="fas fa-check"></i> Automatizaciones ilimitadas</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">Comenzar Prueba</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>Lo que dicen nuestros clientes</h2>
+                <p>Descubre cómo DataConecta ha transformado la gestión de datos en empresas como la tuya</p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "DataConecta ha revolucionado nuestra forma de gestionar clientes. La integración con nuestras bases de datos existentes fue impecable y el dashboard unificado nos permite tomar decisiones basadas en datos en tiempo real."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">ML</div>
+                        <div class="author-info">
+                            <h4>María López</h4>
+                            <p>Directora de Marketing, TechSolutions</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Como startup, necesitábamos una solución todo-en-uno que escalara con nosotros. DataConecta no solo cumplió con nuestras expectativas, sino que nos ha permitido crecer de forma más eficiente y data-driven."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">CR</div>
+                        <div class="author-info">
+                            <h4>Carlos Rodríguez</h4>
+                            <p>CEO, Innovación Digital</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        "Las herramientas de análisis de UX nos han permitido identificar puntos de fricción que no habíamos detectado antes. Hemos mejorado nuestra tasa de conversión en un 28% desde que implementamos DataConecta."
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AM</div>
+                        <div class="author-info">
+                            <h4>Ana Martínez</h4>
+                            <p>Directora de Producto, EcommercePlus</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>¿Listo para transformar tu gestión de datos?</h2>
+            <p>Únete a miles de empresas que ya utilizan DataConecta para optimizar sus operaciones y tomar mejores decisiones.</p>
+            <a href="#" class="btn btn-outline">Comenzar Prueba Gratuita</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>DataConecta</h3>
+                    <p>La plataforma integral para gestión de datos, marketing y experiencia de usuario.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Producto</h3>
+                    <ul>
+                        <li><a href="#">Características</a></li>
+                        <li><a href="#">Precios</a></li>
+                        <li><a href="#">Casos de Éxito</a></li>
+                        <li><a href="#">Seguridad</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Recursos</h3>
+                    <ul>
+                        <li><a href="#">Documentación</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Centro de Ayuda</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Webinars</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Empresa</h3>
+                    <ul>
+                        <li><a href="#">Nosotros</a></li>
+                        <li><a href="#">Carreras</a></li>
+                        <li><a href="#">Contacto</a></li>
+                        <li><a href="#">Socios</a></li>
+                        <li><a href="#">Prensa</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 DataConecta. Todos los derechos reservados. | <a href="#">Términos de Servicio</a> | <a href="#">Política de Privacidad</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab contents
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the corresponding tab content
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-content`).classList.add('active');
+            });
+        });
+        
+        // Simple animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe feature cards for animation
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s, transform 0.5s';
+            observer.observe(card);
+        });
+        
+        // Observe pricing cards for animation
+        document.querySelectorAll('.pricing-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s, transform 0.5s';
+            observer.observe(card);
+        });
+        
+        // Observe testimonial cards for animation
+        document.querySelectorAll('.testimonial-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s, transform 0.5s';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
