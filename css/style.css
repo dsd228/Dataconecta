@@ -1,1 +1,39 @@
-
+/* Styles for DataConecta Premium local demo */
+:root{
+  --bg:#f6fbff; --card:#fff; --primary:#2b8fe6; --muted:#6b7280; --border:#e6eef6; --success:#16a34a; --danger:#dc2626;
+}
+*{box-sizing:border-box}
+body{font-family:Inter, "Segoe UI", Roboto, Arial; margin:0; background:var(--bg); color:#0f1724;-webkit-font-smoothing:antialiased}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:#0f1724;color:#fff}
+.topbar .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.topbar .tag{font-size:12px;opacity:0.85;margin-left:6px}
+.topbar .controls{display:flex;align-items:center;gap:8px}
+.container{max-width:1200px;margin:18px auto;padding:0 16px}
+.panel{background:var(--card);border-radius:10px;padding:14px;border:1px solid var(--border);box-shadow:0 8px 24px rgba(12,35,60,0.04);margin-bottom:12px}
+.hero{padding:18px}
+.hero-actions{display:flex;gap:8px;margin-top:12px}
+.btn{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.layout{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:12px}
+.left{min-width:0}
+.right{min-width:0}
+.row{display:flex;gap:8px;align-items:center}
+.stack{display:flex;flex-direction:column;gap:8px}
+.input, input, select{padding:8px;border-radius:8px;border:1px solid var(--border);background:#fff;min-width:0}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #f0f6fb;text-align:left}
+th{background:#fbfeff;color:var(--muted);font-weight:600}
+.muted{color:var(--muted);font-size:13px}
+.pipeline{display:flex;gap:12px;overflow:auto;padding:8px}
+.stage{min-width:220px;padding:8px;border-radius:8px;background:#fbfeff;border:1px dashed #e9f3fb}
+.deal{background:#fff;padding:8px;border-radius:6px;margin-bottom:8px;border:1px solid #eef7ff;cursor:grab}
+.small{font-size:13px;color:var(--muted)}
+.footer{margin-top:16px;text-align:center;color:var(--muted)}
+.toast-wrap{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.toast{background:#111;color:#fff;padding:10px 12px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.2)}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(4,10,20,0.45);z-index:1000}
+.modal-card{background:#fff;padding:16px;border-radius:10px;width:100%;max-width:720px}
+.save-indicator{color:#fff;margin-left:6px;font-size:13px}
+.hidden{display:none}
+@media (max-width:980px){ .layout{grid-template-columns:1fr} .right{order:2} }
