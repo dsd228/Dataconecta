@@ -1,243 +1,77 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor Visual de Prototipos | DataConecta</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/konva@9.3.13/konva.min.js"></script>
-    <style>
-        :root {
-            --primary: #3498db;
-            --primary-dark: #2980b9;
-            --secondary: #2c3e50;
-            --accent: #9b59b6;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --text: #333;
-            --text-light: #7f8c8d;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --bg-light: #f9fbfd;
-            --bg-darker: #f1f5f9;
-            --border-color: #e2e8f0;
-        }
-        * { box-sizing: border-box; }
-        body.editor-mode {
-            background-color: var(--bg-darker);
-            color: var(--text);
-            display: flex; flex-direction: column; height: 100vh; overflow: hidden; margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        header.editor-header { background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%); color: white; padding: 10px 20px; display:flex; justify-content:space-between; align-items:center; }
-        .header-left { display:flex; align-items:center; gap:16px }
-        .logo { display:flex; align-items:center; font-weight:700 }
-        .logo i { margin-right:8px; color:var(--primary) }
-        .header-nav { display:flex; gap:12px; list-style:none; margin:0; padding:0 }
-        .header-nav a { color:white; text-decoration:none }
-        .editor-toolbar { display:flex; gap:10px; align-items:center }
-        .view-controls button, .mode-toggle, .btn-tool { background:transparent; border:1px solid rgba(255,255,255,0.45); color:white; padding:6px 10px; border-radius:4px; cursor:pointer }
-        .view-controls button.active { background:var(--primary); border-color:var(--primary) }
-        .editor-main { display:flex; flex:1; overflow:hidden }
-        aside.components-toolbar { width:220px; background:white; border-right:1px solid var(--border-color); padding:16px; overflow:auto }
-        .component-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px }
-        .component-item { background:var(--bg-light); border:1px solid var(--border-color); padding:12px; text-align:center; border-radius:6px; cursor:grab }
-        .canvas-container { flex:1; display:flex; align-items:center; justify-content:center; padding:18px; background:var(--bg-darker); overflow:auto }
-        #canvas-stage { background:white; border:1px solid var(--border-color); box-shadow:0 6px 24px rgba(0,0,0,0.08) }
-        aside.properties-panel { width:260px; background:white; border-left:1px solid var(--border-color); padding:16px; overflow:auto }
-        #properties-placeholder { text-align:center; color:var(--text-light); }
-        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); align-items:center; justify-content:center }
-        .modal-content { background:white; padding:20px; border-radius:8px; max-width:420px; width:90% }
-        .toolbar-row { display:flex; gap:8px; }
-        .btn-tool.primary { background:var(--primary); border-color:var(--primary); color:white }
-        input[type=file] { display:none }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DataConecta — Editor Premium</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/editor.css">
+  <script src="https://unpkg.com/konva@9.3.13/konva.min.js"></script>
+  <script src="js/editor.js" defer></script>
 </head>
-<body class="editor-mode">
-    <header class="editor-header">
-        <div class="header-left">
-            <div class="logo"><i class="fas fa-drafting-compass"></i><span>DataConecta</span></div>
-            <ul class="header-nav">
-                <li><a href="./index.html">CRM</a></li>
-                <li><a href="./editor.html" class="active">Editor</a></li>
-                <li><a href="./analitica.html">Analítica</a></li>
-            </ul>
-            <div id="user-display">Cargando...</div>
+<body class="editor-body">
+  <header class="editor-topbar">
+    <div class="brand"><i class="fas fa-drafting-compass"></i> Editor Premium</div>
+    <div class="toolbar">
+      <select id="view-select">
+        <option value="desktop">Escritorio</option>
+        <option value="tablet">Tablet</option>
+        <option value="mobile">Móvil</option>
+      </select>
+      <button id="btn-undo" title="Deshacer" class="btn"><i class="fas fa-undo"></i></button>
+      <button id="btn-redo" title="Rehacer" class="btn"><i class="fas fa-redo"></i></button>
+      <button id="btn-save-components" title="Guardar componente" class="btn"><i class="fas fa-save"></i></button>
+      <button id="btn-export-html" title="Exportar HTML" class="btn primary"><i class="fas fa-file-code"></i> Exportar HTML</button>
+      <div id="editor-save-state" class="muted">—</div>
+    </div>
+  </header>
+
+  <main class="editor-main">
+    <aside class="editor-left">
+      <section class="panel">
+        <h4>Componentes</h4>
+        <div class="component-grid" id="component-palette">
+          <div class="component-item" data-type="Text"><i class="fas fa-font"></i><div>Texto</div></div>
+          <div class="component-item" data-type="Button"><i class="fas fa-mouse-pointer"></i><div>Botón</div></div>
+          <div class="component-item" data-type="Image"><i class="fas fa-image"></i><div>Imagen</div></div>
+          <div class="component-item" data-type="Input"><i class="fas fa-keyboard"></i><div>Input</div></div>
         </div>
-        <div class="editor-toolbar">
-            <div class="view-controls">
-                <button id="view-mobile" title="Vista Móvil"><i class="fas fa-mobile-alt"></i></button>
-                <button id="view-tablet" title="Vista Tablet"><i class="fas fa-tablet-alt"></i></button>
-                <button id="view-desktop" title="Vista Escritorio" class="active"><i class="fas fa-desktop"></i></button>
-            </div>
-            <button class="mode-toggle" id="toggle-preview"><i class="fas fa-play"></i> <span id="preview-text">Vista Previa</span></button>
-            <div class="toolbar-row">
-                <button class="btn-tool" id="btn-save">Guardar</button>
-                <button class="btn-tool" id="btn-load">Cargar</button>
-                <button class="btn-tool" id="btn-export">Exportar</button>
-                <button class="btn-tool" id="btn-import">Importar</button>
-                <input type="file" id="file-input" accept="application/json" />
-            </div>
+        <hr/>
+        <h4>Componentes guardados</h4>
+        <div id="saved-components" class="saved-list">
+          <div class="muted">Sin componentes guardados.</div>
         </div>
-    </header>
-    <main class="editor-main">
-        <aside class="components-toolbar">
-            <div class="toolbar-section">
-                <h3>Componentes</h3>
-                <div class="component-grid">
-                    <div class="component-item" draggable="true" data-type="Text"><i class="fas fa-font"></i><div>Texto</div></div>
-                    <div class="component-item" draggable="true" data-type="Button"><i class="fas fa-mouse-pointer"></i><div>Botón</div></div>
-                    <div class="component-item" draggable="true" data-type="Image"><i class="fas fa-image"></i><div>Imagen</div></div>
-                    <div class="component-item" draggable="true" data-type="Input"><i class="fas fa-keyboard"></i><div>Input</div></div>
-                </div>
-            </div>
-            <div class="toolbar-section">
-                <h3>Componentes Guardados</h3>
-                <div id="saved-components-list"><p class="muted">Aquí aparecerán tus componentes reutilizables.</p></div>
-            </div>
-        </aside>
-        <section class="canvas-container" id="canvas-container"><div id="canvas-stage"></div></section>
-        <aside class="properties-panel">
-            <h3>Propiedades</h3>
-            <div id="properties-placeholder"><i class="fas fa-hand-pointer" style="font-size:24px;margin-bottom:10px"></i><p>Selecciona un elemento para editar sus propiedades.</p></div>
-            <form id="properties-form" style="display:none">
-                <input type="hidden" id="selected-node-id">
-                <div class="form-group" id="group-text"><label for="prop-text">Texto</label><input id="prop-text" class="form-control"/></div>
-                <div class="form-row"><div class="form-group"><label for="prop-fontsize">Tamaño</label><input id="prop-fontsize" type="number" min="8" max="100" class="form-control"/></div><div class="form-group" id="group-fill"><label for="prop-fill">Color Texto</label><input id="prop-fill" type="color" class="form-control"/></div></div>
-                <div class="form-group" id="group-background"><label for="prop-background">Color Fondo</label><input id="prop-background" type="color" class="form-control"/></div>
-                <div class="form-row"><div class="form-group"><label for="prop-x">X</label><input id="prop-x" type="number" step="1" class="form-control"/></div><div class="form-group"><label for="prop-y">Y</label><input id="prop-y" type="number" step="1" class="form-control"/></div></div>
-                <div class="form-row"><div class="form-group"><label for="prop-width">Ancho</label><input id="prop-width" type="number" min="10" class="form-control"/></div><div class="form-group"><label for="prop-height">Alto</label><input id="prop-height" type="number" min="10" class="form-control"/></div></div>
-                <hr/>
-                <div class="form-group"><label>Interacción</label><button type="button" class="btn-tool primary" id="add-interaction-btn"><i class="fas fa-link"></i> Añadir Interacción</button></div>
-                <div class="form-group"><label>Componente</label><button type="button" class="btn-tool" id="save-component-btn"><i class="fas fa-save"></i> Guardar como Componente</button></div>
-                <div class="form-group"><button type="button" class="btn-tool" id="delete-element-btn"><i class="fas fa-trash-alt"></i> Eliminar Elemento</button></div>
-            </form>
-        </aside>
-    </main>
+      </section>
+    </aside>
 
-    <div class="modal" id="interaction-modal"><div class="modal-content"><div class="modal-header"><h3 class="modal-title">Añadir Interacción</h3><span class="close" id="close-modal">&times;</span></div><form id="interaction-form"><div class="form-group"><label for="interaction-event">Evento</label><select id="interaction-event"><option value="click">Al hacer Clic</option><option value="hover">Al pasar el ratón</option></select></div><div class="form-group"><label for="interaction-action">Acción</label><select id="interaction-action"><option value="link">Ir a otra pantalla</option><option value="modal">Mostrar modal</option></select></div><div class="form-group"><label for="interaction-target">Destino (Simulado)</label><input id="interaction-target" placeholder="Ej: 'Pantalla de Perfil' o 'Modal de Éxito'"/></div><div class="form-actions" style="display:flex;justify-content:space-between"><button type="button" class="btn-tool" id="remove-interaction-btn">Eliminar</button><button type="submit" class="btn-tool primary">Guardar</button></div></form></div></div>
+    <section class="editor-canvas">
+      <div id="canvas-stage" class="canvas-stage"></div>
+      <div class="canvas-footer">
+        <label><input type="checkbox" id="show-grid"/> Mostrar grilla</label>
+        <label><input type="checkbox" id="snap-grid" checked/> Snap</label>
+        <label>Zoom: <input type="range" id="zoom-range" min="0.5" max="2" step="0.05" value="1"/></label>
+      </div>
+    </section>
 
-    <input type="file" id="import-file" accept="application/json" style="display:none" />
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // Helpers
-        function uid() { return 'n_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
-        function getCssVar(name, fallback){ const v = getComputedStyle(document.documentElement).getPropertyValue(name); return (v||fallback).trim()||fallback; }
+    <aside class="editor-right">
+      <section class="panel">
+        <h4>Propiedades</h4>
+        <div id="properties-panel">
+          <div class="muted">Selecciona un elemento para ver propiedades</div>
+        </div>
+      </section>
 
-        const STORAGE_KEY = 'dataconecta_editor_v1';
-        const COMPONENTS_KEY = 'dataconecta_components_v1';
+      <section class="panel">
+        <h4>Export / Import</h4>
+        <div style="display:flex;gap:8px">
+          <button id="btn-export-components" class="btn">Exportar comps</button>
+          <button id="btn-import-components" class="btn">Importar comps</button>
+          <input type="file" id="components-file" accept="application/json" style="display:none" />
+        </div>
+      </section>
+    </aside>
+  </main>
 
-        let stage, layer, tr; let selectedNode = null; let isPreviewMode = false;
-        const views = { mobile:{width:375,height:667}, tablet:{width:768,height:1024}, desktop:{width:1366,height:768} };
-        let currentView = 'desktop';
-
-        const propertiesForm = document.getElementById('properties-form');
-        const propertiesPlaceholder = document.getElementById('properties-placeholder');
-        document.getElementById('user-display').textContent = 'Usuario Anónimo (Modo Local)';
-
-        function initCanvas(){
-            const viewSize = views[currentView];
-            stage = new Konva.Stage({ container: 'canvas-stage', width: viewSize.width, height: viewSize.height });
-            layer = new Konva.Layer(); stage.add(layer);
-            const primary = getCssVar('--primary','#3498db');
-            tr = new Konva.Transformer({ nodes:[], keepRatio:false, anchorStroke:primary, anchorFill:'white', anchorSize:8, borderStroke:primary, borderDash:[4,4] });
-            layer.add(tr);
-
-            // selection
-            stage.on('click tap', e=>{
-                if (isPreviewMode){ handlePreviewClick(e.target); return; }
-                if (!e.target || e.target === stage){ deselectNode(); return; }
-                if (e.target.getParent && e.target.getParent().className === 'Transformer') return;
-                let node = e.target;
-                if (node.getParent && node.getParent().getAttr && node.getParent().getAttr('data-type')) node = node.getParent();
-                selectNode(node);
-            });
-
-            // attach drop to actual container element for accurate coords
-            const sc = stage.container();
-            sc.addEventListener('dragover', ev=>ev.preventDefault());
-            sc.addEventListener('drop', ev=>{ ev.preventDefault(); const dtType = ev.dataTransfer && ev.dataTransfer.getData('text/plain'); const dropType = dtType || window.__dragItemType; if(!dropType) return; try{ stage.setPointersPositions(ev); }catch(e){} const pos = stage.getPointerPosition() || { x: ev.offsetX, y: ev.offsetY }; createElement(dropType,pos); window.__dragItemType=null; });
-        }
-
-        function selectNode(node){ if(!node) return; selectedNode=node; tr.nodes([node]); showProperties(node); layer.draw(); }
-        function deselectNode(){ selectedNode=null; tr.nodes([]); hideProperties(); layer.draw(); }
-        function showProperties(node){ propertiesPlaceholder.style.display='none'; propertiesForm.style.display='block'; updatePropertiesPanel(node); }
-        function hideProperties(){ propertiesPlaceholder.style.display='block'; propertiesForm.style.display='none'; }
-
-        function updatePropertiesPanel(node){ if(!node) return; const type=node.getAttr('data-type'); document.getElementById('selected-node-id').value = node.id()||''; document.getElementById('group-text').style.display='none'; document.getElementById('group-fill').style.display='none'; document.getElementById('group-background').style.display='none';
-            document.getElementById('prop-x').value = Math.round(node.x()||0); document.getElementById('prop-y').value = Math.round(node.y()||0);
-            let w = node.width(); let h = node.height(); if((!w || !h) && node.getClientRect){ const r = node.getClientRect(); w=r.width; h=r.height; }
-            document.getElementById('prop-width').value = Math.round(w||0); document.getElementById('prop-height').value = Math.round(h||0);
-            if(type==='Text'){ const txt=node; document.getElementById('group-text').style.display='block'; document.getElementById('group-fill').style.display='block'; document.getElementById('prop-text').value = txt.text(); document.getElementById('prop-fontsize').value = txt.fontSize()||20; document.getElementById('prop-fill').value = txt.fill()||'#333'; }
-            else if(type==='Button' || type==='Input'){ const rect=node.findOne('Rect'); const text=node.findOne('Text'); document.getElementById('group-text').style.display='block'; document.getElementById('group-fill').style.display='block'; document.getElementById('group-background').style.display='block'; document.getElementById('prop-text').value = text ? text.text() : ''; document.getElementById('prop-fontsize').value = text ? (text.fontSize()||16) : 16; document.getElementById('prop-fill').value = text ? (text.fill()||'#fff') : '#fff'; document.getElementById('prop-background').value = rect ? (rect.fill()||'#fff') : '#fff'; }
-            else if(type==='Image'){ const rect=node.findOne('Rect'); document.getElementById('group-background').style.display='block'; document.getElementById('prop-background').value = rect? (rect.fill()||'#eee'):'#eee'; }
-            const interaction = node.getAttr('interaction'); const interactionBtn=document.getElementById('add-interaction-btn'); if(interaction){ interactionBtn.textContent=' Editar Interacción'; interactionBtn.style.backgroundColor=getCssVar('--success','#2ecc71'); } else { interactionBtn.textContent=' Añadir Interacción'; interactionBtn.style.backgroundColor=getCssVar('--primary','#3498db'); }
-        }
-
-        // Drag palette
-        window.__dragItemType=null;
-        document.querySelectorAll('.component-item').forEach(it=>{
-            it.addEventListener('dragstart', e=>{ const type = it.dataset.type; window.__dragItemType = type; try{ if(e.dataTransfer) e.dataTransfer.setData('text/plain', type); }catch(err){} });
-            it.addEventListener('touchstart', ()=>{ window.__dragItemType = it.dataset.type; });
-        });
-
-        function createElement(type,pos){ let element; switch(type){ case 'Text': element = new Konva.Text({ x:pos.x, y:pos.y, text:'Texto de ejemplo', fontSize:20, fill:'#333', width:200, draggable:true, 'data-type':type }); break; case 'Button': element = new Konva.Group({ x:pos.x, y:pos.y, draggable:true, 'data-type':type }); const buttonRect = new Konva.Rect({ width:120,height:40, fill:getCssVar('--primary','#3498db'), cornerRadius:6 }); const buttonText = new Konva.Text({ text:'Click Aquí', fontSize:16, fill:'white', width:120, height:40, align:'center', verticalAlign:'middle', listening:false }); element.add(buttonRect, buttonText); break; case 'Image': element = new Konva.Group({ x:pos.x, y:pos.y, draggable:true, 'data-type':type }); const imgRect = new Konva.Rect({ width:150,height:100, fill:'#eee', stroke:'#ccc', strokeWidth:2, dash:[5,5] }); const imgLabel = new Konva.Text({ text:'IMAGEN', fontSize:14, fill:'#aaa', width:150, height:100, align:'center', verticalAlign:'middle', listening:false }); element.add(imgRect, imgLabel); break; case 'Input': element = new Konva.Group({ x:pos.x, y:pos.y, draggable:true, 'data-type':type }); const inputRect = new Konva.Rect({ width:200,height:36, fill:'white', stroke:'#ccc', strokeWidth:1, cornerRadius:4 }); const inputText = new Konva.Text({ text:'Placeholder...', fontSize:14, fill:'#999', width:200, height:36, align:'left', verticalAlign:'middle', padding:10, listening:false }); element.add(inputRect, inputText); break; }
-            if(element){ element.id(uid()); element.on('transformend dragend', ()=>{ if(selectedNode && selectedNode.id && selectedNode.id()===element.id()) updatePropertiesPanel(selectedNode); }); element.on('dblclick dbltap', ()=>{ if(element.getAttr('data-type')==='Text'){ const newText = prompt('Editar texto:', element.text()||''); if(newText!==null) element.text(newText); } }); layer.add(element); layer.draw(); }
-        }
-
-        // View controls
-        document.querySelectorAll('.view-controls button').forEach(btn=>btn.addEventListener('click', e=>{ document.querySelectorAll('.view-controls button').forEach(b=>b.classList.remove('active')); const clicked = e.target.closest('button'); clicked.classList.add('active'); currentView = clicked.id==='view-mobile'?'mobile': clicked.id==='view-tablet'?'tablet':'desktop'; resizeCanvas(); }));
-        function resizeCanvas(){ const view = views[currentView]; if(!stage) return; stage.width(view.width); stage.height(view.height); stage.draw(); }
-
-        // Properties sync
-        propertiesForm.addEventListener('input', e=>{
-            if(!selectedNode) return; const id = e.target.id; let value = e.target.value; if(e.target.type==='number') value = parseInt(value,10)||0;
-            switch(id){ case 'prop-text': if(selectedNode.getAttr('data-type')==='Text') selectedNode.text(value); else{ const t=selectedNode.findOne('Text'); if(t) t.text(value); } break; case 'prop-fontsize': const fs=parseInt(value,10)||12; if(selectedNode.getAttr('data-type')==='Text') selectedNode.fontSize(fs); else{ const t=selectedNode.findOne('Text'); if(t) t.fontSize(fs); } break; case 'prop-fill': { const t=selectedNode.findOne('Text'); if(t) t.fill(value); } break; case 'prop-background': { const r=selectedNode.findOne('Rect'); if(r) r.fill(value); } break; case 'prop-x': selectedNode.x(value); break; case 'prop-y': selectedNode.y(value); break; case 'prop-width': selectedNode.width(parseInt(value,10)||selectedNode.width()); break; case 'prop-height': selectedNode.height(parseInt(value,10)||selectedNode.height()); break; }
-            layer.draw();
-        });
-
-        // Actions
-        document.getElementById('delete-element-btn').addEventListener('click', ()=>{ if(selectedNode){ selectedNode.destroy(); deselectNode(); layer.draw(); } });
-        document.getElementById('save-component-btn').addEventListener('click', ()=>{ if(!selectedNode) return; const comp = selectedNode.toObject(); comp.type = selectedNode.getAttr('data-type'); comp.name = prompt('Nombre del componente:', comp.type) || comp.type; const saved = loadComponents(); saved.unshift(comp); localStorage.setItem(COMPONENTS_KEY, JSON.stringify(saved)); renderSavedComponents(); alert('Componente guardado.'); });
-
-        // Render components list
-        function loadComponents(){ try{ return JSON.parse(localStorage.getItem(COMPONENTS_KEY)||'[]'); }catch(e){return[]} }
-        function renderSavedComponents(){ const list = document.getElementById('saved-components-list'); const arr = loadComponents(); if(arr.length===0){ list.innerHTML='<p class="muted">Aquí aparecerán tus componentes reutilizables.</p>'; return; } list.innerHTML=''; arr.forEach((c, idx)=>{ const el = document.createElement('div'); el.className='saved-comp'; el.style.padding='8px'; el.style.border='1px solid var(--border-color)'; el.style.marginBottom='8px'; el.style.cursor='pointer'; el.textContent = c.name || c.type; el.addEventListener('click', ()=>{ // instantiate component
-                    try{ const node = Konva.Node.create(c); node.id(uid()); layer.add(node); layer.draw(); }catch(err){ console.error(err); alert('No se pudo instanciar el componente.'); } }); const del = document.createElement('button'); del.textContent='Eliminar'; del.style.marginLeft='8px'; del.addEventListener('click', (ev)=>{ ev.stopPropagation(); if(confirm('Eliminar componente?')){ arr.splice(idx,1); localStorage.setItem(COMPONENTS_KEY, JSON.stringify(arr)); renderSavedComponents(); } }); el.appendChild(del); list.appendChild(el); }); }
-
-        // Interactions modal
-        const modal = document.getElementById('interaction-modal'); document.getElementById('add-interaction-btn').addEventListener('click', ()=>{ if(!selectedNode) return; const interaction = selectedNode.getAttr('interaction'); if(interaction){ document.getElementById('interaction-event').value = interaction.event||'click'; document.getElementById('interaction-action').value = interaction.action||'link'; document.getElementById('interaction-target').value = interaction.target||''; document.getElementById('remove-interaction-btn').style.display='inline-block'; } else { document.getElementById('interaction-form').reset(); document.getElementById('remove-interaction-btn').style.display='none'; } modal.style.display='flex'; }); document.getElementById('close-modal').addEventListener('click', ()=>modal.style.display='none'); document.getElementById('interaction-form').addEventListener('submit', e=>{ e.preventDefault(); if(!selectedNode) return; selectedNode.setAttr('interaction',{ event: document.getElementById('interaction-event').value, action: document.getElementById('interaction-action').value, target: document.getElementById('interaction-target').value }); modal.style.display='none'; updatePropertiesPanel(selectedNode); }); document.getElementById('remove-interaction-btn').addEventListener('click', ()=>{ if(selectedNode){ selectedNode.setAttr('interaction', null); modal.style.display='none'; updatePropertiesPanel(selectedNode); } });
-
-        // Preview mode
-        document.getElementById('toggle-preview').addEventListener('click', ()=>{ isPreviewMode = !isPreviewMode; const btn = document.getElementById('toggle-preview'); const text = document.getElementById('preview-text'); if(isPreviewMode){ deselectNode(); btn.innerHTML = '<i class="fas fa-edit"></i> <span>Modo Edición</span>'; btn.style.backgroundColor = getCssVar('--success','#2ecc71'); try{ stage.container().style.cursor='pointer'; }catch(e){} } else { btn.innerHTML = '<i class="fas fa-play"></i> <span id="preview-text">Vista Previa</span>'; btn.style.backgroundColor='transparent'; try{ stage.container().style.cursor='default'; }catch(e){} } });
-        function handlePreviewClick(node){ if(!node || node===stage) return; if(node.parent && node.parent.getAttr && node.parent.getAttr('data-type')) node = node.parent; const inter = node.getAttr('interaction'); if(inter && inter.event==='click'){ // show preview modal simplified
-            const title = modal.querySelector('.modal-title'); const original = title.textContent; title.textContent = 'Vista Previa de Interacción'; const holder = document.createElement('div'); holder.id='preview-holder'; holder.style.padding='8px'; holder.innerHTML = `<p><strong>Evento:</strong> ${inter.event}</p><p><strong>Acción:</strong> ${inter.action}</p><p><strong>Destino:</strong> ${inter.target}</p><div style="margin-top:8px"><button id="close-preview-modal" class="btn-tool primary">Cerrar</button></div>`; modal.querySelector('.modal-content').appendChild(holder); modal.style.display='flex'; document.getElementById('close-preview-modal').onclick = ()=>{ const ph = document.getElementById('preview-holder'); if(ph) ph.remove(); title.textContent = original; modal.style.display='none'; }; }
-        }
-
-        // Save/Load/Export/Import canvas
-        function saveProject(){ try{ const json = stage.toJSON(); localStorage.setItem(STORAGE_KEY, json); alert('Proyecto guardado localmente.'); }catch(e){ console.error(e); alert('Error guardando proyecto'); } }
-        function loadProject(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(!raw) { alert('No hay proyecto guardado.'); return; } layer.destroyChildren(); layer.draw(); const parsed = JSON.parse(raw); if(parsed && parsed.children){ parsed.children.forEach(ch=>{ try{ const n = Konva.Node.create(JSON.stringify(ch)); n.id(uid()); layer.add(n); }catch(err){ console.warn('skip node', err); } }); layer.draw(); } alert('Proyecto cargado.'); }catch(e){ console.error(e); alert('Error cargando proyecto'); } }
-        function exportProject(){ try{ const json = stage.toJSON(); const blob = new Blob([json], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'dataconecta_editor_project.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }catch(e){ console.error(e); alert('Error exportando'); } }
-        function importProjectFile(file){ const reader = new FileReader(); reader.onload = (e)=>{ try{ const parsed = e.target.result; const obj = JSON.parse(parsed); layer.destroyChildren(); if(obj && obj.children){ obj.children.forEach(ch=>{ try{ const n = Konva.Node.create(JSON.stringify(ch)); n.id(uid()); layer.add(n); }catch(err){ console.warn('skip',err); } }); layer.draw(); } else { alert('Formato de proyecto inválido'); } }catch(err){ console.error(err); alert('Error importando'); } }; reader.onerror = ()=> alert('Error leyendo archivo'); reader.readAsText(file); }
-
-        document.getElementById('btn-save').addEventListener('click', saveProject);
-        document.getElementById('btn-load').addEventListener('click', loadProject);
-        document.getElementById('btn-export').addEventListener('click', exportProject);
-        document.getElementById('btn-import').addEventListener('click', ()=>document.getElementById('file-input').click());
-        document.getElementById('file-input').addEventListener('change', (ev)=>{ const f = ev.target.files && ev.target.files[0]; if(!f) return; importProjectFile(f); ev.target.value=''; });
-
-        // Keyboard shortcuts
-        window.addEventListener('keydown', (ev)=>{
-            if(ev.key === 'Delete' || ev.key === 'Backspace'){ if(selectedNode){ selectedNode.destroy(); deselectNode(); layer.draw(); } }
-            if((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 's'){ ev.preventDefault(); saveProject(); }
-        });
-
-        // Utility: show saved state or counts
-        function showSavedState(){ /*placeholder, could update UI*/ }
-
-        // Initialize
-        initCanvas(); resizeCanvas(); renderSavedComponents();
-    });
-    </script>
+  <div id="editor-toast" class="toast-wrap"></div>
 </body>
 </html>
