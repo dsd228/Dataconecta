@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataConecta CRM | Plataforma Integral con Almacenamiento Local</title>
+    <title>DataConecta CRM | Plataforma Integral de Gestión</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -216,10 +216,11 @@
             display: flex;
             border-bottom: 1px solid var(--light);
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
         .tab {
-            padding: 15px 30px;
+            padding: 15px 20px;
             cursor: pointer;
             font-weight: 600;
             color: var(--text-light);
@@ -359,6 +360,258 @@
             margin-top: 20px;
         }
         
+        /* Pipeline */
+        .pipeline-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+        
+        .pipeline-stage {
+            min-width: 280px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stage-title {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .stage-count {
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .deal-card {
+            background-color: white;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            cursor: move;
+        }
+        
+        .deal-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .deal-value {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .deal-contact {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
+        /* Email Tracking */
+        .email-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .email-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        .email-subject {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .email-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .email-body {
+            line-height: 1.6;
+        }
+        
+        .email-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light);
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Chat */
+        .chat-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light);
+            font-weight: 600;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+        }
+        
+        .message.received {
+            align-self: flex-start;
+        }
+        
+        .message.sent {
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .message-bubble {
+            padding: 10px 15px;
+            border-radius: 18px;
+        }
+        
+        .message.received .message-bubble {
+            background-color: #f1f1f1;
+        }
+        
+        .message.sent .message-bubble {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid var(--light);
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--light);
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+        
+        /* Automation */
+        .automation-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .automation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .automation-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .automation-steps {
+            margin-top: 20px;
+        }
+        
+        .automation-step {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 600;
+        }
+        
+        /* Analytics */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+        
+        .chart-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .chart-placeholder {
+            height: 200px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+        }
+        
         /* Alerts */
         .alert {
             padding: 15px;
@@ -397,9 +650,11 @@
             background-color: white;
             border-radius: 8px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             padding: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .modal-header {
@@ -453,6 +708,14 @@
                 flex-direction: column;
                 gap: 0;
             }
+            
+            .pipeline-container {
+                flex-direction: column;
+            }
+            
+            .pipeline-stage {
+                min-width: auto;
+            }
         }
     </style>
 </head>
@@ -479,54 +742,58 @@
             <div class="dashboard-cards">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Total Clientes</div>
+                        <div class="card-title">Total Contactos</div>
                         <div class="card-icon primary">
                             <i class="fas fa-users"></i>
                         </div>
                     </div>
-                    <div class="card-value" id="total-clients">0</div>
-                    <div class="card-description">Clientes registrados en el sistema</div>
+                    <div class="card-value" id="total-contacts">0</div>
+                    <div class="card-description">Contactos registrados en el sistema</div>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Campañas Activas</div>
+                        <div class="card-title">Oportunidades Activas</div>
                         <div class="card-icon success">
                             <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
-                    <div class="card-value" id="active-campaigns">0</div>
-                    <div class="card-description">Campañas de marketing activas</div>
+                    <div class="card-value" id="active-deals">0</div>
+                    <div class="card-description">Oportunidades en pipeline</div>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Feedback Recibido</div>
+                        <div class="card-title">Tickets Abiertos</div>
                         <div class="card-icon warning">
-                            <i class="fas fa-comments"></i>
+                            <i class="fas fa-ticket-alt"></i>
                         </div>
                     </div>
-                    <div class="card-value" id="total-feedback">0</div>
-                    <div class="card-description">Comentarios de experiencia de usuario</div>
+                    <div class="card-value" id="open-tickets">0</div>
+                    <div class="card-description">Tickets de soporte pendientes</div>
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Tasa de Satisfacción</div>
+                        <div class="card-title">Ingresos del Mes</div>
                         <div class="card-icon danger">
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-dollar-sign"></i>
                         </div>
                     </div>
-                    <div class="card-value" id="satisfaction-rate">0%</div>
-                    <div class="card-description">Promedio de satisfacción del usuario</div>
+                    <div class="card-value" id="monthly-revenue">$0</div>
+                    <div class="card-description">Ingresos generados este mes</div>
                 </div>
             </div>
             
             <!-- Tabs -->
             <div class="tabs">
-                <div class="tab active" data-tab="clients">Clientes</div>
-                <div class="tab" data-tab="campaigns">Campañas</div>
-                <div class="tab" data-tab="feedback">Feedback UX</div>
+                <div class="tab active" data-tab="contacts">Contactos</div>
+                <div class="tab" data-tab="communication">Comunicación</div>
+                <div class="tab" data-tab="sales">Ventas</div>
+                <div class="tab" data-tab="marketing">Marketing</div>
+                <div class="tab" data-tab="service">Servicio</div>
+                <div class="tab" data-tab="analytics">Analítica</div>
+                <div class="tab" data-tab="integrations">Integraciones</div>
             </div>
             
             <!-- Alerts -->
@@ -538,36 +805,213 @@
                 Ha ocurrido un error. Por favor, intente nuevamente.
             </div>
             
-            <!-- Clients Tab -->
-            <div class="tab-content active" id="clients-content">
+            <!-- Contacts Tab -->
+            <div class="tab-content active" id="contacts-content">
                 <div class="table-container">
                     <div class="table-header">
-                        <div class="table-title">Gestión de Clientes</div>
-                        <button class="btn btn-primary" id="add-client-btn">Agregar Cliente</button>
+                        <div class="table-title">Gestión de Contactos</div>
+                        <div>
+                            <button class="btn btn-outline" id="segment-contacts">Segmentar</button>
+                            <button class="btn btn-primary" id="add-contact-btn">Agregar Contacto</button>
+                        </div>
                     </div>
-                    <table id="clients-table">
+                    <table id="contacts-table">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Teléfono</th>
                                 <th>Empresa</th>
-                                <th>Estado</th>
+                                <th>Etapa</th>
+                                <th>Última Interacción</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="clients-tbody">
+                        <tbody id="contacts-tbody">
                             <!-- Los datos se cargarán dinámicamente -->
                         </tbody>
                     </table>
                 </div>
+                
+                <div class="form-container" id="segment-form" style="display: none;">
+                    <h3>Segmentar Contactos</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="segment-criteria">Criterio de Segmentación</label>
+                            <select class="form-control" id="segment-criteria">
+                                <option value="location">Ubicación</option>
+                                <option value="funnel-stage">Etapa del Embudo</option>
+                                <option value="client-type">Tipo de Cliente</option>
+                                <option value="email-opened">Abrió Email</option>
+                                <option value="email-not-opened">No Abrió Email</option>
+                                <option value="purchased">Compró</option>
+                                <option value="not-purchased">No Compró</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="segment-value">Valor</label>
+                            <input type="text" class="form-control" id="segment-value" placeholder="Ej: Madrid, Lead, Cliente VIP">
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancel-segment">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="apply-segment">Aplicar Segmentación</button>
+                    </div>
+                </div>
             </div>
             
-            <!-- Campaigns Tab -->
-            <div class="tab-content" id="campaigns-content">
+            <!-- Communication Tab -->
+            <div class="tab-content" id="communication-content">
                 <div class="table-container">
                     <div class="table-header">
-                        <div class="table-title">Gestión de Campañas</div>
+                        <div class="table-title">Seguimiento de Comunicación</div>
+                        <button class="btn btn-primary" id="send-email-btn">Enviar Email</button>
+                    </div>
+                    <table id="communications-table">
+                        <thead>
+                            <tr>
+                                <th>Contacto</th>
+                                <th>Tipo</th>
+                                <th>Asunto/Resumen</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="communications-tbody">
+                            <!-- Los datos se cargarán dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="email-container">
+                    <div class="email-header">
+                        <div class="email-subject">Seguimiento de Producto - DataConecta CRM</div>
+                        <div class="email-meta">
+                            <span>Enviado: 15/05/2023</span>
+                            <span>Para: María González</span>
+                        </div>
+                    </div>
+                    <div class="email-body">
+                        <p>Hola María,</p>
+                        <p>Me pongo en contacto contigo para hacer seguimiento de nuestra última conversación sobre DataConecta CRM. ¿Hay alguna pregunta que pueda responder?</p>
+                        <p>Estamos aquí para ayudarte a aprovechar al máximo nuestra plataforma.</p>
+                        <p>Saludos,<br>El equipo de DataConecta</p>
+                    </div>
+                    <div class="email-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-envelope-open" style="color: var(--primary);"></i>
+                            <span>Abierto: Sí (3 veces)</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-mouse-pointer" style="color: var(--success);"></i>
+                            <span>Clicks: 2</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-clock" style="color: var(--warning);"></i>
+                            <span>Última apertura: Hace 2 horas</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <i class="fas fa-comments"></i> Chat en Vivo - Carlos Rodríguez
+                    </div>
+                    <div class="chat-messages">
+                        <div class="message received">
+                            <div class="message-bubble">
+                                Hola, tengo una pregunta sobre la facturación
+                            </div>
+                        </div>
+                        <div class="message sent">
+                            <div class="message-bubble">
+                                ¡Hola Carlos! Claro, ¿en qué puedo ayudarte?
+                            </div>
+                        </div>
+                        <div class="message received">
+                            <div class="message-bubble">
+                                Necesito cambiar el método de pago de tarjeta a transferencia
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="Escribe tu mensaje...">
+                        <button class="btn btn-primary">Enviar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sales Tab -->
+            <div class="tab-content" id="sales-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Pipeline de Ventas</div>
+                        <button class="btn btn-primary" id="add-deal-btn">Nueva Oportunidad</button>
+                    </div>
+                    <div class="pipeline-container">
+                        <div class="pipeline-stage">
+                            <div class="stage-header">
+                                <div class="stage-title">Lead</div>
+                                <div class="stage-count" id="lead-count">0</div>
+                            </div>
+                            <div class="opportunities" id="lead-opportunities">
+                                <!-- Oportunidades en etapa Lead -->
+                            </div>
+                        </div>
+                        <div class="pipeline-stage">
+                            <div class="stage-header">
+                                <div class="stage-title">Contactado</div>
+                                <div class="stage-count" id="contacted-count">0</div>
+                            </div>
+                            <div class="opportunities" id="contacted-opportunities">
+                                <!-- Oportunidades en etapa Contactado -->
+                            </div>
+                        </div>
+                        <div class="pipeline-stage">
+                            <div class="stage-header">
+                                <div class="stage-title">Negociación</div>
+                                <div class="stage-count" id="negotiation-count">0</div>
+                            </div>
+                            <div class="opportunities" id="negotiation-opportunities">
+                                <!-- Oportunidades en etapa Negociación -->
+                            </div>
+                        </div>
+                        <div class="pipeline-stage">
+                            <div class="stage-header">
+                                <div class="stage-title">Cerrado</div>
+                                <div class="stage-count" id="closed-count">0</div>
+                            </div>
+                            <div class="opportunities" id="closed-opportunities">
+                                <!-- Oportunidades en etapa Cerrado -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Pronóstico de Ventas</div>
+                        <div class="btn-group">
+                            <button class="btn btn-outline">Semanal</button>
+                            <button class="btn btn-outline active">Mensual</button>
+                            <button class="btn btn-outline">Trimestral</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Pronóstico de Cierre</div>
+                        <div class="chart-placeholder">
+                            Gráfico de pronóstico de ventas
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Marketing Tab -->
+            <div class="tab-content" id="marketing-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Campañas de Marketing</div>
                         <button class="btn btn-primary" id="add-campaign-btn">Nueva Campaña</button>
                     </div>
                     <table id="campaigns-table">
@@ -579,6 +1023,7 @@
                                 <th>Inicio</th>
                                 <th>Fin</th>
                                 <th>Estado</th>
+                                <th>ROI</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -587,73 +1032,435 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <div class="automation-container">
+                    <div class="automation-header">
+                        <div class="automation-title">Automatización de Marketing</div>
+                        <button class="btn btn-primary">Crear Flujo</button>
+                    </div>
+                    <p>Creá flujos de correos o acciones automáticas según la conducta del usuario.</p>
+                    
+                    <div class="automation-steps">
+                        <div class="automation-step">
+                            <div class="step-number">1</div>
+                            <div>
+                                <strong>Trigger:</strong> Usuario visita página de precios
+                            </div>
+                        </div>
+                        <div class="automation-step">
+                            <div class="step-number">2</div>
+                            <div>
+                                <strong>Acción:</strong> Enviar email con caso de éxito en 24 horas
+                            </div>
+                        </div>
+                        <div class="automation-step">
+                            <div class="step-number">3</div>
+                            <div>
+                                <strong>Condición:</strong> Si no responde en 3 días, enviar oferta especial
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-container">
+                    <h3>Landing Page - Captación de Leads</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="landing-title">Título</label>
+                        <input type="text" class="form-control" id="landing-title" value="Descubre cómo DataConecta puede transformar tu negocio">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="landing-description">Descripción</label>
+                        <textarea class="form-control" id="landing-description">Únete a miles de empresas que ya utilizan DataConecta para optimizar sus operaciones y tomar mejores decisiones basadas en datos.</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="landing-form">Formulario de Captación</label>
+                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 4px;">
+                            <input type="text" class="form-control" placeholder="Nombre" style="margin-bottom: 10px;">
+                            <input type="email" class="form-control" placeholder="Email" style="margin-bottom: 10px;">
+                            <button class="btn btn-primary">Descargar Guía Gratuita</button>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary">Guardar Landing Page</button>
+                    </div>
+                </div>
             </div>
             
-            <!-- Feedback Tab -->
-            <div class="tab-content" id="feedback-content">
+            <!-- Service Tab -->
+            <div class="tab-content" id="service-content">
                 <div class="table-container">
                     <div class="table-header">
-                        <div class="table-title">Feedback de Experiencia de Usuario</div>
-                        <button class="btn btn-primary" id="add-feedback-btn">Agregar Feedback</button>
+                        <div class="table-title">Tickets de Soporte</div>
+                        <button class="btn btn-primary" id="add-ticket-btn">Nuevo Ticket</button>
                     </div>
-                    <table id="feedback-table">
+                    <table id="tickets-table">
                         <thead>
                             <tr>
-                                <th>Usuario</th>
-                                <th>Puntuación</th>
-                                <th>Comentarios</th>
-                                <th>Fecha</th>
+                                <th>ID</th>
+                                <th>Asunto</th>
+                                <th>Cliente</th>
                                 <th>Estado</th>
+                                <th>Prioridad</th>
+                                <th>Fecha</th>
+                                <th>Agente</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="feedback-tbody">
+                        <tbody id="tickets-tbody">
                             <!-- Los datos se cargarán dinámicamente -->
                         </tbody>
                     </table>
+                </div>
+                
+                <div class="form-container">
+                    <h3>Base de Conocimientos</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="kb-title">Título del Artículo</label>
+                        <input type="text" class="form-control" id="kb-title" placeholder="Ej: Cómo importar contactos">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="kb-content">Contenido</label>
+                        <textarea class="form-control" id="kb-content" rows="6" placeholder="Escribe el contenido del artículo..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="kb-category">Categoría</label>
+                        <select class="form-control" id="kb-category">
+                            <option>Configuración</option>
+                            <option>Facturación</option>
+                            <option>Funcionalidades</option>
+                            <option>Solución de Problemas</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary">Publicar Artículo</button>
+                    </div>
+                </div>
+                
+                <div class="form-container">
+                    <h3>Encuesta de Satisfacción (NPS)</h3>
+                    <div class="form-group">
+                        <label class="form-label">¿Qué tan probable es que recomiendes DataConecta a un colega o amigo?</label>
+                        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                            <span style="text-align: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #e74c3c; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto;">0</div>
+                                <small>Muy improbable</small>
+                            </span>
+                            <span style="text-align: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #f39c12; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto;">5</div>
+                                <small>Neutral</small>
+                            </span>
+                            <span style="text-align: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto;">10</div>
+                                <small>Muy probable</small>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="nps-comment">¿Qué es lo que más valoras de DataConecta?</label>
+                        <textarea class="form-control" id="nps-comment" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary">Enviar Encuesta</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics-content">
+                <div class="analytics-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Rendimiento de Ventas</div>
+                        <div class="chart-placeholder">
+                            Gráfico de rendimiento de ventas
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">ROI de Campañas</div>
+                        <div class="chart-placeholder">
+                            Gráfico de ROI de campañas
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Satisfacción del Cliente (NPS)</div>
+                        <div class="chart-placeholder">
+                            Gráfico de NPS
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Efectividad del Equipo</div>
+                        <div class="chart-placeholder">
+                            Gráfico de efectividad del equipo
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Métricas Clave</div>
+                        <div class="btn-group">
+                            <button class="btn btn-outline">Hoy</button>
+                            <button class="btn btn-outline active">Esta Semana</button>
+                            <button class="btn btn-outline">Este Mes</button>
+                            <button class="btn btn-outline">Este Trimestre</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Métrica</th>
+                                <th>Valor</th>
+                                <th>Cambio</th>
+                                <th>Tendencia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tasa de Conversión</td>
+                                <td>4.8%</td>
+                                <td>+0.7%</td>
+                                <td><i class="fas fa-arrow-up" style="color: var(--success);"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Valor de Por Vida del Cliente</td>
+                                <td>$2,450</td>
+                                <td>+$120</td>
+                                <td><i class="fas fa-arrow-up" style="color: var(--success);"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Tiempo de Respuesta a Tickets</td>
+                                <td>2.4h</td>
+                                <td>-0.3h</td>
+                                <td><i class="fas fa-arrow-down" style="color: var(--success);"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Coste de Adquisición de Cliente</td>
+                                <td>$340</td>
+                                <td>+$15</td>
+                                <td><i class="fas fa-arrow-up" style="color: var(--danger);"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Integrations Tab -->
+            <div class="tab-content" id="integrations-content">
+                <div class="table-container">
+                    <div class="table-header">
+                        <div class="table-title">Integraciones Disponibles</div>
+                        <button class="btn btn-primary" id="add-integration-btn">Conectar Nueva Integración</button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div class="form-row" style="margin-bottom: 30px;">
+                            <div class="form-group">
+                                <div class="integration-card">
+                                    <div class="integration-icon" style="background-color: #ea4335; color: white; width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fab fa-google"></i>
+                                    </div>
+                                    <div>
+                                        <h4>Google Workspace / Gmail</h4>
+                                        <p>Sincroniza tus contactos, calendario y emails</p>
+                                        <button class="btn btn-outline">Conectar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="integration-card">
+                                    <div class="integration-icon" style="background-color: #0078d4; color: white; width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fab fa-microsoft"></i>
+                                    </div>
+                                    <div>
+                                        <h4>Microsoft Outlook</h4>
+                                        <p>Integra tu correo y calendario de Outlook</p>
+                                        <button class="btn btn-outline">Conectar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row" style="margin-bottom: 30px;">
+                            <div class="form-group">
+                                <div class="integration-card">
+                                    <div class="integration-icon" style="background-color: #25d366; color: white; width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </div>
+                                    <div>
+                                        <h4>WhatsApp Business</h4>
+                                        <p>Gestiona conversaciones de WhatsApp</p>
+                                        <button class="btn btn-outline">Conectar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="integration-card">
+                                    <div class="integration-icon" style="background-color: #4a154b; color: white; width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fab fa-slack"></i>
+                                    </div>
+                                    <div>
+                                        <h4>Slack</h4>
+                                        <p>Recibe notificaciones y actualizaciones en Slack</p>
+                                        <button class="btn btn-outline">Conectar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <div class="integration-card">
+                                    <div class="integration-icon" style="background-color: #ff5a00; color: white; width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fab fa-shopify"></i>
+                                    </div>
+                                    <div>
+                                        <h4>Shopify</h4>
+                                        <p>Sincroniza órdenes y clientes de tu tienda</p>
+                                        <button class="btn btn-outline">Conectar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="integration-card">
+                                    <div class="integration-icon" style="background-color: #635bff; color: white; width: 50px; height: 50px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div>
+                                        <h4>Stripe</h4>
+                                        <p>Gestiona pagos y suscripciones</p>
+                                        <button class="btn btn-outline">Conectar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-container">
+                    <h3>API Personalizada</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="api-key">API Key</label>
+                        <div class="form-row">
+                            <input type="text" class="form-control" id="api-key" value="dc_sk_5x8w2z9p4q3r7s6t1u0v" readonly>
+                            <button class="btn btn-outline">Regenerar</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="api-docs">Documentación de API</label>
+                        <p>Consulta nuestra <a href="#">documentación completa</a> para integrar DataConecta con tus sistemas personalizados.</p>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary">Descargar SDK</button>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Client Modal -->
-    <div class="modal" id="client-modal">
+    <!-- Contact Modal -->
+    <div class="modal" id="contact-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="client-modal-title">Agregar Cliente</h3>
+                <h3 class="modal-title" id="contact-modal-title">Agregar Contacto</h3>
                 <span class="close">&times;</span>
             </div>
-            <form id="client-form">
-                <input type="hidden" id="client-id">
+            <form id="contact-form">
+                <input type="hidden" id="contact-id">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="client-name">Nombre</label>
-                        <input type="text" class="form-control" id="client-name" required>
+                        <label class="form-label" for="contact-name">Nombre</label>
+                        <input type="text" class="form-control" id="contact-name" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="client-email">Email</label>
-                        <input type="email" class="form-control" id="client-email" required>
+                        <label class="form-label" for="contact-email">Email</label>
+                        <input type="email" class="form-control" id="contact-email" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="client-phone">Teléfono</label>
-                        <input type="text" class="form-control" id="client-phone">
+                        <label class="form-label" for="contact-phone">Teléfono</label>
+                        <input type="text" class="form-control" id="contact-phone">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="client-company">Empresa</label>
-                        <input type="text" class="form-control" id="client-company">
+                        <label class="form-label" for="contact-company">Empresa</label>
+                        <input type="text" class="form-control" id="contact-company">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="contact-stage">Etapa del Embudo</label>
+                        <select class="form-control" id="contact-stage">
+                            <option value="lead">Lead</option>
+                            <option value="prospect">Prospecto</option>
+                            <option value="opportunity">Oportunidad</option>
+                            <option value="customer">Cliente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contact-type">Tipo de Cliente</label>
+                        <select class="form-control" id="contact-type">
+                            <option value="new">Nuevo</option>
+                            <option value="existing">Existente</option>
+                            <option value="vip">VIP</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="client-status">Estado</label>
-                    <select class="form-control" id="client-status">
-                        <option value="active">Activo</option>
-                        <option value="inactive">Inactivo</option>
-                    </select>
+                    <label class="form-label" for="contact-notes">Notas</label>
+                    <textarea class="form-control" id="contact-notes"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancel-client">Cancelar</button>
+                    <button type="button" class="btn btn-outline" id="cancel-contact">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Deal Modal -->
+    <div class="modal" id="deal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="deal-modal-title">Nueva Oportunidad</h3>
+                <span class="close">&times;</span>
+            </div>
+            <form id="deal-form">
+                <input type="hidden" id="deal-id">
+                <div class="form-group">
+                    <label class="form-label" for="deal-name">Nombre de la Oportunidad</label>
+                    <input type="text" class="form-control" id="deal-name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="deal-contact">Contacto</label>
+                        <select class="form-control" id="deal-contact" required>
+                            <!-- Se llenará dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="deal-value">Valor</label>
+                        <input type="number" class="form-control" id="deal-value" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="deal-stage">Etapa</label>
+                        <select class="form-control" id="deal-stage" required>
+                            <option value="lead">Lead</option>
+                            <option value="contacted">Contactado</option>
+                            <option value="negotiation">Negociación</option>
+                            <option value="closed">Cerrado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="deal-probability">Probabilidad de Cierre</label>
+                        <input type="number" class="form-control" id="deal-probability" min="0" max="100" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="deal-close-date">Fecha Estimada de Cierre</label>
+                    <input type="date" class="form-control" id="deal-close-date" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-deal">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
@@ -700,11 +1507,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="campaign-status">Estado</label>
-                    <select class="form-control" id="campaign-status">
-                        <option value="active">Activa</option>
-                        <option value="inactive">Inactiva</option>
-                        <option value="completed">Completada</option>
+                    <label class="form-label" for="campaign-segment">Segmento Objetivo</label>
+                    <select class="form-control" id="campaign-segment">
+                        <option value="all">Todos los contactos</option>
+                        <option value="leads">Solo leads</option>
+                        <option value="customers">Solo clientes</option>
+                        <option value="vip">Clientes VIP</option>
                     </select>
                 </div>
                 <div class="form-actions">
@@ -715,40 +1523,42 @@
         </div>
     </div>
 
-    <!-- Feedback Modal -->
-    <div class="modal" id="feedback-modal">
+    <!-- Ticket Modal -->
+    <div class="modal" id="ticket-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="feedback-modal-title">Agregar Feedback</h3>
+                <h3 class="modal-title" id="ticket-modal-title">Nuevo Ticket</h3>
                 <span class="close">&times;</span>
             </div>
-            <form id="feedback-form">
-                <input type="hidden" id="feedback-id">
+            <form id="ticket-form">
+                <input type="hidden" id="ticket-id">
                 <div class="form-group">
-                    <label class="form-label" for="feedback-user">Usuario</label>
-                    <input type="text" class="form-control" id="feedback-user" required>
+                    <label class="form-label" for="ticket-subject">Asunto</label>
+                    <input type="text" class="form-control" id="ticket-subject" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="ticket-contact">Contacto</label>
+                        <select class="form-control" id="ticket-contact" required>
+                            <!-- Se llenará dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="ticket-priority">Prioridad</label>
+                        <select class="form-control" id="ticket-priority" required>
+                            <option value="low">Baja</option>
+                            <option value="medium">Media</option>
+                            <option value="high">Alta</option>
+                            <option value="urgent">Urgente</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="feedback-rating">Puntuación (1-10)</label>
-                    <input type="number" class="form-control" id="feedback-rating" min="1" max="10" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="feedback-comments">Comentarios</label>
-                    <textarea class="form-control" id="feedback-comments" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="feedback-date">Fecha</label>
-                    <input type="date" class="form-control" id="feedback-date" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="feedback-status">Estado</label>
-                    <select class="form-control" id="feedback-status">
-                        <option value="reviewed">Revisado</option>
-                        <option value="pending">Pendiente</option>
-                    </select>
+                    <label class="form-label" for="ticket-description">Descripción</label>
+                    <textarea class="form-control" id="ticket-description" rows="4" required></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancel-feedback">Cancelar</button>
+                    <button type="button" class="btn btn-outline" id="cancel-ticket">Cancelar</button>
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </form>
@@ -758,14 +1568,17 @@
     <script>
         // Datos iniciales de ejemplo
         const initialData = {
-            clients: [
+            contacts: [
                 {
                     id: 1,
                     name: "María González",
                     email: "maria.gonzalez@empresa.com",
                     phone: "+34 612 345 678",
                     company: "Tech Solutions",
-                    status: "active"
+                    stage: "lead",
+                    type: "new",
+                    lastInteraction: "2023-05-18",
+                    notes: "Interesada en CRM para equipo de ventas"
                 },
                 {
                     id: 2,
@@ -773,7 +1586,10 @@
                     email: "carlos.rodriguez@consultores.com",
                     phone: "+34 623 456 789",
                     company: "Consultores Asociados",
-                    status: "active"
+                    stage: "opportunity",
+                    type: "vip",
+                    lastInteraction: "2023-05-17",
+                    notes: "Cliente VIP, necesita integración con Shopify"
                 },
                 {
                     id: 3,
@@ -781,7 +1597,39 @@
                     email: "ana.martinez@innovacion.com",
                     phone: "+34 634 567 890",
                     company: "Innovación Digital",
-                    status: "inactive"
+                    stage: "customer",
+                    type: "existing",
+                    lastInteraction: "2023-05-15",
+                    notes: "Usando DataConecta desde hace 6 meses"
+                }
+            ],
+            deals: [
+                {
+                    id: 1,
+                    name: "Implementación CRM Tech Solutions",
+                    contactId: 1,
+                    value: 12000,
+                    stage: "negotiation",
+                    probability: 75,
+                    closeDate: "2023-06-15"
+                },
+                {
+                    id: 2,
+                    name: "Suscripción Enterprise Consultores Asociados",
+                    contactId: 2,
+                    value: 24000,
+                    stage: "contacted",
+                    probability: 50,
+                    closeDate: "2023-06-30"
+                },
+                {
+                    id: 3,
+                    name: "Renovación Innovación Digital",
+                    contactId: 3,
+                    value: 8000,
+                    stage: "closed",
+                    probability: 100,
+                    closeDate: "2023-05-10"
                 }
             ],
             campaigns: [
@@ -792,7 +1640,8 @@
                     budget: 5000,
                     start: "2023-05-01",
                     end: "2023-06-30",
-                    status: "active"
+                    status: "active",
+                    roi: 3.2
                 },
                 {
                     id: 2,
@@ -801,46 +1650,80 @@
                     budget: 2500,
                     start: "2023-04-15",
                     end: "2023-05-15",
-                    status: "completed"
+                    status: "completed",
+                    roi: 2.1
                 }
             ],
-            feedback: [
+            tickets: [
                 {
                     id: 1,
-                    user: "Usuario Anónimo",
-                    rating: 9,
-                    comments: "Interfaz intuitiva y fácil de usar",
+                    subject: "Problema con importación de contactos",
+                    contactId: 1,
+                    status: "open",
+                    priority: "high",
                     date: "2023-05-18",
-                    status: "reviewed"
+                    agent: "Juan Pérez"
                 },
                 {
                     id: 2,
-                    user: "Carlos López",
-                    rating: 7,
-                    comments: "Funcionalidades útiles pero lenta en móvil",
-                    date: "2023-05-16",
-                    status: "reviewed"
+                    subject: "Consulta sobre facturación",
+                    contactId: 2,
+                    status: "in-progress",
+                    priority: "medium",
+                    date: "2023-05-17",
+                    agent: "Laura Gómez"
                 },
                 {
                     id: 3,
-                    user: "Usuario Anónimo",
-                    rating: 8,
-                    comments: "Buen diseño pero falta opción de exportación",
-                    date: "2023-05-14",
-                    status: "pending"
+                    subject: "Solicitud de nueva integración",
+                    contactId: 3,
+                    status: "closed",
+                    priority: "low",
+                    date: "2023-05-15",
+                    agent: "Carlos López"
+                }
+            ],
+            communications: [
+                {
+                    id: 1,
+                    contactId: 1,
+                    type: "email",
+                    subject: "Seguimiento de Producto - DataConecta CRM",
+                    date: "2023-05-18",
+                    status: "opened"
+                },
+                {
+                    id: 2,
+                    contactId: 2,
+                    type: "call",
+                    subject: "Llamada de seguimiento",
+                    date: "2023-05-17",
+                    status: "completed"
+                },
+                {
+                    id: 3,
+                    contactId: 3,
+                    type: "meeting",
+                    subject: "Reunión de revisión de cuenta",
+                    date: "2023-05-15",
+                    status: "scheduled"
                 }
             ]
         };
 
         // Estado de la aplicación
         let appState = {
-            clients: [],
+            contacts: [],
+            deals: [],
             campaigns: [],
-            feedback: [],
+            tickets: [],
+            communications: [],
             nextId: {
-                clients: 1,
+                contacts: 1,
+                deals: 1,
                 campaigns: 1,
-                feedback: 1
+                tickets: 1,
+                communications: 1
             }
         };
 
@@ -848,9 +1731,11 @@
         function initApp() {
             loadData();
             renderDashboard();
-            renderClients();
+            renderContacts();
+            renderDeals();
             renderCampaigns();
-            renderFeedback();
+            renderTickets();
+            renderCommunications();
             setupEventListeners();
         }
 
@@ -861,14 +1746,18 @@
             if (savedData) {
                 appState = JSON.parse(savedData);
             } else {
-                appState.clients = initialData.clients;
+                appState.contacts = initialData.contacts;
+                appState.deals = initialData.deals;
                 appState.campaigns = initialData.campaigns;
-                appState.feedback = initialData.feedback;
+                appState.tickets = initialData.tickets;
+                appState.communications = initialData.communications;
                 
                 // Calcular el siguiente ID para cada tipo
-                appState.nextId.clients = Math.max(...appState.clients.map(c => c.id)) + 1;
+                appState.nextId.contacts = Math.max(...appState.contacts.map(c => c.id)) + 1;
+                appState.nextId.deals = Math.max(...appState.deals.map(d => d.id)) + 1;
                 appState.nextId.campaigns = Math.max(...appState.campaigns.map(c => c.id)) + 1;
-                appState.nextId.feedback = Math.max(...appState.feedback.map(f => f.id)) + 1;
+                appState.nextId.tickets = Math.max(...appState.tickets.map(t => t.id)) + 1;
+                appState.nextId.communications = Math.max(...appState.communications.map(c => c.id)) + 1;
                 
                 saveData();
             }
@@ -881,42 +1770,136 @@
 
         // Renderizar el dashboard con estadísticas
         function renderDashboard() {
-            document.getElementById('total-clients').textContent = appState.clients.length;
+            document.getElementById('total-contacts').textContent = appState.contacts.length;
             
-            const activeCampaigns = appState.campaigns.filter(c => c.status === 'active').length;
-            document.getElementById('active-campaigns').textContent = activeCampaigns;
+            const activeDeals = appState.deals.filter(d => d.stage !== 'closed').length;
+            document.getElementById('active-deals').textContent = activeDeals;
             
-            document.getElementById('total-feedback').textContent = appState.feedback.length;
+            const openTickets = appState.tickets.filter(t => t.status === 'open').length;
+            document.getElementById('open-tickets').textContent = openTickets;
             
-            if (appState.feedback.length > 0) {
-                const avgRating = appState.feedback.reduce((sum, f) => sum + f.rating, 0) / appState.feedback.length;
-                const satisfactionRate = (avgRating / 10 * 100).toFixed(0);
-                document.getElementById('satisfaction-rate').textContent = `${satisfactionRate}%`;
-            } else {
-                document.getElementById('satisfaction-rate').textContent = '0%';
-            }
+            const monthlyRevenue = appState.deals
+                .filter(d => d.stage === 'closed' && new Date(d.closeDate).getMonth() === new Date().getMonth())
+                .reduce((sum, deal) => sum + deal.value, 0);
+            document.getElementById('monthly-revenue').textContent = `$${monthlyRevenue.toLocaleString()}`;
         }
 
-        // Renderizar la tabla de clientes
-        function renderClients() {
-            const tbody = document.getElementById('clients-tbody');
+        // Renderizar la tabla de contactos
+        function renderContacts() {
+            const tbody = document.getElementById('contacts-tbody');
             tbody.innerHTML = '';
             
-            appState.clients.forEach(client => {
+            appState.contacts.forEach(contact => {
                 const tr = document.createElement('tr');
+                
+                const stageNames = {
+                    lead: 'Lead',
+                    prospect: 'Prospecto',
+                    opportunity: 'Oportunidad',
+                    customer: 'Cliente'
+                };
+                
                 tr.innerHTML = `
-                    <td>${client.name}</td>
-                    <td>${client.email}</td>
-                    <td>${client.phone}</td>
-                    <td>${client.company}</td>
-                    <td><span class="status ${client.status}">${client.status === 'active' ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>${contact.name}</td>
+                    <td>${contact.email}</td>
+                    <td>${contact.phone}</td>
+                    <td>${contact.company}</td>
+                    <td><span class="status ${contact.stage}">${stageNames[contact.stage]}</span></td>
+                    <td>${formatDate(contact.lastInteraction)}</td>
                     <td>
-                        <button class="btn btn-outline edit-client" data-id="${client.id}">Editar</button>
-                        <button class="btn btn-danger delete-client" data-id="${client.id}">Eliminar</button>
+                        <button class="btn btn-outline edit-contact" data-id="${contact.id}">Editar</button>
+                        <button class="btn btn-danger delete-contact" data-id="${contact.id}">Eliminar</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        // Renderizar el pipeline de ventas
+        function renderDeals() {
+            // Limpiar todas las etapas
+            document.querySelectorAll('.pipeline-stage .opportunities').forEach(container => {
+                container.innerHTML = '';
+            });
+            
+            // Contadores por etapa
+            const stageCounts = {
+                lead: 0,
+                contacted: 0,
+                negotiation: 0,
+                closed: 0
+            };
+            
+            // Agregar cada oportunidad en su etapa
+            appState.deals.forEach(deal => {
+                stageCounts[deal.stage]++;
+                
+                const contact = appState.contacts.find(c => c.id === deal.contactId);
+                const contactName = contact ? contact.name : 'Contacto no encontrado';
+                
+                const dealElement = document.createElement('div');
+                dealElement.className = 'deal-card';
+                dealElement.draggable = true;
+                dealElement.dataset.id = deal.id;
+                dealElement.innerHTML = `
+                    <div class="deal-name">${deal.name}</div>
+                    <div class="deal-value">$${deal.value.toLocaleString()}</div>
+                    <div class="deal-contact">${contactName}</div>
+                    <div style="margin-top: 10px; font-size: 12px;">
+                        <span>Probabilidad: ${deal.probability}%</span><br>
+                        <span>Cierre: ${formatDate(deal.closeDate)}</span>
+                    </div>
+                `;
+                
+                document.getElementById(`${deal.stage}-opportunities`).appendChild(dealElement);
+            });
+            
+            // Actualizar contadores
+            document.getElementById('lead-count').textContent = stageCounts.lead;
+            document.getElementById('contacted-count').textContent = stageCounts.contacted;
+            document.getElementById('negotiation-count').textContent = stageCounts.negotiation;
+            document.getElementById('closed-count').textContent = stageCounts.closed;
+            
+            // Configurar drag and drop
+            setupDragAndDrop();
+        }
+
+        // Configurar drag and drop para el pipeline
+        function setupDragAndDrop() {
+            const dealCards = document.querySelectorAll('.deal-card');
+            dealCards.forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+            });
+            
+            const stages = document.querySelectorAll('.pipeline-stage');
+            stages.forEach(stage => {
+                stage.addEventListener('dragover', handleDragOver);
+                stage.addEventListener('drop', handleDrop);
+            });
+        }
+        
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.id);
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            const dealId = parseInt(e.dataTransfer.getData('text/plain'));
+            const newStage = e.currentTarget.dataset.stage;
+            
+            // Actualizar la etapa de la oportunidad en el estado
+            const deal = appState.deals.find(d => d.id === dealId);
+            if (deal) {
+                deal.stage = newStage;
+                saveData();
+                renderDeals();
+                renderDashboard();
+                showAlert('success', 'Oportunidad movida correctamente');
+            }
         }
 
         // Renderizar la tabla de campañas
@@ -926,6 +1909,7 @@
             
             appState.campaigns.forEach(campaign => {
                 const tr = document.createElement('tr');
+                
                 const channelNames = {
                     email: 'Email Marketing',
                     social: 'Redes Sociales',
@@ -947,6 +1931,7 @@
                     <td>${formatDate(campaign.start)}</td>
                     <td>${formatDate(campaign.end)}</td>
                     <td><span class="status ${campaign.status}">${statusNames[campaign.status]}</span></td>
+                    <td>${campaign.roi}x</td>
                     <td>
                         <button class="btn btn-outline edit-campaign" data-id="${campaign.id}">Editar</button>
                         <button class="btn btn-danger delete-campaign" data-id="${campaign.id}">Eliminar</button>
@@ -956,33 +1941,81 @@
             });
         }
 
-        // Renderizar la tabla de feedback
-        function renderFeedback() {
-            const tbody = document.getElementById('feedback-tbody');
+        // Renderizar la tabla de tickets
+        function renderTickets() {
+            const tbody = document.getElementById('tickets-tbody');
             tbody.innerHTML = '';
             
-            appState.feedback.forEach(feedback => {
+            appState.tickets.forEach(ticket => {
                 const tr = document.createElement('tr');
-                const statusNames = {
-                    reviewed: 'Revisado',
-                    pending: 'Pendiente'
+                
+                const contact = appState.contacts.find(c => c.id === ticket.contactId);
+                const contactName = contact ? contact.name : 'Contacto no encontrado';
+                
+                const priorityNames = {
+                    low: 'Baja',
+                    medium: 'Media',
+                    high: 'Alta',
+                    urgent: 'Urgente'
                 };
                 
-                // Crear estrellas para la puntuación
-                let stars = '';
-                for (let i = 1; i <= 10; i++) {
-                    stars += i <= feedback.rating ? '★' : '☆';
-                }
+                const statusNames = {
+                    open: 'Abierto',
+                    'in-progress': 'En Progreso',
+                    closed: 'Cerrado'
+                };
                 
                 tr.innerHTML = `
-                    <td>${feedback.user}</td>
-                    <td>${stars} (${feedback.rating}/10)</td>
-                    <td>${feedback.comments}</td>
-                    <td>${formatDate(feedback.date)}</td>
-                    <td><span class="status ${feedback.status}">${statusNames[feedback.status]}</span></td>
+                    <td>#${ticket.id}</td>
+                    <td>${ticket.subject}</td>
+                    <td>${contactName}</td>
+                    <td><span class="status ${ticket.status}">${statusNames[ticket.status]}</span></td>
+                    <td>${priorityNames[ticket.priority]}</td>
+                    <td>${formatDate(ticket.date)}</td>
+                    <td>${ticket.agent}</td>
                     <td>
-                        <button class="btn btn-outline edit-feedback" data-id="${feedback.id}">Editar</button>
-                        <button class="btn btn-danger delete-feedback" data-id="${feedback.id}">Eliminar</button>
+                        <button class="btn btn-outline edit-ticket" data-id="${ticket.id}">Editar</button>
+                        <button class="btn btn-danger delete-ticket" data-id="${ticket.id}">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Renderizar la tabla de comunicaciones
+        function renderCommunications() {
+            const tbody = document.getElementById('communications-tbody');
+            tbody.innerHTML = '';
+            
+            appState.communications.forEach(comm => {
+                const tr = document.createElement('tr');
+                
+                const contact = appState.contacts.find(c => c.id === comm.contactId);
+                const contactName = contact ? contact.name : 'Contacto no encontrado';
+                
+                const typeNames = {
+                    email: 'Email',
+                    call: 'Llamada',
+                    meeting: 'Reunión',
+                    form: 'Formulario'
+                };
+                
+                const statusNames = {
+                    sent: 'Enviado',
+                    opened: 'Abierto',
+                    clicked: 'Clickeado',
+                    completed: 'Completada',
+                    scheduled: 'Programada'
+                };
+                
+                tr.innerHTML = `
+                    <td>${contactName}</td>
+                    <td>${typeNames[comm.type]}</td>
+                    <td>${comm.subject}</td>
+                    <td>${formatDate(comm.date)}</td>
+                    <td><span class="status ${comm.status}">${statusNames[comm.status]}</span></td>
+                    <td>
+                        <button class="btn btn-outline">Ver Detalles</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1011,19 +2044,33 @@
             });
             
             // Botones para agregar
-            document.getElementById('add-client-btn').addEventListener('click', () => openClientModal());
+            document.getElementById('add-contact-btn').addEventListener('click', () => openContactModal());
+            document.getElementById('add-deal-btn').addEventListener('click', () => openDealModal());
             document.getElementById('add-campaign-btn').addEventListener('click', () => openCampaignModal());
-            document.getElementById('add-feedback-btn').addEventListener('click', () => openFeedbackModal());
+            document.getElementById('add-ticket-btn').addEventListener('click', () => openTicketModal());
+            
+            // Segmentación de contactos
+            document.getElementById('segment-contacts').addEventListener('click', () => {
+                document.getElementById('segment-form').style.display = 'block';
+            });
+            
+            document.getElementById('cancel-segment').addEventListener('click', () => {
+                document.getElementById('segment-form').style.display = 'none';
+            });
+            
+            document.getElementById('apply-segment').addEventListener('click', applySegment);
             
             // Formularios
-            document.getElementById('client-form').addEventListener('submit', handleClientSubmit);
+            document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
+            document.getElementById('deal-form').addEventListener('submit', handleDealSubmit);
             document.getElementById('campaign-form').addEventListener('submit', handleCampaignSubmit);
-            document.getElementById('feedback-form').addEventListener('submit', handleFeedbackSubmit);
+            document.getElementById('ticket-form').addEventListener('submit', handleTicketSubmit);
             
             // Botones de cancelar
-            document.getElementById('cancel-client').addEventListener('click', () => closeModal('client-modal'));
+            document.getElementById('cancel-contact').addEventListener('click', () => closeModal('contact-modal'));
+            document.getElementById('cancel-deal').addEventListener('click', () => closeModal('deal-modal'));
             document.getElementById('cancel-campaign').addEventListener('click', () => closeModal('campaign-modal'));
-            document.getElementById('cancel-feedback').addEventListener('click', () => closeModal('feedback-modal'));
+            document.getElementById('cancel-ticket').addEventListener('click', () => closeModal('ticket-modal'));
             
             // Cerrar modales con la X
             document.querySelectorAll('.close').forEach(closeBtn => {
@@ -1040,13 +2087,13 @@
             });
             
             // Delegación de eventos para botones de editar y eliminar
-            document.getElementById('clients-tbody').addEventListener('click', (e) => {
-                if (e.target.classList.contains('edit-client')) {
+            document.getElementById('contacts-tbody').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-contact')) {
                     const id = parseInt(e.target.dataset.id);
-                    editClient(id);
-                } else if (e.target.classList.contains('delete-client')) {
+                    editContact(id);
+                } else if (e.target.classList.contains('delete-contact')) {
                     const id = parseInt(e.target.dataset.id);
-                    deleteClient(id);
+                    deleteContact(id);
                 }
             });
             
@@ -1060,13 +2107,13 @@
                 }
             });
             
-            document.getElementById('feedback-tbody').addEventListener('click', (e) => {
-                if (e.target.classList.contains('edit-feedback')) {
+            document.getElementById('tickets-tbody').addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-ticket')) {
                     const id = parseInt(e.target.dataset.id);
-                    editFeedback(id);
-                } else if (e.target.classList.contains('delete-feedback')) {
+                    editTicket(id);
+                } else if (e.target.classList.contains('delete-ticket')) {
                     const id = parseInt(e.target.dataset.id);
-                    deleteFeedback(id);
+                    deleteTicket(id);
                 }
             });
             
@@ -1083,23 +2130,66 @@
         }
 
         // Funciones para abrir modales
-        function openClientModal(client = null) {
-            const modal = document.getElementById('client-modal');
-            const title = document.getElementById('client-modal-title');
-            const form = document.getElementById('client-form');
+        function openContactModal(contact = null) {
+            const modal = document.getElementById('contact-modal');
+            const title = document.getElementById('contact-modal-title');
+            const form = document.getElementById('contact-form');
             
-            if (client) {
-                title.textContent = 'Editar Cliente';
-                document.getElementById('client-id').value = client.id;
-                document.getElementById('client-name').value = client.name;
-                document.getElementById('client-email').value = client.email;
-                document.getElementById('client-phone').value = client.phone;
-                document.getElementById('client-company').value = client.company;
-                document.getElementById('client-status').value = client.status;
+            if (contact) {
+                title.textContent = 'Editar Contacto';
+                document.getElementById('contact-id').value = contact.id;
+                document.getElementById('contact-name').value = contact.name;
+                document.getElementById('contact-email').value = contact.email;
+                document.getElementById('contact-phone').value = contact.phone;
+                document.getElementById('contact-company').value = contact.company;
+                document.getElementById('contact-stage').value = contact.stage;
+                document.getElementById('contact-type').value = contact.type;
+                document.getElementById('contact-notes').value = contact.notes || '';
             } else {
-                title.textContent = 'Agregar Cliente';
+                title.textContent = 'Agregar Contacto';
                 form.reset();
-                document.getElementById('client-id').value = '';
+                document.getElementById('contact-id').value = '';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function openDealModal(deal = null) {
+            const modal = document.getElementById('deal-modal');
+            const title = document.getElementById('deal-modal-title');
+            const form = document.getElementById('deal-form');
+            const contactSelect = document.getElementById('deal-contact');
+            
+            // Llenar select de contactos
+            contactSelect.innerHTML = '';
+            appState.contacts.forEach(contact => {
+                const option = document.createElement('option');
+                option.value = contact.id;
+                option.textContent = contact.name;
+                contactSelect.appendChild(option);
+            });
+            
+            if (deal) {
+                title.textContent = 'Editar Oportunidad';
+                document.getElementById('deal-id').value = deal.id;
+                document.getElementById('deal-name').value = deal.name;
+                document.getElementById('deal-contact').value = deal.contactId;
+                document.getElementById('deal-value').value = deal.value;
+                document.getElementById('deal-stage').value = deal.stage;
+                document.getElementById('deal-probability').value = deal.probability;
+                document.getElementById('deal-close-date').value = deal.closeDate;
+            } else {
+                title.textContent = 'Nueva Oportunidad';
+                form.reset();
+                document.getElementById('deal-id').value = '';
+                
+                // Establecer fecha por defecto (30 días desde hoy)
+                const nextMonth = new Date();
+                nextMonth.setDate(nextMonth.getDate() + 30);
+                document.getElementById('deal-close-date').value = nextMonth.toISOString().split('T')[0];
+                
+                // Establecer probabilidad por defecto
+                document.getElementById('deal-probability').value = 50;
             }
             
             modal.style.display = 'flex';
@@ -1118,7 +2208,6 @@
                 document.getElementById('campaign-budget').value = campaign.budget;
                 document.getElementById('campaign-start').value = campaign.start;
                 document.getElementById('campaign-end').value = campaign.end;
-                document.getElementById('campaign-status').value = campaign.status;
             } else {
                 title.textContent = 'Nueva Campaña';
                 form.reset();
@@ -1136,27 +2225,32 @@
             modal.style.display = 'flex';
         }
 
-        function openFeedbackModal(feedback = null) {
-            const modal = document.getElementById('feedback-modal');
-            const title = document.getElementById('feedback-modal-title');
-            const form = document.getElementById('feedback-form');
+        function openTicketModal(ticket = null) {
+            const modal = document.getElementById('ticket-modal');
+            const title = document.getElementById('ticket-modal-title');
+            const form = document.getElementById('ticket-form');
+            const contactSelect = document.getElementById('ticket-contact');
             
-            if (feedback) {
-                title.textContent = 'Editar Feedback';
-                document.getElementById('feedback-id').value = feedback.id;
-                document.getElementById('feedback-user').value = feedback.user;
-                document.getElementById('feedback-rating').value = feedback.rating;
-                document.getElementById('feedback-comments').value = feedback.comments;
-                document.getElementById('feedback-date').value = feedback.date;
-                document.getElementById('feedback-status').value = feedback.status;
+            // Llenar select de contactos
+            contactSelect.innerHTML = '';
+            appState.contacts.forEach(contact => {
+                const option = document.createElement('option');
+                option.value = contact.id;
+                option.textContent = contact.name;
+                contactSelect.appendChild(option);
+            });
+            
+            if (ticket) {
+                title.textContent = 'Editar Ticket';
+                document.getElementById('ticket-id').value = ticket.id;
+                document.getElementById('ticket-subject').value = ticket.subject;
+                document.getElementById('ticket-contact').value = ticket.contactId;
+                document.getElementById('ticket-priority').value = ticket.priority;
+                document.getElementById('ticket-description').value = ticket.description || '';
             } else {
-                title.textContent = 'Agregar Feedback';
+                title.textContent = 'Nuevo Ticket';
                 form.reset();
-                document.getElementById('feedback-id').value = '';
-                
-                // Establecer fecha por defecto (hoy)
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('feedback-date').value = today;
+                document.getElementById('ticket-id').value = '';
             }
             
             modal.style.display = 'flex';
@@ -1168,27 +2262,54 @@
         }
 
         // Manejadores de formularios
-        function handleClientSubmit(e) {
+        function handleContactSubmit(e) {
             e.preventDefault();
             
-            const id = document.getElementById('client-id').value;
-            const clientData = {
-                name: document.getElementById('client-name').value,
-                email: document.getElementById('client-email').value,
-                phone: document.getElementById('client-phone').value,
-                company: document.getElementById('client-company').value,
-                status: document.getElementById('client-status').value
+            const id = document.getElementById('contact-id').value;
+            const contactData = {
+                name: document.getElementById('contact-name').value,
+                email: document.getElementById('contact-email').value,
+                phone: document.getElementById('contact-phone').value,
+                company: document.getElementById('contact-company').value,
+                stage: document.getElementById('contact-stage').value,
+                type: document.getElementById('contact-type').value,
+                notes: document.getElementById('contact-notes').value,
+                lastInteraction: new Date().toISOString().split('T')[0]
             };
             
             if (id) {
-                // Editar cliente existente
-                updateClient(parseInt(id), clientData);
+                // Editar contacto existente
+                updateContact(parseInt(id), contactData);
             } else {
-                // Agregar nuevo cliente
-                addClient(clientData);
+                // Agregar nuevo contacto
+                addContact(contactData);
             }
             
-            closeModal('client-modal');
+            closeModal('contact-modal');
+        }
+
+        function handleDealSubmit(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('deal-id').value;
+            const dealData = {
+                name: document.getElementById('deal-name').value,
+                contactId: parseInt(document.getElementById('deal-contact').value),
+                value: parseFloat(document.getElementById('deal-value').value),
+                stage: document.getElementById('deal-stage').value,
+                probability: parseInt(document.getElementById('deal-probability').value),
+                closeDate: document.getElementById('deal-close-date').value
+            };
+            
+            if (id) {
+                // Editar oportunidad existente
+                updateDeal(parseInt(id), dealData);
+            } else {
+                // Agregar nueva oportunidad
+                addDeal(dealData);
+            }
+            
+            closeModal('deal-modal');
         }
 
         function handleCampaignSubmit(e) {
@@ -1201,7 +2322,8 @@
                 budget: parseFloat(document.getElementById('campaign-budget').value),
                 start: document.getElementById('campaign-start').value,
                 end: document.getElementById('campaign-end').value,
-                status: document.getElementById('campaign-status').value
+                status: "active",
+                roi: 0
             };
             
             if (id) {
@@ -1215,68 +2337,95 @@
             closeModal('campaign-modal');
         }
 
-        function handleFeedbackSubmit(e) {
+        function handleTicketSubmit(e) {
             e.preventDefault();
             
-            const id = document.getElementById('feedback-id').value;
-            const feedbackData = {
-                user: document.getElementById('feedback-user').value,
-                rating: parseInt(document.getElementById('feedback-rating').value),
-                comments: document.getElementById('feedback-comments').value,
-                date: document.getElementById('feedback-date').value,
-                status: document.getElementById('feedback-status').value
+            const id = document.getElementById('ticket-id').value;
+            const ticketData = {
+                subject: document.getElementById('ticket-subject').value,
+                contactId: parseInt(document.getElementById('ticket-contact').value),
+                priority: document.getElementById('ticket-priority').value,
+                description: document.getElementById('ticket-description').value,
+                status: "open",
+                date: new Date().toISOString().split('T')[0],
+                agent: "Agente Asignado"
             };
             
             if (id) {
-                // Editar feedback existente
-                updateFeedback(parseInt(id), feedbackData);
+                // Editar ticket existente
+                updateTicket(parseInt(id), ticketData);
             } else {
-                // Agregar nuevo feedback
-                addFeedback(feedbackData);
+                // Agregar nuevo ticket
+                addTicket(ticketData);
             }
             
-            closeModal('feedback-modal');
+            closeModal('ticket-modal');
         }
 
-        // Funciones CRUD para clientes
-        function addClient(clientData) {
-            const newClient = {
-                id: appState.nextId.clients++,
-                ...clientData
+        // Funciones CRUD para contactos
+        function addContact(contactData) {
+            const newContact = {
+                id: appState.nextId.contacts++,
+                ...contactData
             };
             
-            appState.clients.push(newClient);
+            appState.contacts.push(newContact);
             saveData();
-            renderClients();
+            renderContacts();
             renderDashboard();
-            showAlert('success', 'Cliente agregado correctamente');
+            showAlert('success', 'Contacto agregado correctamente');
         }
 
-        function editClient(id) {
-            const client = appState.clients.find(c => c.id === id);
-            if (client) {
-                openClientModal(client);
+        function editContact(id) {
+            const contact = appState.contacts.find(c => c.id === id);
+            if (contact) {
+                openContactModal(contact);
             }
         }
 
-        function updateClient(id, clientData) {
-            const index = appState.clients.findIndex(c => c.id === id);
+        function updateContact(id, contactData) {
+            const index = appState.contacts.findIndex(c => c.id === id);
             if (index !== -1) {
-                appState.clients[index] = { id, ...clientData };
+                appState.contacts[index] = { id, ...contactData };
                 saveData();
-                renderClients();
+                renderContacts();
                 renderDashboard();
-                showAlert('success', 'Cliente actualizado correctamente');
+                showAlert('success', 'Contacto actualizado correctamente');
             }
         }
 
-        function deleteClient(id) {
-            if (confirm('¿Está seguro de que desea eliminar este cliente?')) {
-                appState.clients = appState.clients.filter(c => c.id !== id);
+        function deleteContact(id) {
+            if (confirm('¿Está seguro de que desea eliminar este contacto?')) {
+                appState.contacts = appState.contacts.filter(c => c.id !== id);
                 saveData();
-                renderClients();
+                renderContacts();
                 renderDashboard();
-                showAlert('success', 'Cliente eliminado correctamente');
+                showAlert('success', 'Contacto eliminado correctamente');
+            }
+        }
+
+        // Funciones CRUD para oportunidades
+        function addDeal(dealData) {
+            const newDeal = {
+                id: appState.nextId.deals++,
+                ...dealData
+            };
+            
+            appState.deals.push(newDeal);
+            saveData();
+            renderDeals();
+            renderDashboard();
+            showAlert('success', 'Oportunidad agregada correctamente');
+        }
+
+        function updateDeal(id, dealData) {
+            const index = appState.deals.findIndex(d => d.id === id);
+            if (index !== -1) {
+                appState.deals[index] = { id, ...dealData };
+                saveData();
+                renderDeals();
+                renderDashboard();
+                showAlert('success', 'Oportunidad actualizada correctamente');
             }
         }
 
@@ -1290,7 +2439,6 @@
             appState.campaigns.push(newCampaign);
             saveData();
             renderCampaigns();
-            renderDashboard();
             showAlert('success', 'Campaña agregada correctamente');
         }
 
@@ -1307,7 +2455,6 @@
                 appState.campaigns[index] = { id, ...campaignData };
                 saveData();
                 renderCampaigns();
-                renderDashboard();
                 showAlert('success', 'Campaña actualizada correctamente');
             }
         }
@@ -1317,51 +2464,130 @@
                 appState.campaigns = appState.campaigns.filter(c => c.id !== id);
                 saveData();
                 renderCampaigns();
-                renderDashboard();
                 showAlert('success', 'Campaña eliminada correctamente');
             }
         }
 
-        // Funciones CRUD para feedback
-        function addFeedback(feedbackData) {
-            const newFeedback = {
-                id: appState.nextId.feedback++,
-                ...feedbackData
+        // Funciones CRUD para tickets
+        function addTicket(ticketData) {
+            const newTicket = {
+                id: appState.nextId.tickets++,
+                ...ticketData
             };
             
-            appState.feedback.push(newFeedback);
+            appState.tickets.push(newTicket);
             saveData();
-            renderFeedback();
+            renderTickets();
             renderDashboard();
-            showAlert('success', 'Feedback agregado correctamente');
+            showAlert('success', 'Ticket agregado correctamente');
         }
 
-        function editFeedback(id) {
-            const feedback = appState.feedback.find(f => f.id === id);
-            if (feedback) {
-                openFeedbackModal(feedback);
+        function editTicket(id) {
+            const ticket = appState.tickets.find(t => t.id === id);
+            if (ticket) {
+                openTicketModal(ticket);
             }
         }
 
-        function updateFeedback(id, feedbackData) {
-            const index = appState.feedback.findIndex(f => f.id === id);
+        function updateTicket(id, ticketData) {
+            const index = appState.tickets.findIndex(t => t.id === id);
             if (index !== -1) {
-                appState.feedback[index] = { id, ...feedbackData };
+                appState.tickets[index] = { id, ...ticketData };
                 saveData();
-                renderFeedback();
+                renderTickets();
                 renderDashboard();
-                showAlert('success', 'Feedback actualizado correctamente');
+                showAlert('success', 'Ticket actualizado correctamente');
             }
         }
 
-        function deleteFeedback(id) {
-            if (confirm('¿Está seguro de que desea eliminar este feedback?')) {
-                appState.feedback = appState.feedback.filter(f => f.id !== id);
+        function deleteTicket(id) {
+            if (confirm('¿Está seguro de que desea eliminar este ticket?')) {
+                appState.tickets = appState.tickets.filter(t => t.id !== id);
                 saveData();
-                renderFeedback();
+                renderTickets();
                 renderDashboard();
-                showAlert('success', 'Feedback eliminado correctamente');
+                showAlert('success', 'Ticket eliminado correctamente');
             }
+        }
+
+        // Aplicar segmentación
+        function applySegment() {
+            const criteria = document.getElementById('segment-criteria').value;
+            const value = document.getElementById('segment-value').value.toLowerCase();
+            
+            let filteredContacts = [];
+            
+            switch(criteria) {
+                case 'location':
+                    // En un caso real, los contactos tendrían campo de ubicación
+                    filteredContacts = appState.contacts.filter(c => 
+                        c.company.toLowerCase().includes(value) || 
+                        (c.notes && c.notes.toLowerCase().includes(value))
+                    );
+                    break;
+                case 'funnel-stage':
+                    filteredContacts = appState.contacts.filter(c => 
+                        c.stage === value
+                    );
+                    break;
+                case 'client-type':
+                    filteredContacts = appState.contacts.filter(c => 
+                        c.type === value
+                    );
+                    break;
+                case 'email-opened':
+                    // En un caso real, esto vendría de datos de tracking
+                    filteredContacts = appState.contacts.filter(c => 
+                        c.lastInteraction && new Date(c.lastInteraction) > new Date('2023-05-01')
+                    );
+                    break;
+                case 'email-not-opened':
+                    filteredContacts = appState.contacts.filter(c => 
+                        !c.lastInteraction || new Date(c.lastInteraction) <= new Date('2023-05-01')
+                    );
+                    break;
+                case 'purchased':
+                    filteredContacts = appState.contacts.filter(c => 
+                        appState.deals.some(d => d.contactId === c.id && d.stage === 'closed')
+                    );
+                    break;
+                case 'not-purchased':
+                    filteredContacts = appState.contacts.filter(c => 
+                        !appState.deals.some(d => d.contactId === c.id && d.stage === 'closed')
+                    );
+                    break;
+            }
+            
+            // Mostrar resultados
+            const tbody = document.getElementById('contacts-tbody');
+            tbody.innerHTML = '';
+            
+            filteredContacts.forEach(contact => {
+                const tr = document.createElement('tr');
+                
+                const stageNames = {
+                    lead: 'Lead',
+                    prospect: 'Prospecto',
+                    opportunity: 'Oportunidad',
+                    customer: 'Cliente'
+                };
+                
+                tr.innerHTML = `
+                    <td>${contact.name}</td>
+                    <td>${contact.email}</td>
+                    <td>${contact.phone}</td>
+                    <td>${contact.company}</td>
+                    <td><span class="status ${contact.stage}">${stageNames[contact.stage]}</span></td>
+                    <td>${formatDate(contact.lastInteraction)}</td>
+                    <td>
+                        <button class="btn btn-outline edit-contact" data-id="${contact.id}">Editar</button>
+                        <button class="btn btn-danger delete-contact" data-id="${contact.id}">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            showAlert('success', `Se encontraron ${filteredContacts.length} contactos con el criterio seleccionado`);
         }
 
         // Mostrar alertas
@@ -1408,9 +2634,11 @@
                             if (confirm('¿Está seguro de que desea importar estos datos? Se sobrescribirán los datos actuales.')) {
                                 appState = importedData;
                                 saveData();
-                                renderClients();
+                                renderContacts();
+                                renderDeals();
                                 renderCampaigns();
-                                renderFeedback();
+                                renderTickets();
+                                renderCommunications();
                                 renderDashboard();
                                 showAlert('success', 'Datos importados correctamente');
                             }
@@ -1431,19 +2659,25 @@
             if (confirm('¿Está seguro de que desea eliminar todos los datos? Esta acción no se puede deshacer.')) {
                 localStorage.removeItem('dataconecta-crm');
                 appState = {
-                    clients: [],
+                    contacts: [],
+                    deals: [],
                     campaigns: [],
-                    feedback: [],
+                    tickets: [],
+                    communications: [],
                     nextId: {
-                        clients: 1,
+                        contacts: 1,
+                        deals: 1,
                         campaigns: 1,
-                        feedback: 1
+                        tickets: 1,
+                        communications: 1
                     }
                 };
                 
-                renderClients();
+                renderContacts();
+                renderDeals();
                 renderCampaigns();
-                renderFeedback();
+                renderTickets();
+                renderCommunications();
                 renderDashboard();
                 showAlert('success', 'Todos los datos han sido eliminados');
             }
