@@ -1,9 +1,8 @@
-html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>DataConecta CRM | Plataforma Integral de Gestión</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -637,7 +636,6 @@ html
         input:checked + .slider:before {
             transform: translateX(22px);
         }
-        /* Fin Analytics 2.0 */
         /* Alerts */
         .alert {
             padding: 15px;
@@ -645,7 +643,7 @@ html
             margin-bottom: 20px;
             display: none;
         }
-        .alert-success { 
+        .alert-success {
             background-color: rgba(46, 204, 113, 0.1);
             border: 1px solid var(--success);
             color: var(--success);
@@ -812,6 +810,11 @@ html
         #custom-confirm-modal .btn-cancel:hover {
             background-color: var(--bg-darker);
         }
+
+        /* Small helpers */
+        .muted { color: var(--text-light); font-size: 13px; }
+        .actions button { margin-right: 8px; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body id="main-body">
@@ -833,6 +836,7 @@ html
             </ul>
         </div>
     </header>
+
     <!-- Dashboard -->
     <section class="dashboard">
         <div class="container">
@@ -878,6 +882,7 @@ html
                     <div class="card-description">Ingresos generados este mes</div>
                 </div>
             </div>
+
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab active" data-tab="contacts">Contactos</div>
@@ -885,17 +890,12 @@ html
                 <div class="tab" data-tab="sales">Ventas</div>
                 <div class="tab" data-tab="marketing">Marketing</div>
                 <div class="tab" data-tab="service">Servicio</div>
-                <!-- Las tabs de Analytics e Integrations se gestionarán en sus propias páginas HTML -->
-                <!-- <div class="tab" data-tab="analytics">Analítica</div> -->
-                <!-- <div class="tab" data-tab="integrations">Integraciones</div> -->
             </div>
+
             <!-- Alerts -->
-            <div class="alert alert-success" id="success-alert">
-                Operación realizada con éxito.
-            </div>
-            <div class="alert alert-error" id="error-alert">
-                Ha ocurrido un error. Por favor, intente nuevamente.
-            </div>
+            <div class="alert alert-success" id="success-alert">Operación realizada con éxito.</div>
+            <div class="alert alert-error" id="error-alert">Ha ocurrido un error. Por favor, intente nuevamente.</div>
+
             <!-- Contacts Tab -->
             <div class="tab-content active" id="contacts-content">
                 <div class="table-container">
@@ -923,6 +923,7 @@ html
                         </tbody>
                     </table>
                 </div>
+
                 <div class="form-container" id="segment-form" style="display: none;">
                     <h3>Segmentar Contactos</h3>
                     <div class="form-row">
@@ -949,6 +950,7 @@ html
                     </div>
                 </div>
             </div>
+
             <!-- Communication Tab -->
             <div class="tab-content" id="communication-content">
                 <div class="table-container">
@@ -972,6 +974,7 @@ html
                         </tbody>
                     </table>
                 </div>
+
                 <div class="email-container">
                     <div class="email-header">
                         <div class="email-subject">Seguimiento de Producto - DataConecta CRM</div>
@@ -1001,1500 +1004,457 @@ html
                         </div>
                     </div>
                 </div>
-                <div class="chat-container">
-                    <div class="chat-header">
-                        <i class="fas fa-comments"></i> Chat en Vivo - Carlos Rodríguez
-                    </div>
-                    <div class="chat-messages">
-                        <div class="message received">
-                            <div class="message-bubble">
-                                Hola, tengo una pregunta sobre la facturación
-                            </div>
-                        </div>
-                        <div class="message sent">
-                            <div class="message-bubble">
-                                ¡Hola Carlos! Claro, ¿en qué puedo ayudarte?
-                            </div>
-                        </div>
-                        <div class="message received">
-                            <div class="message-bubble">
-                                Necesito cambiar el método de pago de tarjeta a transferencia
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-input">
-                        <input type="text" placeholder="Escribe tu mensaje...">
-                        <button class="btn btn-primary">Enviar</button>
-                    </div>
-                </div>
             </div>
-            <!-- Sales Tab -->
+
+            <!-- Other tabs (placeholder content) -->
             <div class="tab-content" id="sales-content">
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="table-title">Pipeline de Ventas</div>
-                        <button class="btn btn-primary" id="add-deal-btn">Nueva Oportunidad</button>
-                    </div>
-                    <div class="pipeline-container">
-                        <div class="pipeline-stage" data-stage="lead">
-                            <div class="stage-header">
-                                <div class="stage-title">Lead</div>
-                                <div class="stage-count" id="lead-count">0</div>
-                            </div>
-                            <div class="opportunities" id="lead-opportunities">
-                                <!-- Oportunidades en etapa Lead -->
-                            </div>
-                        </div>
-                        <div class="pipeline-stage" data-stage="contacted">
-                            <div class="stage-header">
-                                <div class="stage-title">Contactado</div>
-                                <div class="stage-count" id="contacted-count">0</div>
-                            </div>
-                            <div class="opportunities" id="contacted-opportunities">
-                                <!-- Oportunidades en etapa Contactado -->
-                            </div>
-                        </div>
-                        <div class="pipeline-stage" data-stage="negotiation">
-                            <div class="stage-header">
-                                <div class="stage-title">Negociación</div>
-                                <div class="stage-count" id="negotiation-count">0</div>
-                            </div>
-                            <div class="opportunities" id="negotiation-opportunities">
-                                <!-- Oportunidades en etapa Negociación -->
-                            </div>
-                        </div>
-                        <div class="pipeline-stage" data-stage="closed">
-                            <div class="stage-header">
-                                <div class="stage-title">Cerrado</div>
-                                <div class="stage-count" id="closed-count">0</div>
-                            </div>
-                            <div class="opportunities" id="closed-opportunities">
-                                <!-- Oportunidades en etapa Cerrado -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="table-title">Pronóstico de Ventas</div>
-                        <div class="btn-group">
-                            <button class="btn btn-outline">Semanal</button>
-                            <button class="btn btn-outline active">Mensual</button>
-                            <button class="btn btn-outline">Trimestral</button>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <div class="chart-title">Pronóstico de Cierre</div>
-                        <div class="chart-placeholder">
-                            Gráfico de pronóstico de ventas
-                        </div>
-                    </div>
+                <div class="form-container">
+                    <h3>Ventas</h3>
+                    <p class="muted">Aquí aparecerán las métricas y pipeline detallado.</p>
                 </div>
             </div>
-            <!-- Marketing Tab -->
             <div class="tab-content" id="marketing-content">
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="table-title">Campañas de Marketing</div>
-                        <button class="btn btn-primary" id="add-campaign-btn">Nueva Campaña</button>
-                    </div>
-                    <table id="campaigns-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Canal</th>
-                                <th>Presupuesto</th>
-                                <th>Inicio</th>
-                                <th>Fin</th>
-                                <th>Estado</th>
-                                <th>ROI</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="campaigns-tbody">
-                            <!-- Los datos se cargarán dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="automation-container">
-                    <div class="automation-header">
-                        <div class="automation-title">Automatización de Marketing</div>
-                        <button class="btn btn-primary">Crear Flujo</button>
-                    </div>
-                    <p>Creá flujos de correos o acciones automáticas según la conducta del usuario.</p>
-                    <div class="automation-steps">
-                        <div class="automation-step">
-                            <div class="step-number">1</div>
-                            <div>
-                                <strong>Trigger:</strong> Usuario visita página de precios
-                            </div>
-                        </div>
-                        <div class="automation-step">
-                            <div class="step-number">2</div>
-                            <div>
-                                <strong>Acción:</strong> Enviar email con caso de éxito en 24 horas
-                            </div>
-                        </div>
-                        <div class="automation-step">
-                            <div class="step-number">3</div>
-                            <div>
-                                <strong>Condición:</strong> Si no responde en 3 días, enviar oferta especial
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="form-container">
-                    <h3>Landing Page - Captación de Leads</h3>
-                    <div class="form-group">
-                        <label class="form-label" for="landing-title">Título</label>
-                        <input type="text" class="form-control" id="landing-title" value="Descubre cómo DataConecta puede transformar tu negocio">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="landing-description">Descripción</label>
-                        <textarea class="form-control" id="landing-description">Únete a miles de empresas que ya utilizan DataConecta para optimizar sus operaciones y tomar mejores decisiones basadas en datos.</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="landing-form">Formulario de Captación</label>
-                        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 4px;">
-                            <input type="text" class="form-control" placeholder="Nombre" style="margin-bottom: 10px;">
-                            <input type="email" class="form-control" placeholder="Email" style="margin-bottom: 10px;">
-                            <button class="btn btn-primary">Descargar Guía Gratuita</button>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-primary">Guardar Landing Page</button>
-                    </div>
+                    <h3>Marketing</h3>
+                    <p class="muted">Automations, campañas y métricas de marketing.</p>
                 </div>
             </div>
-            <!-- Service Tab -->
             <div class="tab-content" id="service-content">
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="table-title">Tickets de Soporte</div>
-                        <button class="btn btn-primary" id="add-ticket-btn">Nuevo Ticket</button>
-                    </div>
-                    <table id="tickets-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Asunto</th>
-                                <th>Cliente</th>
-                                <th>Estado</th>
-                                <th>Prioridad</th>
-                                <th>Fecha</th>
-                                <th>Agente</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tickets-tbody">
-                            <!-- Los datos se cargarán dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
                 <div class="form-container">
-                    <h3>Base de Conocimientos</h3>
-                    <div class="form-group">
-                        <label class="form-label" for="kb-title">Título del Artículo</label>
-                        <input type="text" class="form-control" id="kb-title" placeholder="Ej: Cómo importar contactos">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="kb-content">Contenido</label>
-                        <textarea class="form-control" id="kb-content" rows="6" placeholder="Escribe el contenido del artículo..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="kb-category">Categoría</label>
-                        <select class="form-control" id="kb-category">
-                            <option>Configuración</option>
-                            <option>Facturación</option>
-                            <option>Funcionalidades</option>
-                            <option>Solución de Problemas</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-primary">Publicar Artículo</button>
-                    </div>
-                </div>
-                <div class="form-container">
-                    <h3>Encuesta de Satisfacción (NPS)</h3>
-                    <div class="form-group">
-                        <label class="form-label">¿Qué tan probable es que recomiendes DataConecta a un colega o amigo?</label>
-                        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-                            <span style="text-align: center;">
-                                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #e74c3c; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto;">0</div>
-                                <small>Muy improbable</small>
-                            </span>
-                            <span style="text-align: center;">
-                                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #f39c12; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto;">5</div>
-                                <small>Neutral</small>
-                            </span>
-                            <span style="text-align: center;">
-                                <div style="width: 40px; height: 40px; border-radius: 50%; background-color: #2ecc71; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto;">10</div>
-                                <small>Muy probable</small>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="nps-comment">¿Qué es lo que más valoras de DataConecta?</label>
-                        <textarea class="form-control" id="nps-comment" rows="3"></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-primary">Enviar Encuesta</button>
-                    </div>
+                    <h3>Servicio</h3>
+                    <p class="muted">Tickets y base de conocimiento.</p>
                 </div>
             </div>
-            <!-- Integrations Tab (CONTENIDO ACTUALIZADO) -->
-            <!-- Esta sección se moverá a su propia página o se integrará en Analytics con la nueva estructura -->
-            <!-- <div class="tab-content" id="integrations-content">
-                ... contenido de integraciones ...
-            </div> -->
+
         </div>
     </section>
-    <!-- Contact Modal -->
-    <div class="modal" id="contact-modal">
+
+    <!-- Add/Edit Contact Modal -->
+    <div class="modal" id="add-contact-modal" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="contact-modal-title">Agregar Contacto</h3>
-                <span class="close">&times;</span>
+                <div class="modal-title" id="modal-title">Agregar Contacto</div>
+                <div class="close" id="close-add-modal">&times;</div>
             </div>
-            <form id="contact-form">
-                <input type="hidden" id="contact-id">
+            <div>
+                <div class="form-group">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="contact-name" placeholder="Nombre completo">
+                </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="contact-name">Nombre</label>
-                        <input type="text" class="form-control" id="contact-name" required>
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="contact-email" placeholder="email@ejemplo.com">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="contact-email">Email</label>
-                        <input type="email" class="form-control" id="contact-email" required>
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="contact-phone" placeholder="+34 600 000 000">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="contact-phone">Teléfono</label>
-                        <input type="text" class="form-control" id="contact-phone">
+                        <label class="form-label">Empresa</label>
+                        <input type="text" class="form-control" id="contact-company" placeholder="Empresa S.A.">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="contact-company">Empresa</label>
-                        <input type="text" class="form-control" id="contact-company">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="contact-stage">Etapa del Embudo</label>
+                        <label class="form-label">Etapa</label>
                         <select class="form-control" id="contact-stage">
-                            <option value="lead">Lead</option>
-                            <option value="prospect">Prospecto</option>
-                            <option value="opportunity">Oportunidad</option>
-                            <option value="customer">Cliente</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="contact-type">Tipo de Cliente</label>
-                        <select class="form-control" id="contact-type">
-                            <option value="new">Nuevo</option>
-                            <option value="existing">Existente</option>
-                            <option value="vip">VIP</option>
+                            <option value="Lead">Lead</option>
+                            <option value="Contacto">Contacto</option>
+                            <option value="Prospecto">Prospecto</option>
+                            <option value="Cliente">Cliente</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="contact-notes">Notas</label>
-                    <textarea class="form-control" id="contact-notes"></textarea>
+                    <label class="form-label">Última Interacción</label>
+                    <input type="date" class="form-control" id="contact-last-interaction">
                 </div>
+
                 <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancel-contact">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button class="btn btn-outline" id="cancel-contact">Cancelar</button>
+                    <button class="btn btn-primary" id="save-contact-btn">Guardar Contacto</button>
                 </div>
-            </form>
-        </div>
-    </div>
-    <!-- Deal Modal -->
-    <div class="modal" id="deal-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="deal-modal-title">Nueva Oportunidad</h3>
-                <span class="close">&times;</span>
             </div>
-            <form id="deal-form">
-                <input type="hidden" id="deal-id">
-                <div class="form-group">
-                    <label class="form-label" for="deal-name">Nombre de la Oportunidad</label>
-                    <input type="text" class="form-control" id="deal-name" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="deal-contact">Contacto</label>
-                        <select class="form-control" id="deal-contact" required>
-                            <!-- Se llenará dinámicamente -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="deal-value">Valor</label>
-                        <input type="number" class="form-control" id="deal-value" min="0" step="0.01" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="deal-stage">Etapa</label>
-                        <select class="form-control" id="deal-stage" required>
-                            <option value="lead">Lead</option>
-                            <option value="contacted">Contactado</option>
-                            <option value="negotiation">Negociación</option>
-                            <option value="closed">Cerrado</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="deal-probability">Probabilidad de Cierre</label>
-                        <input type="number" class="form-control" id="deal-probability" min="0" max="100" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="deal-close-date">Fecha Estimada de Cierre</label>
-                    <input type="date" class="form-control" id="deal-close-date" required>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancel-deal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <!-- Campaign Modal -->
-    <div class="modal" id="campaign-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="campaign-modal-title">Nueva Campaña</h3>
-                <span class="close">&times;</span>
-            </div>
-            <form id="campaign-form">
-                <input type="hidden" id="campaign-id">
-                <div class="form-group">
-                    <label class="form-label" for="campaign-name">Nombre</label>
-                    <input type="text" class="form-control" id="campaign-name" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="campaign-channel">Canal</label>
-                        <select class="form-control" id="campaign-channel" required>
-                            <option value="email">Email Marketing</option>
-                            <option value="social">Redes Sociales</option>
-                            <option value="seo">SEO</option>
-                            <option value="ads">Publicidad Pagada</option>
-                            <option value="content">Marketing de Contenidos</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="campaign-budget">Presupuesto</label>
-                        <input type="number" class="form-control" id="campaign-budget" min="0" step="0.01" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="campaign-start">Fecha Inicio</label>
-                        <input type="date" class="form-control" id="campaign-start" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="campaign-end">Fecha Fin</label>
-                        <input type="date" class="form-control" id="campaign-end" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="campaign-segment">Segmento Objetivo</label>
-                    <select class="form-control" id="campaign-segment">
-                        <option value="all">Todos los contactos</option>
-                        <option value="leads">Solo leads</option>
-                        <option value="customers">Solo clientes</option>
-                        <option value="vip">Clientes VIP</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancel-campaign">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <!-- Ticket Modal -->
-    <div class="modal" id="ticket-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="ticket-modal-title">Nuevo Ticket</h3>
-                <span class="close">&times;</span>
-            </div>
-            <form id="ticket-form">
-                <input type="hidden" id="ticket-id">
-                <div class="form-group">
-                    <label class="form-label" for="ticket-subject">Asunto</label>
-                    <input type="text" class="form-control" id="ticket-subject" required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="ticket-contact">Contacto</label>
-                        <select class="form-control" id="ticket-contact" required>
-                            <!-- Se llenará dinámicamente -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="ticket-priority">Prioridad</label>
-                        <select class="form-control" id="ticket-priority" required>
-                            <option value="low">Baja</option>
-                            <option value="medium">Media</option>
-                            <option value="high">Alta</option>
-                            <option value="urgent">Urgente</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="ticket-description">Descripción</label>
-                    <textarea class="form-control" id="ticket-description" rows="4" required></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancel-ticket">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                </div>
-            </form>
         </div>
     </div>
 
     <!-- Custom Confirm Modal -->
     <div id="custom-confirm-modal">
         <div class="modal-content">
-            <p id="confirm-message"></p>
+            <p id="confirm-message">¿Estás seguro?</p>
             <div class="modal-actions">
-                <button class="btn-cancel" id="confirm-cancel">Cancelar</button>
-                <button class="btn-confirm" id="confirm-ok">Aceptar</button>
+                <button class="btn btn-confirm" id="confirm-yes">Sí, eliminar</button>
+                <button class="btn btn-cancel" id="confirm-no">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Datos iniciales de ejemplo
-        const initialData = {
-            contacts: [
-                {
-                    id: 1,
-                    name: "María González",
-                    email: "maria.gonzalez@empresa.com",
-                    phone: "+34 612 345 678",
-                    company: "Tech Solutions",
-                    stage: "lead",
-                    type: "new",
-                    lastInteraction: "2023-05-18",
-                    notes: "Interesada en CRM para equipo de ventas"
-                },
-                {
-                    id: 2,
-                    name: "Carlos Rodríguez",
-                    email: "carlos.rodriguez@consultores.com",
-                    phone: "+34 623 456 789",
-                    company: "Consultores Asociados",
-                    stage: "opportunity",
-                    type: "vip",
-                    lastInteraction: "2023-05-17",
-                    notes: "Cliente VIP, necesita integración con Shopify"
-                },
-                {
-                    id: 3,
-                    name: "Ana Martínez",
-                    email: "ana.martinez@innovacion.com",
-                    phone: "+34 634 567 890",
-                    company: "Innovación Digital",
-                    stage: "customer",
-                    type: "existing",
-                    lastInteraction: "2023-05-15",
-                    notes: "Usando DataConecta desde hace 6 meses"
-                }
-            ],
-            deals: [
-                {
-                    id: 1,
-                    name: "Implementación CRM Tech Solutions",
-                    contactId: 1,
-                    value: 12000,
-                    stage: "negotiation",
-                    probability: 75,
-                    closeDate: "2023-06-15"
-                },
-                {
-                    id: 2,
-                    name: "Suscripción Enterprise Consultores Asociados",
-                    contactId: 2,
-                    value: 24000,
-                    stage: "contacted",
-                    probability: 50,
-                    closeDate: "2023-06-30"
-                },
-                {
-                    id: 3,
-                    name: "Renovación Innovación Digital",
-                    contactId: 3,
-                    value: 8000,
-                    stage: "closed",
-                    probability: 100,
-                    closeDate: "2023-05-10"
-                }
-            ],
-            campaigns: [
-                {
-                    id: 1,
-                    name: "Lanzamiento Producto X",
-                    channel: "email",
-                    budget: 5000,
-                    start: "2023-05-01",
-                    end: "2023-06-30",
-                    status: "active",
-                    roi: 3.2
-                },
-                {
-                    id: 2,
-                    name: "Webinar UX Avanzado",
-                    channel: "social",
-                    budget: 2500,
-                    start: "2023-04-15",
-                    end: "2023-05-15",
-                    status: "completed",
-                    roi: 2.1
-                }
-            ],
-            tickets: [
-                {
-                    id: 1,
-                    subject: "Problema con importación de contactos",
-                    contactId: 1,
-                    status: "open",
-                    priority: "high",
-                    date: "2023-05-18",
-                    agent: "Juan Pérez"
-                },
-                {
-                    id: 2,
-                    subject: "Consulta sobre facturación",
-                    contactId: 2,
-                    status: "in-progress",
-                    priority: "medium",
-                    date: "2023-05-17",
-                    agent: "Laura Gómez"
-                },
-                {
-                    id: 3,
-                    subject: "Solicitud de nueva integración",
-                    contactId: 3,
-                    status: "closed",
-                    priority: "low",
-                    date: "2023-05-15",
-                    agent: "Carlos López"
-                }
-            ],
-            communications: [
-                {
-                    id: 1,
-                    contactId: 1,
-                    type: "email",
-                    subject: "Seguimiento de Producto - DataConecta CRM",
-                    date: "2023-05-18",
-                    status: "opened"
-                },
-                {
-                    id: 2,
-                    contactId: 2,
-                    type: "call",
-                    subject: "Llamada de seguimiento",
-                    date: "2023-05-17",
-                    status: "completed"
-                },
-                {
-                    id: 3,
-                    contactId: 3,
-                    type: "meeting",
-                    subject: "Reunión de revisión de cuenta",
-                    date: "2023-05-15",
-                    status: "scheduled"
-                }
-            ]
-        };
-        // Estado de la aplicación
-        let appState = {
-            contacts: [],
-            deals: [],
-            campaigns: [],
-            tickets: [],
-            communications: [],
-            nextId: {
-                contacts: 1,
-                deals: 1,
-                campaigns: 1,
-                tickets: 1,
-                communications: 1
-            }
-        };
-        // Callback para la confirmación personalizada
-        let confirmCallback = null;
+    <!-- Hidden file input for import -->
+    <input type="file" id="file-input" accept="application/json" class="hidden" />
 
-        // Inicializar la aplicación
-        function initApp() {
-            loadData();
-            renderDashboard();
-            renderContacts();
-            renderDeals();
-            renderCampaigns();
-            renderTickets();
-            renderCommunications();
-            setupEventListeners();
-        }
-        // Cargar datos del localStorage o inicializar con datos de ejemplo
-        function loadData() {
-            const savedData = localStorage.getItem('dataconecta-crm');
-            if (savedData) {
-                appState = JSON.parse(savedData);
-            } else {
-                appState.contacts = initialData.contacts;
-                appState.deals = initialData.deals;
-                appState.campaigns = initialData.campaigns;
-                appState.tickets = initialData.tickets;
-                appState.communications = initialData.communications;
-                // Calcular el siguiente ID para cada tipo
-                appState.nextId.contacts = Math.max(...appState.contacts.map(c => c.id), 0) + 1;
-                appState.nextId.deals = Math.max(...appState.deals.map(d => d.id), 0) + 1;
-                appState.nextId.campaigns = Math.max(...appState.campaigns.map(c => c.id), 0) + 1;
-                appState.nextId.tickets = Math.max(...appState.tickets.map(t => t.id), 0) + 1;
-                appState.nextId.communications = Math.max(...appState.communications.map(c => c.id), 0) + 1;
-                saveData();
+    <script>
+        // DataConecta: lógica mínima en localStorage para CRUD de contactos, export/import y UI básica.
+        (function () {
+            const STORAGE_KEY = 'dataconecta_contacts_v1';
+            const contactsTbody = document.getElementById('contacts-tbody');
+            const totalContactsEl = document.getElementById('total-contacts');
+            const activeDealsEl = document.getElementById('active-deals');
+            const openTicketsEl = document.getElementById('open-tickets');
+            const monthlyRevenueEl = document.getElementById('monthly-revenue');
+
+            const addContactBtn = document.getElementById('add-contact-btn');
+            const addContactModal = document.getElementById('add-contact-modal');
+            const closeAddModal = document.getElementById('close-add-modal');
+            const cancelContactBtn = document.getElementById('cancel-contact');
+            const saveContactBtn = document.getElementById('save-contact-btn');
+            const modalTitle = document.getElementById('modal-title');
+
+            const nameInput = document.getElementById('contact-name');
+            const emailInput = document.getElementById('contact-email');
+            const phoneInput = document.getElementById('contact-phone');
+            const companyInput = document.getElementById('contact-company');
+            const stageInput = document.getElementById('contact-stage');
+            const lastInteractionInput = document.getElementById('contact-last-interaction');
+
+            const exportBtn = document.getElementById('export-data');
+            const importBtn = document.getElementById('import-data');
+            const clearBtn = document.getElementById('clear-data');
+            const fileInput = document.getElementById('file-input');
+
+            const successAlert = document.getElementById('success-alert');
+            const errorAlert = document.getElementById('error-alert');
+
+            const customConfirmModal = document.getElementById('custom-confirm-modal');
+            const confirmMessage = document.getElementById('confirm-message');
+            const confirmYesBtn = document.getElementById('confirm-yes');
+            const confirmNoBtn = document.getElementById('confirm-no');
+
+            let contacts = [];
+            let editingId = null;
+            let pendingConfirmAction = null;
+
+            // Utils
+            function uid() {
+                return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
             }
-        }
-        // Guardar datos en localStorage
-        function saveData() {
-            localStorage.setItem('dataconecta-crm', JSON.stringify(appState));
-        }
-        // Renderizar el dashboard con estadísticas
-        function renderDashboard() {
-            document.getElementById('total-contacts').textContent = appState.contacts.length;
-            const activeDeals = appState.deals.filter(d => d.stage !== 'closed').length;
-            document.getElementById('active-deals').textContent = activeDeals;
-            const openTickets = appState.tickets.filter(t => t.status === 'open').length;
-            document.getElementById('open-tickets').textContent = openTickets;
-            const monthlyRevenue = appState.deals
-                .filter(d => d.stage === 'closed' && new Date(d.closeDate).getMonth() === new Date().getMonth())
-                .reduce((sum, deal) => sum + deal.value, 0);
-            document.getElementById('monthly-revenue').textContent = `$${monthlyRevenue.toLocaleString()}`;
-        }
-        // Renderizar la tabla de contactos
-        function renderContacts() {
-            const tbody = document.getElementById('contacts-tbody');
-            tbody.innerHTML = '';
-            appState.contacts.forEach(contact => {
-                const tr = document.createElement('tr');
-                const stageNames = {
-                    lead: 'Lead',
-                    prospect: 'Prospecto',
-                    opportunity: 'Oportunidad',
-                    customer: 'Cliente'
-                };
-                tr.innerHTML = `
-                    <td>${contact.name}</td>
-                    <td>${contact.email}</td>
-                    <td>${contact.phone}</td>
-                    <td>${contact.company}</td>
-                    <td><span class="status ${contact.stage}">${stageNames[contact.stage] || contact.stage}</span></td>
-                    <td>${formatDate(contact.lastInteraction)}</td>
-                    <td>
-                        <button class="btn btn-outline edit-contact" data-id="${contact.id}">Editar</button>
-                        <button class="btn btn-danger delete-contact" data-id="${contact.id}">Eliminar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-        // Renderizar el pipeline de ventas
-        function renderDeals() {
-            // Limpiar todas las etapas
-            document.querySelectorAll('.pipeline-stage .opportunities').forEach(container => {
-                container.innerHTML = '';
-            });
-            // Contadores por etapa
-            const stageCounts = {
-                lead: 0,
-                contacted: 0,
-                negotiation: 0,
-                closed: 0
-            };
-            // Agregar cada oportunidad en su etapa
-            appState.deals.forEach(deal => {
-                if(stageCounts.hasOwnProperty(deal.stage)) {
-                    stageCounts[deal.stage]++;
-                    const contact = appState.contacts.find(c => c.id === deal.contactId);
-                    const contactName = contact ? contact.name : 'Contacto no encontrado';
-                    const dealElement = document.createElement('div');
-                    dealElement.className = 'deal-card';
-                    dealElement.draggable = true;
-                    dealElement.dataset.id = deal.id;
-                    dealElement.innerHTML = `
-                        <div class="deal-name">${deal.name}</div>
-                        <div class="deal-value">$${deal.value.toLocaleString()}</div>
-                        <div class="deal-contact">${contactName}</div>
-                        <div style="margin-top: 10px; font-size: 12px;">
-                            <span>Probabilidad: ${deal.probability}%</span><br>
-                            <span>Cierre: ${formatDate(deal.closeDate)}</span>
-                        </div>
-                    `;
-                    document.getElementById(`${deal.stage}-opportunities`).appendChild(dealElement);
+            function showAlert(type, message, timeout = 2500) {
+                const el = type === 'success' ? successAlert : errorAlert;
+                el.textContent = message;
+                el.style.display = 'block';
+                setTimeout(() => { el.style.display = 'none'; }, timeout);
+            }
+            function saveToStorage() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
+            }
+            function loadFromStorage() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return [];
+                    return JSON.parse(raw);
+                } catch (e) {
+                    console.error('Error leyendo storage', e);
+                    return [];
                 }
-            });
-            // Actualizar contadores
-            document.getElementById('lead-count').textContent = stageCounts.lead;
-            document.getElementById('contacted-count').textContent = stageCounts.contacted;
-            document.getElementById('negotiation-count').textContent = stageCounts.negotiation;
-            document.getElementById('closed-count').textContent = stageCounts.closed;
-            // Configurar drag and drop
-            setupDragAndDrop();
-        }
-        // Configurar drag and drop para el pipeline
-        function setupDragAndDrop() {
-            const dealCards = document.querySelectorAll('.deal-card');
-            dealCards.forEach(card => {
-                card.addEventListener('dragstart', handleDragStart);
-            });
-            const stages = document.querySelectorAll('.pipeline-stage');
-            stages.forEach(stage => {
-                stage.addEventListener('dragover', handleDragOver);
-                stage.addEventListener('drop', handleDrop);
-            });
-        }
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.dataset.id);
-        }
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-        function handleDrop(e) {
-            e.preventDefault();
-            const dealId = parseInt(e.dataTransfer.getData('text/plain'));
-            const newStage = e.currentTarget.dataset.stage;
-            // Actualizar la etapa de la oportunidad en el estado
-            const deal = appState.deals.find(d => d.id === dealId);
-            if (deal) {
-                deal.stage = newStage;
-                saveData();
-                renderDeals();
-                renderDashboard();
-                showAlert('success', 'Oportunidad movida correctamente');
             }
-        }
-        // Renderizar la tabla de campañas
-        function renderCampaigns() {
-            const tbody = document.getElementById('campaigns-tbody');
-            tbody.innerHTML = '';
-            appState.campaigns.forEach(campaign => {
-                const tr = document.createElement('tr');
-                const channelNames = {
-                    email: 'Email Marketing',
-                    social: 'Redes Sociales',
-                    seo: 'SEO',
-                    ads: 'Publicidad Pagada',
-                    content: 'Marketing de Contenidos'
+
+            // Render
+            function renderContacts(list) {
+                contactsTbody.innerHTML = '';
+                if (!list || list.length === 0) {
+                    contactsTbody.innerHTML = '<tr><td colspan="7" class="muted">No hay contactos. Añade uno usando "Agregar Contacto".</td></tr>';
+                    updateCards();
+                    return;
+                }
+                list.forEach(contact => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${escapeHtml(contact.name)}</td>
+                        <td>${escapeHtml(contact.email || '')}</td>
+                        <td>${escapeHtml(contact.phone || '')}</td>
+                        <td>${escapeHtml(contact.company || '')}</td>
+                        <td>${escapeHtml(contact.stage || '')}</td>
+                        <td>${contact.lastInteraction ? formatDate(contact.lastInteraction) : '-'}</td>
+                        <td class="actions">
+                            <button class="btn btn-outline" data-action="edit" data-id="${contact.id}"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" data-action="delete" data-id="${contact.id}"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                    contactsTbody.appendChild(tr);
+                });
+                // Actions binding
+                contactsTbody.querySelectorAll('button[data-action]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const action = btn.getAttribute('data-action');
+                        const id = btn.getAttribute('data-id');
+                        if (action === 'edit') openEditContact(id);
+                        if (action === 'delete') confirmAction(() => deleteContact(id), '¿Deseas eliminar este contacto?');
+                    });
+                });
+                updateCards();
+            }
+
+            function updateCards() {
+                totalContactsEl.textContent = contacts.length;
+                // Simplified placeholders
+                const activeDeals = contacts.filter(c => c.stage && (c.stage.toLowerCase() === 'prospecto' || c.stage.toLowerCase() === 'contacto')).length;
+                activeDealsEl.textContent = activeDeals;
+                const openTickets = Math.floor(contacts.length / 5); // placeholder logic
+                openTicketsEl.textContent = openTickets;
+                const revenue = contacts.length * 200; // placeholder
+                monthlyRevenueEl.textContent = '$' + revenue;
+            }
+
+            // Helpers
+            function escapeHtml(text) {
+                if (!text && text !== 0) return '';
+                return String(text)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+            function formatDate(dateStr) {
+                try {
+                    const d = new Date(dateStr);
+                    if (isNaN(d)) return dateStr;
+                    return d.toLocaleDateString();
+                } catch (e) {
+                    return dateStr;
+                }
+            }
+
+            // CRUD
+            function addContact(contact) {
+                contact.id = uid();
+                contacts.unshift(contact);
+                saveToStorage();
+                renderContacts(contacts);
+                showAlert('success', 'Contacto agregado.');
+            }
+            function updateContact(id, updated) {
+                const idx = contacts.findIndex(c => c.id === id);
+                if (idx === -1) { showAlert('error', 'Contacto no encontrado'); return; }
+                contacts[idx] = Object.assign({}, contacts[idx], updated);
+                saveToStorage();
+                renderContacts(contacts);
+                showAlert('success', 'Contacto actualizado.');
+            }
+            function deleteContact(id) {
+                contacts = contacts.filter(c => c.id !== id);
+                saveToStorage();
+                renderContacts(contacts);
+                hideConfirm();
+                showAlert('success', 'Contacto eliminado.');
+            }
+            function openEditContact(id) {
+                const c = contacts.find(x => x.id === id);
+                if (!c) { showAlert('error', 'Contacto no encontrado'); return; }
+                editingId = id;
+                modalTitle.textContent = 'Editar Contacto';
+                nameInput.value = c.name || '';
+                emailInput.value = c.email || '';
+                phoneInput.value = c.phone || '';
+                companyInput.value = c.company || '';
+                stageInput.value = c.stage || 'Lead';
+                lastInteractionInput.value = c.lastInteraction ? new Date(c.lastInteraction).toISOString().split('T')[0] : '';
+                openModal(addContactModal);
+            }
+
+            // Modal handling
+            function openModal(modal) {
+                modal.style.display = 'flex';
+                modal.setAttribute('aria-hidden', 'false');
+            }
+            function closeModal(modal) {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden', 'true');
+            }
+
+            // Confirm modal
+            function confirmAction(actionFn, message = '¿Estás seguro?') {
+                pendingConfirmAction = actionFn;
+                confirmMessage.textContent = message;
+                customConfirmModal.style.display = 'flex';
+            }
+            function hideConfirm() {
+                customConfirmModal.style.display = 'none';
+                pendingConfirmAction = null;
+            }
+
+            // Export / Import
+            function exportData() {
+                try {
+                    const dataStr = JSON.stringify(contacts, null, 2);
+                    const blob = new Blob([dataStr], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'dataconecta_contacts.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                    showAlert('success', 'Exportado correctamente.');
+                } catch (e) {
+                    console.error(e);
+                    showAlert('error', 'Error al exportar.');
+                }
+            }
+            function importDataFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (!Array.isArray(parsed)) throw new Error('Formato inválido');
+                        // Basic validation of items
+                        const valid = parsed.every(it => it.name && typeof it.name === 'string');
+                        if (!valid) throw new Error('Datos inválidos en el JSON');
+                        contacts = parsed.map(it => {
+                            // ensure id exists
+                            if (!it.id) it.id = uid();
+                            return it;
+                        });
+                        saveToStorage();
+                        renderContacts(contacts);
+                        showAlert('success', 'Importación completada.');
+                    } catch (err) {
+                        console.error(err);
+                        showAlert('error', 'Error al importar: ' + (err.message || 'JSON inválido'));
+                    }
                 };
-                const statusNames = {
-                    active: 'Activa',
-                    inactive: 'Inactiva',
-                    completed: 'Completada'
-                };
-                tr.innerHTML = `
-                    <td>${campaign.name}</td>
-                    <td>${channelNames[campaign.channel]}</td>
-                    <td>$${campaign.budget.toLocaleString()}</td>
-                    <td>${formatDate(campaign.start)}</td>
-                    <td>${formatDate(campaign.end)}</td>
-                    <td><span class="status ${campaign.status}">${statusNames[campaign.status]}</span></td>
-                    <td>${campaign.roi}x</td>
-                    <td>
-                        <button class="btn btn-outline edit-campaign" data-id="${campaign.id}">Editar</button>
-                        <button class="btn btn-danger delete-campaign" data-id="${campaign.id}">Eliminar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+                reader.onerror = () => showAlert('error', 'No se pudo leer el archivo.');
+                reader.readAsText(file);
+            }
+
+            // Events
+            addContactBtn.addEventListener('click', () => {
+                editingId = null;
+                modalTitle.textContent = 'Agregar Contacto';
+                nameInput.value = emailInput.value = phoneInput.value = companyInput.value = '';
+                stageInput.value = 'Lead';
+                lastInteractionInput.value = '';
+                openModal(addContactModal);
             });
-        }
-        // Renderizar la tabla de tickets
-        function renderTickets() {
-            const tbody = document.getElementById('tickets-tbody');
-            tbody.innerHTML = '';
-            appState.tickets.forEach(ticket => {
-                const tr = document.createElement('tr');
-                const contact = appState.contacts.find(c => c.id === ticket.contactId);
-                const contactName = contact ? contact.name : 'Contacto no encontrado';
-                const priorityNames = {
-                    low: 'Baja',
-                    medium: 'Media',
-                    high: 'Alta',
-                    urgent: 'Urgente'
-                };
-                const statusNames = {
-                    open: 'Abierto',
-                    'in-progress': 'En Progreso',
-                    closed: 'Cerrado'
-                };
-                tr.innerHTML = `
-                    <td>#${ticket.id}</td>
-                    <td>${ticket.subject}</td>
-                    <td>${contactName}</td>
-                    <td><span class="status ${ticket.status}">${statusNames[ticket.status]}</span></td>
-                    <td>${priorityNames[ticket.priority]}</td>
-                    <td>${formatDate(ticket.date)}</td>
-                    <td>${ticket.agent}</td>
-                    <td>
-                        <button class="btn btn-outline edit-ticket" data-id="${ticket.id}">Editar</button>
-                        <button class="btn btn-danger delete-ticket" data-id="${ticket.id}">Eliminar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+            closeAddModal.addEventListener('click', () => closeModal(addContactModal));
+            cancelContactBtn.addEventListener('click', () => closeModal(addContactModal));
+
+            saveContactBtn.addEventListener('click', () => {
+                const name = nameInput.value.trim();
+                const email = emailInput.value.trim();
+                const phone = phoneInput.value.trim();
+                const company = companyInput.value.trim();
+                const stage = stageInput.value;
+                const lastInteraction = lastInteractionInput.value ? new Date(lastInteractionInput.value).toISOString() : null;
+
+                if (!name) { showAlert('error', 'El nombre es obligatorio'); return; }
+
+                const contactData = { name, email, phone, company, stage, lastInteraction };
+                if (editingId) {
+                    updateContact(editingId, contactData);
+                } else {
+                    addContact(contactData);
+                }
+                closeModal(addContactModal);
             });
-        }
-        // Renderizar la tabla de comunicaciones
-        function renderCommunications() {
-            const tbody = document.getElementById('communications-tbody');
-            tbody.innerHTML = '';
-            appState.communications.forEach(comm => {
-                const tr = document.createElement('tr');
-                const contact = appState.contacts.find(c => c.id === comm.contactId);
-                const contactName = contact ? contact.name : 'Contacto no encontrado';
-                const typeNames = {
-                    email: 'Email',
-                    call: 'Llamada',
-                    meeting: 'Reunión',
-                    form: 'Formulario'
-                };
-                const statusNames = {
-                    sent: 'Enviado',
-                    opened: 'Abierto',
-                    clicked: 'Clickeado',
-                    completed: 'Completada',
-                    scheduled: 'Programada'
-                };
-                tr.innerHTML = `
-                    <td>${contactName}</td>
-                    <td>${typeNames[comm.type]}</td>
-                    <td>${comm.subject}</td>
-                    <td>${formatDate(comm.date)}</td>
-                    <td><span class="status ${comm.status}">${statusNames[comm.status]}</span></td>
-                    <td>
-                        <button class="btn btn-outline">Ver Detalles</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+
+            // Export / Import / Clear
+            exportBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                exportData();
             });
-        }
-        // Formatear fecha para mostrar
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('es-ES', options);
-        }
-        // Configurar event listeners
-        function setupEventListeners() {
-            // Tabs
+            importBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                fileInput.click();
+            });
+            fileInput.addEventListener('change', (ev) => {
+                const file = ev.target.files && ev.target.files[0];
+                if (!file) return;
+                importDataFile(file);
+                fileInput.value = ''; // reset
+            });
+
+            clearBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                confirmAction(() => {
+                    contacts = [];
+                    saveToStorage();
+                    renderContacts(contacts);
+                    hideConfirm();
+                    showAlert('success', 'Datos limpiados.');
+                }, 'Esto eliminará todos los contactos. ¿Deseas continuar?');
+            });
+
+            // Confirm modal buttons
+            confirmYesBtn.addEventListener('click', () => {
+                if (typeof pendingConfirmAction === 'function') pendingConfirmAction();
+            });
+            confirmNoBtn.addEventListener('click', () => hideConfirm());
+            customConfirmModal.addEventListener('click', (ev) => {
+                if (ev.target === customConfirmModal) hideConfirm();
+            });
+
+            // Tabs handling
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // Remove active class from all tabs
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    // Add active class to clicked tab
                     tab.classList.add('active');
-                    document.getElementById(`${tab.dataset.tab}-content`).classList.add('active');
+                    const target = tab.getAttribute('data-tab');
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                    const content = document.getElementById(target + '-content');
+                    if (content) content.classList.add('active');
                 });
             });
-            // Botones para agregar
-            document.getElementById('add-contact-btn').addEventListener('click', () => openContactModal());
-            document.getElementById('add-deal-btn').addEventListener('click', () => openDealModal());
-            document.getElementById('add-campaign-btn').addEventListener('click', () => openCampaignModal());
-            document.getElementById('add-ticket-btn').addEventListener('click', () => openTicketModal());
-            // Segmentación de contactos
-            document.getElementById('segment-contacts').addEventListener('click', () => {
-                const segmentForm = document.getElementById('segment-form');
+
+            // Segmentation quick UI
+            const segmentBtn = document.getElementById('segment-contacts');
+            const segmentForm = document.getElementById('segment-form');
+            const cancelSegment = document.getElementById('cancel-segment');
+            const applySegment = document.getElementById('apply-segment');
+
+            segmentBtn.addEventListener('click', () => {
                 segmentForm.style.display = segmentForm.style.display === 'none' ? 'block' : 'none';
+                segmentForm.scrollIntoView({ behavior: 'smooth' });
             });
-            document.getElementById('cancel-segment').addEventListener('click', () => {
-                document.getElementById('segment-form').style.display = 'none';
-            });
-            document.getElementById('apply-segment').addEventListener('click', applySegment);
-            // Formularios
-            document.getElementById('contact-form').addEventListener('submit', handleContactSubmit);
-            document.getElementById('deal-form').addEventListener('submit', handleDealSubmit);
-            document.getElementById('campaign-form').addEventListener('submit', handleCampaignSubmit);
-            document.getElementById('ticket-form').addEventListener('submit', handleTicketSubmit);
-            // Botones de cancelar
-            document.getElementById('cancel-contact').addEventListener('click', () => closeModal('contact-modal'));
-            document.getElementById('cancel-deal').addEventListener('click', () => closeModal('deal-modal'));
-            document.getElementById('cancel-campaign').addEventListener('click', () => closeModal('campaign-modal'));
-            document.getElementById('cancel-ticket').addEventListener('click', () => closeModal('ticket-modal'));
-            // Cerrar modales con la X
-            document.querySelectorAll('.close').forEach(closeBtn => {
-                closeBtn.addEventListener('click', function() {
-                    this.closest('.modal').style.display = 'none';
-                });
-            });
-            // Cerrar modales al hacer clic fuera
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) {
-                    e.target.style.display = 'none';
+            cancelSegment.addEventListener('click', () => { segmentForm.style.display = 'none'; });
+            applySegment.addEventListener('click', () => {
+                const criteria = document.getElementById('segment-criteria').value;
+                const value = document.getElementById('segment-value').value.trim().toLowerCase();
+                if (!value) { showAlert('error', 'Introduce un valor para segmentar'); return; }
+                // Simple segmentation demo: filter by stage or company or name containing value
+                let results = contacts.filter(c => (c.company && c.company.toLowerCase().includes(value)) ||
+                    (c.name && c.name.toLowerCase().includes(value)) ||
+                    (c.stage && c.stage.toLowerCase().includes(value)));
+                if (results.length === 0) {
+                    showAlert('error', 'No se encontraron contactos para la segmentación');
+                } else {
+                    renderContacts(results);
+                    showAlert('success', 'Segmentación aplicada (' + results.length + ')');
                 }
-            });
-            // Delegación de eventos para botones de editar y eliminar
-            document.getElementById('contacts-tbody').addEventListener('click', (e) => {
-                if (e.target.classList.contains('edit-contact')) {
-                    const id = parseInt(e.target.dataset.id);
-                    editContact(id);
-                } else if (e.target.classList.contains('delete-contact')) {
-                    const id = parseInt(e.target.dataset.id);
-                    deleteContact(id);
-                }
-            });
-            document.getElementById('campaigns-tbody').addEventListener('click', (e) => {
-                if (e.target.classList.contains('edit-campaign')) {
-                    const id = parseInt(e.target.dataset.id);
-                    editCampaign(id);
-                } else if (e.target.classList.contains('delete-campaign')) {
-                    const id = parseInt(e.target.dataset.id);
-                    deleteCampaign(id);
-                }
-            });
-            document.getElementById('tickets-tbody').addEventListener('click', (e) => {
-                if (e.target.classList.contains('edit-ticket')) {
-                    const id = parseInt(e.target.dataset.id);
-                    editTicket(id);
-                } else if (e.target.classList.contains('delete-ticket')) {
-                    const id = parseInt(e.target.dataset.id);
-                    deleteTicket(id);
-                }
-            });
-            // Exportar datos
-            document.getElementById('export-data').addEventListener('click', exportData);
-            // Importar datos
-            document.getElementById('import-data').addEventListener('click', () => {
-                document.getElementById('import-file').click();
-            });
-            // Limpiar datos
-            document.getElementById('clear-data').addEventListener('click', clearData);
-
-            // Custom Confirm Modal buttons
-            document.getElementById('confirm-ok').addEventListener('click', () => {
-                if (confirmCallback) {
-                    confirmCallback(true);
-                    confirmCallback = null;
-                }
-                document.getElementById('custom-confirm-modal').style.display = 'none';
             });
 
-            document.getElementById('confirm-cancel').addEventListener('click', () => {
-                if (confirmCallback) {
-                    confirmCallback(false);
-                    confirmCallback = null;
-                }
-                document.getElementById('custom-confirm-modal').style.display = 'none';
+            // Small UX: clicking outside modal closes it
+            window.addEventListener('click', (ev) => {
+                if (ev.target === addContactModal) closeModal(addContactModal);
             });
-        }
-        // Funciones para abrir modales
-        function openContactModal(contact = null) {
-            const modal = document.getElementById('contact-modal');
-            const title = document.getElementById('contact-modal-title');
-            const form = document.getElementById('contact-form');
-            if (contact) {
-                title.textContent = 'Editar Contacto';
-                document.getElementById('contact-id').value = contact.id;
-                document.getElementById('contact-name').value = contact.name;
-                document.getElementById('contact-email').value = contact.email;
-                document.getElementById('contact-phone').value = contact.phone;
-                document.getElementById('contact-company').value = contact.company;
-                document.getElementById('contact-stage').value = contact.stage;
-                document.getElementById('contact-type').value = contact.type;
-                document.getElementById('contact-notes').value = contact.notes || '';
-            } else {
-                title.textContent = 'Agregar Contacto';
-                form.reset();
-                document.getElementById('contact-id').value = '';
+
+            // Initialize app
+            function init() {
+                contacts = loadFromStorage();
+                renderContacts(contacts);
             }
-            modal.style.display = 'flex';
-        }
-        function openDealModal(deal = null) {
-            const modal = document.getElementById('deal-modal');
-            const title = document.getElementById('deal-modal-title');
-            const form = document.getElementById('deal-form');
-            const contactSelect = document.getElementById('deal-contact');
-            // Llenar select de contactos
-            contactSelect.innerHTML = '';
-            appState.contacts.forEach(contact => {
-                const option = document.createElement('option');
-                option.value = contact.id;
-                option.textContent = contact.name;
-                contactSelect.appendChild(option);
-            });
-            if (deal) {
-                title.textContent = 'Editar Oportunidad';
-                document.getElementById('deal-id').value = deal.id;
-                document.getElementById('deal-name').value = deal.name;
-                document.getElementById('deal-contact').value = deal.contactId;
-                document.getElementById('deal-value').value = deal.value;
-                document.getElementById('deal-stage').value = deal.stage;
-                document.getElementById('deal-probability').value = deal.probability;
-                document.getElementById('deal-close-date').value = deal.closeDate;
-            } else {
-                title.textContent = 'Nueva Oportunidad';
-                form.reset();
-                document.getElementById('deal-id').value = '';
-                // Establecer fecha por defecto (30 días desde hoy)
-                const nextMonth = new Date();
-                nextMonth.setDate(nextMonth.getDate() + 30);
-                document.getElementById('deal-close-date').value = nextMonth.toISOString().split('T')[0];
-                // Establecer probabilidad por defecto
-                document.getElementById('deal-probability').value = 50;
-            }
-            modal.style.display = 'flex';
-        }
-        function openCampaignModal(campaign = null) {
-            const modal = document.getElementById('campaign-modal');
-            const title = document.getElementById('campaign-modal-title');
-            const form = document.getElementById('campaign-form');
-            if (campaign) {
-                title.textContent = 'Editar Campaña';
-                document.getElementById('campaign-id').value = campaign.id;
-                document.getElementById('campaign-name').value = campaign.name;
-                document.getElementById('campaign-channel').value = campaign.channel;
-                document.getElementById('campaign-budget').value = campaign.budget;
-                document.getElementById('campaign-start').value = campaign.start;
-                document.getElementById('campaign-end').value = campaign.end;
-            } else {
-                title.textContent = 'Nueva Campaña';
-                form.reset();
-                document.getElementById('campaign-id').value = '';
-                // Establecer fechas por defecto
-                const today = new Date().toISOString().split('T')[0];
-                document.getElementById('campaign-start').value = today;
-                const nextMonth = new Date();
-                nextMonth.setMonth(nextMonth.getMonth() + 1);
-                document.getElementById('campaign-end').value = nextMonth.toISOString().split('T')[0];
-            }
-            modal.style.display = 'flex';
-        }
-        function openTicketModal(ticket = null) {
-            const modal = document.getElementById('ticket-modal');
-            const title = document.getElementById('ticket-modal-title');
-            const form = document.getElementById('ticket-form');
-            const contactSelect = document.getElementById('ticket-contact');
-            // Llenar select de contactos
-            contactSelect.innerHTML = '';
-            appState.contacts.forEach(contact => {
-                const option = document.createElement('option');
-                option.value = contact.id;
-                option.textContent = contact.name;
-                contactSelect.appendChild(option);
-            });
-            if (ticket) {
-                title.textContent = 'Editar Ticket';
-                document.getElementById('ticket-id').value = ticket.id;
-                document.getElementById('ticket-subject').value = ticket.subject;
-                document.getElementById('ticket-contact').value = ticket.contactId;
-                document.getElementById('ticket-priority').value = ticket.priority;
-                document.getElementById('ticket-description').value = ticket.description || '';
-            } else {
-                title.textContent = 'Nuevo Ticket';
-                form.reset();
-                document.getElementById('ticket-id').value = '';
-            }
-            modal.style.display = 'flex';
-        }
-        // Funciones para cerrar modales
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        // Manejadores de formularios
-        function handleContactSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('contact-id').value;
-            const contactData = {
-                name: document.getElementById('contact-name').value,
-                email: document.getElementById('contact-email').value,
-                phone: document.getElementById('contact-phone').value,
-                company: document.getElementById('contact-company').value,
-                stage: document.getElementById('contact-stage').value,
-                type: document.getElementById('contact-type').value,
-                notes: document.getElementById('contact-notes').value,
-                lastInteraction: new Date().toISOString().split('T')[0]
+            init();
+
+            // Expose some helpers to console for debugging
+            window.__DataConecta = {
+                contacts,
+                saveToStorage,
+                loadFromStorage,
+                renderContacts
             };
-            if (id) {
-                // Editar contacto existente
-                updateContact(parseInt(id), contactData);
-            } else {
-                // Agregar nuevo contacto
-                addContact(contactData);
-            }
-            closeModal('contact-modal');
-        }
-        function handleDealSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('deal-id').value;
-            const dealData = {
-                name: document.getElementById('deal-name').value,
-                contactId: parseInt(document.getElementById('deal-contact').value),
-                value: parseFloat(document.getElementById('deal-value').value),
-                stage: document.getElementById('deal-stage').value,
-                probability: parseInt(document.getElementById('deal-probability').value),
-                closeDate: document.getElementById('deal-close-date').value
-            };
-            if (id) {
-                // Editar oportunidad existente
-                updateDeal(parseInt(id), dealData);
-            } else {
-                // Agregar nueva oportunidad
-                addDeal(dealData);
-            }
-            closeModal('deal-modal');
-        }
-        function handleCampaignSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('campaign-id').value;
-            const campaignData = {
-                name: document.getElementById('campaign-name').value,
-                channel: document.getElementById('campaign-channel').value,
-                budget: parseFloat(document.getElementById('campaign-budget').value),
-                start: document.getElementById('campaign-start').value,
-                end: document.getElementById('campaign-end').value,
-                status: "active",
-                roi: 0
-            };
-            if (id) {
-                // Editar campaña existente
-                updateCampaign(parseInt(id), campaignData);
-            } else {
-                // Agregar nueva campaña
-                addCampaign(campaignData);
-            }
-            closeModal('campaign-modal');
-        }
-        function handleTicketSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('ticket-id').value;
-            const ticketData = {
-                subject: document.getElementById('ticket-subject').value,
-                contactId: parseInt(document.getElementById('ticket-contact').value),
-                priority: document.getElementById('ticket-priority').value,
-                description: document.getElementById('ticket-description').value,
-                status: "open",
-                date: new Date().toISOString().split('T')[0],
-                agent: "Agente Asignado"
-            };
-            if (id) {
-                // Editar ticket existente
-                updateTicket(parseInt(id), ticketData);
-            } else {
-                // Agregar nuevo ticket
-                addTicket(ticketData);
-            }
-            closeModal('ticket-modal');
-        }
-        // Funciones CRUD para contactos
-        function addContact(contactData) {
-            const newContact = {
-                id: appState.nextId.contacts++,
-                ...contactData
-            };
-            appState.contacts.push(newContact);
-            saveData();
-            renderContacts();
-            renderDashboard();
-            showAlert('success', 'Contacto agregado correctamente');
-        }
-        function editContact(id) {
-            const contact = appState.contacts.find(c => c.id === id);
-            if (contact) {
-                openContactModal(contact);
-            }
-        }
-        function updateContact(id, contactData) {
-            const index = appState.contacts.findIndex(c => c.id === id);
-            if (index !== -1) {
-                appState.contacts[index] = { ...appState.contacts[index], ...contactData, id: id };
-                saveData();
-                renderContacts();
-                renderDashboard();
-                showAlert('success', 'Contacto actualizado correctamente');
-            }
-        }
-        function deleteContact(id) {
-            showCustomConfirm('¿Está seguro de que desea eliminar este contacto?', (result) => {
-                if (result) {
-                    appState.contacts = appState.contacts.filter(c => c.id !== id);
-                    saveData();
-                    renderContacts();
-                    renderDashboard();
-                    showAlert('success', 'Contacto eliminado correctamente');
-                }
-            });
-        }
-        // Funciones CRUD para oportunidades
-        function addDeal(dealData) {
-            const newDeal = {
-                id: appState.nextId.deals++,
-                ...dealData
-            };
-            appState.deals.push(newDeal);
-            saveData();
-            renderDeals();
-            renderDashboard();
-            showAlert('success', 'Oportunidad agregada correctamente');
-        }
-        function updateDeal(id, dealData) {
-            const index = appState.deals.findIndex(d => d.id === id);
-            if (index !== -1) {
-                appState.deals[index] = { ...appState.deals[index], ...dealData, id: id };
-                saveData();
-                renderDeals();
-                renderDashboard();
-                showAlert('success', 'Oportunidad actualizada correctamente');
-            }
-        }
-        // Funciones CRUD para campañas
-        function addCampaign(campaignData) {
-            const newCampaign = {
-                id: appState.nextId.campaigns++,
-                ...campaignData
-            };
-            appState.campaigns.push(newCampaign);
-            saveData();
-            renderCampaigns();
-            showAlert('success', 'Campaña agregada correctamente');
-        }
-        function editCampaign(id) {
-            const campaign = appState.campaigns.find(c => c.id === id);
-            if (campaign) {
-                openCampaignModal(campaign);
-            }
-        }
-        function updateCampaign(id, campaignData) {
-            const index = appState.campaigns.findIndex(c => c.id === id);
-            if (index !== -1) {
-                appState.campaigns[index] = { ...appState.campaigns[index], ...campaignData, id: id };
-                saveData();
-                renderCampaigns();
-                showAlert('success', 'Campaña actualizada correctamente');
-            }
-        }
-        function deleteCampaign(id) {
-            showCustomConfirm('¿Está seguro de que desea eliminar esta campaña?', (result) => {
-                if (result) {
-                    appState.campaigns = appState.campaigns.filter(c => c.id !== id);
-                    saveData();
-                    renderCampaigns();
-                    showAlert('success', 'Campaña eliminada correctamente');
-                }
-            });
-        }
-        // Funciones CRUD para tickets
-        function addTicket(ticketData) {
-            const newTicket = {
-                id: appState.nextId.tickets++,
-                ...ticketData
-            };
-            appState.tickets.push(newTicket);
-            saveData();
-            renderTickets();
-            renderDashboard();
-            showAlert('success', 'Ticket agregado correctamente');
-        }
-        function editTicket(id) {
-            const ticket = appState.tickets.find(t => t.id === id);
-            if (ticket) {
-                openTicketModal(ticket);
-            }
-        }
-        function updateTicket(id, ticketData) {
-            const index = appState.tickets.findIndex(t => t.id === id);
-            if (index !== -1) {
-                appState.tickets[index] = { ...appState.tickets[index], ...ticketData, id: id };
-                saveData();
-                renderTickets();
-                renderDashboard();
-                showAlert('success', 'Ticket actualizado correctamente');
-            }
-        }
-        function deleteTicket(id) {
-            showCustomConfirm('¿Está seguro de que desea eliminar este ticket?', (result) => {
-                if (result) {
-                    appState.tickets = appState.tickets.filter(t => t.id !== id);
-                    saveData();
-                    renderTickets();
-                    renderDashboard();
-                    showAlert('success', 'Ticket eliminado correctamente');
-                }
-            });
-        }
-        // Aplicar segmentación
-        function applySegment() {
-            const criteria = document.getElementById('segment-criteria').value;
-            const value = document.getElementById('segment-value').value.toLowerCase();
-            let filteredContacts = [];
-            switch(criteria) {
-                case 'location':
-                    // En un caso real, los contactos tendrían campo de ubicación
-                    filteredContacts = appState.contacts.filter(c => 
-                        c.company.toLowerCase().includes(value) || 
-                        (c.notes && c.notes.toLowerCase().includes(value))
-                    );
-                    break;
-                case 'funnel-stage':
-                    filteredContacts = appState.contacts.filter(c => 
-                        c.stage === value
-                    );
-                    break;
-                case 'client-type':
-                    filteredContacts = appState.contacts.filter(c => 
-                        c.type === value
-                    );
-                    break;
-                case 'email-opened':
-                    // En un caso real, esto vendría de datos de tracking
-                    // Simulamos que los contactos con interacciones recientes abrieron emails
-                    filteredContacts = appState.contacts.filter(c => 
-                        c.lastInteraction && new Date(c.lastInteraction) > new Date('2023-05-01')
-                    );
-                    break;
-                case 'email-not-opened':
-                    filteredContacts = appState.contacts.filter(c => 
-                        !c.lastInteraction || new Date(c.lastInteraction) <= new Date('2023-05-01')
-                    );
-                    break;
-                case 'purchased':
-                    filteredContacts = appState.contacts.filter(c => 
-                        appState.deals.some(d => d.contactId === c.id && d.stage === 'closed')
-                    );
-                    break;
-                case 'not-purchased':
-                    filteredContacts = appState.contacts.filter(c => 
-                        !appState.deals.some(d => d.contactId === c.id && d.stage === 'closed')
-                    );
-                    break;
-            }
-            // Mostrar resultados
-            const tbody = document.getElementById('contacts-tbody');
-            tbody.innerHTML = '';
-            filteredContacts.forEach(contact => {
-                const tr = document.createElement('tr');
-                const stageNames = {
-                    lead: 'Lead',
-                    prospect: 'Prospecto',
-                    opportunity: 'Oportunidad',
-                    customer: 'Cliente'
-                };
-                tr.innerHTML = `
-                    <td>${contact.name}</td>
-                    <td>${contact.email}</td>
-                    <td>${contact.phone}</td>
-                    <td>${contact.company}</td>
-                    <td><span class="status ${contact.stage}">${stageNames[contact.stage] || contact.stage}</span></td>
-                    <td>${formatDate(contact.lastInteraction)}</td>
-                    <td>
-                        <button class="btn btn-outline edit-contact" data-id="${contact.id}">Editar</button>
-                        <button class="btn btn-danger delete-contact" data-id="${contact.id}">Eliminar</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            showAlert('success', `Se encontraron ${filteredContacts.length} contactos con el criterio seleccionado`);
-            document.getElementById('segment-form').style.display = 'none'; // Ocultar el formulario después de aplicar
-        }
-        // Mostrar alertas
-        function showAlert(type, message) {
-            const alert = document.getElementById(`${type}-alert`);
-            alert.textContent = message;
-            alert.style.display = 'block';
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 3000);
-        }
-        // Reemplazo de confirm()
-        function showCustomConfirm(message, callback) {
-            document.getElementById('confirm-message').textContent = message;
-            document.getElementById('custom-confirm-modal').style.display = 'flex';
-            confirmCallback = callback; // Store the callback to be executed later
-        }
-        // Exportar datos
-        function exportData() {
-            const dataStr = JSON.stringify(appState, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = 'dataconecta-crm-backup.json';
-            link.click();
-            showAlert('success', 'Datos exportados correctamente');
-        }
-        // Importar datos
-        function setupImport() {
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = '.json';
-            fileInput.id = 'import-file';
-            fileInput.style.display = 'none';
-            document.body.appendChild(fileInput);
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        try {
-                            const importedData = JSON.parse(event.target.result);
-                            showCustomConfirm('¿Está seguro de que desea importar estos datos? Se sobrescribirán los datos actuales.', (result) => {
-                                if (result) {
-                                    appState = importedData;
-                                    saveData();
-                                    renderContacts();
-                                    renderDeals();
-                                    renderCampaigns();
-                                    renderTickets();
-                                    renderCommunications();
-                                    renderDashboard();
-                                    showAlert('success', 'Datos importados correctamente');
-                                }
-                            });
-                        } catch (error) {
-                            showAlert('error', 'Error al importar los datos. El archivo puede estar corrupto.');
-                        }
-                    };
-                    reader.readAsText(file);
-                }
-                // Resetear el input
-                fileInput.value = '';
-            });
-        }
-        // Limpiar datos
-        function clearData() {
-            showCustomConfirm('¿Está seguro de que desea eliminar todos los datos? Esta acción no se puede deshacer.', (result) => {
-                if (result) {
-                    localStorage.removeItem('dataconecta-crm');
-                    appState = {
-                        contacts: [],
-                        deals: [],
-                        campaigns: [],
-                        tickets: [],
-                        communications: [],
-                        nextId: {
-                            contacts: 1,
-                            deals: 1,
-                            campaigns: 1,
-                            tickets: 1,
-                            communications: 1
-                        }
-                    };
-                    renderContacts();
-                    renderDeals();
-                    renderCampaigns();
-                    renderTickets();
-                    renderCommunications();
-                    renderDashboard();
-                    showAlert('success', 'Todos los datos han sido eliminados');
-                }
-            });
-        }
-        // Inicializar la aplicación cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', () => {
-            initApp();
-            setupImport();
-        });
+
+        })();
     </script>
 </body>
 </html>
