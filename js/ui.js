@@ -1,7 +1,6 @@
 // ui.js
 // UI bindings: modals, CRUD, pipeline, toasts, validations, undo, export/import
 (function(){
-  // basic helpers
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
   const toastWrap = $('#toast-wrap');
@@ -15,28 +14,22 @@
     setTimeout(()=> t.remove(), ttl);
   }
 
-  // validation
   function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
   function validPhone(p){ return p.trim()==='' || /^[\d+\s()-]{6,20}$/.test(p); }
 
-  // DOM containers
   const contactsTbody = $('#contacts-tbody');
   const communicationsTbody = $('#communications-tbody');
   const ticketsTbody = $('#tickets-tbody');
   const pipelineEl = $('#pipeline');
   const saveIndicator = $('#save-indicator');
-
-  // modal root
   const modalRoot = $('#modal-root');
 
-  // undo
   let lastAction = null;
   $('#btn-undo').addEventListener('click', ()=> {
     if(!lastAction || typeof lastAction.undo !== 'function') return showToast('Nada para deshacer','info');
     try{ lastAction.undo(); window.DataStore.save(); refreshAll(); lastAction = null; showToast('Deshecho','success'); } catch(e){ showToast('Error deshaciendo','error'); }
   });
 
-  // autosave indicator show/hide via DataStore.save debounced
   const originalSave = window.DataStore.save;
   window.DataStore.save = function(opts){
     saveIndicator.textContent = 'Guardando...';
@@ -45,7 +38,6 @@
     setTimeout(()=> saveIndicator.textContent = '—', 2200);
   };
 
-  // render functions
   function renderContacts(list){
     const data = list || window.DataStore.contacts;
     contactsTbody.innerHTML = '';
@@ -62,10 +54,7 @@
         </td>`;
       contactsTbody.appendChild(tr);
     });
-    // bind
-    $$('.link-contact').forEach(a=> a.addEventListener('click', e=>{
-      e.preventDefault(); openContactDetail(a.dataset.id);
-    }));
+    $$('.link-contact').forEach(a=> a.addEventListener('click', e=>{ e.preventDefault(); openContactDetail(a.dataset.id); }));
     $$('button[data-action]').forEach(b=> b.addEventListener('click', e=>{
       const id = b.dataset.id; const act = b.dataset.action;
       if(act==='edit') openContactForm(id);
@@ -99,10 +88,8 @@
     });
   }
 
-  // utilities
   function escapeHtml(t){ if(t==null) return ''; return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  // modals: simple reusable
   function createModal(title, bodyHtml, onClose){
     const m = document.createElement('div'); m.className='modal';
     m.innerHTML = `<div class="modal-card"><h3>${escapeHtml(title)}</h3><div class="modal-body">${bodyHtml}</div></div>`;
@@ -117,7 +104,6 @@
     m.querySelector('#yes').addEventListener('click', ()=> { fn && fn(); m.remove(); });
   }
 
-  // Contact form (modal)
   function openContactForm(id){
     const c = id ? window.DataStore.contacts.find(x=>x.id===id) : null;
     const html = `
@@ -160,7 +146,6 @@
   function openContactDetail(id){
     const c = window.DataStore.contacts.find(x=>x.id===id);
     if(!c) return showToast('Contacto no encontrado','error');
-    // build interactions + add form
     const items = window.DataStore.comms.filter(m=>m.contactId===c.id).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(it=>`<div class="small">${escapeHtml(it.type)} — ${escapeHtml(it.summary)} <span class="muted">(${new Date(it.date).toLocaleString()})</span></div>`).join('') || '<div class="muted">Sin interacciones</div>';
     const html = `<div><strong>${escapeHtml(c.name)}</strong><div class="muted">Email: ${escapeHtml(c.email||'-')} • Tel: ${escapeHtml(c.phone||'-')}</div><hr/></div>
       <h4>Interacciones</h4>${items}
@@ -184,7 +169,6 @@
     });
   }
 
-  // deals (opportunities)
   function openDealForm(id){
     const d = id ? window.DataStore.deals.find(x=>x.id===id) : null;
     const contactOptions = '<option value="">(sin asignar)</option>' + window.DataStore.contacts.map(c=>`<option value="${c.id}" ${d && d.contactId===c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('');
@@ -206,7 +190,6 @@
       if(d){
         const prev = Object.assign({}, d);
         const idx = window.DataStore.deals.findIndex(x=>x.id===d.id);
-        // keep createdAt if present
         const createdAt = window.DataStore.deals[idx] && window.DataStore.deals[idx].createdAt ? window.DataStore.deals[idx].createdAt : new Date().toISOString();
         window.DataStore.deals[idx] = Object.assign({id:d.id}, window.DataStore.deals[idx], { title, value, stage, contactId, createdAt });
         window.DataStore.save();
@@ -223,7 +206,6 @@
     });
   }
 
-  // Tickets
   function openTicketForm(){
     const contactOptions = '<option value="">(sin asignar)</option>' + window.DataStore.contacts.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
     const html = `<div style="display:flex;flex-direction:column;gap:8px">
@@ -248,7 +230,6 @@
 
   function deleteContact(id){ confirm(()=> { const prev = window.DataStore.contacts.find(x=>x.id===id); window.DataStore.contacts = window.DataStore.contacts.filter(x=>x.id!==id); const removedDeals = window.DataStore.deals.filter(d=>d.contactId===id); window.DataStore.deals = window.DataStore.deals.filter(d=>d.contactId!==id); window.DataStore.comms = window.DataStore.comms.filter(m=>m.contactId!==id); window.DataStore.tickets = window.DataStore.tickets.filter(t=>t.contactId!==id); window.DataStore.save(); lastAction = { undo: ()=>{ window.DataStore.contacts.unshift(prev); window.DataStore.deals = removedDeals.concat(window.DataStore.deals); window.DataStore.save(); refreshAll(); } }; showToast('Contacto eliminado','info'); } ); }
 
-  // delete, import, export handlers
   $('#btn-export').addEventListener('click', ()=> {
     const payload = window.DataStore.exportAll();
     const blob = new Blob([payload], { type: 'application/json' });
@@ -272,6 +253,8 @@
     const reader = new FileReader(); reader.onload = ev => {
       try{
         const parsed = JSON.parse(ev.target.result);
+        // basic structure validation
+        if(!parsed || (!Array.isArray(parsed.contacts) && !Array.isArray(parsed.deals))) return showToast('JSON de import inválido','error');
         confirm(()=> { window.DataStore.importAll(parsed); refreshAll(); showToast('Importación realizada','success'); }, 'Importar reemplazará los datos locales. Continuar?');
       }catch(err){ showToast('JSON inválido','error'); }
     }; reader.readAsText(file); e.target.value='';
@@ -279,12 +262,10 @@
 
   $('#btn-clear').addEventListener('click', ()=> confirm(()=>{ window.DataStore.reset(); refreshAll(); showToast('Datos limpiados','info'); }, 'Eliminar todos los datos locales?'));
 
-  // add/create handlers
   $('#btn-add-contact').addEventListener('click', ()=> openContactForm(null));
   $('#btn-add-deal').addEventListener('click', ()=> openDealForm(null));
   $('#btn-add-ticket').addEventListener('click', ()=> openTicketForm());
 
-  // search/filter/segment
   $('#btn-filter').addEventListener('click', ()=> {
     const q = $('#q').value.trim().toLowerCase(); const st = $('#filter-stage').value;
     let res = window.DataStore.contacts.filter(c => !q || (c.name&&c.name.toLowerCase().includes(q)) || (c.email&&c.email.toLowerCase().includes(q)) || (c.company&&c.company.toLowerCase().includes(q)));
@@ -308,7 +289,6 @@
   });
   $('#reset-segment').addEventListener('click', ()=> renderContacts());
 
-  // refresh UI
   function refreshAll(){
     renderContacts();
     renderComms();
@@ -317,7 +297,6 @@
     if(window.Analytics && typeof window.Analytics.renderAll === 'function') window.Analytics.renderAll();
   }
 
-  // load + seed + sync
   function seedIfEmpty(){
     const c = window.DataStore.contacts;
     if(!c || !c.length){
@@ -339,10 +318,8 @@
     }
   }
 
-  // sync listener
   window.DataStore.onSync(() => { window.DataStore.load(); refreshAll(); showToast('Sincronizado desde otra pestaña','info'); });
 
-  // initialize
   window.addEventListener('DOMContentLoaded', ()=> {
     window.DataStore.load();
     seedIfEmpty();
@@ -350,7 +327,6 @@
     if(window.Analytics && typeof window.Analytics.renderAll === 'function') window.Analytics.renderAll();
   });
 
-  // basic keyboard shortcuts
   document.addEventListener('keydown', e => {
     if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); window.DataStore.save(); showToast('Guardado manual','success'); }
     if(e.key === 'Escape') { $$('.modal') .forEach(m=> m.remove()); }
