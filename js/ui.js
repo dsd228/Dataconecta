@@ -73,9 +73,9 @@
     }));
   }
 
-  function renderComms(){ const c = window.DataStore.comms; communicationsTbody.innerHTML = ''; if(!c.length) return communicationsTbody.innerHTML = `<tr><td colspan="4" class="muted">Sin registros</td></tr>`; c.slice(0,50).forEach(it=>{ const contact = window.DataStore.contacts.find(x=>x.id===it.contactId) || {}; const tr = document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(contact.name||'-')}</td><td>${escapeHtml(it.type)}</td><td>${escapeHtml(it.summary)}</td><td>${new Date(it.date).toLocaleString()}</td>`; communicationsTbody.appendChild(tr); }); }
+  function renderComms(){ const c = window.DataStore.comms; communicationsTbody.innerHTML = ''; if(!c.length) return communicationsTbody.innerHTML = `<tr><td colspan="4" class="muted">Sin registros.</td></tr>`; c.slice(0,50).forEach(m=>{ const contact = window.DataStore.contacts.find(x=>x.id===m.contactId) || {name:'-'}; const tr = document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(contact.name)}</td><td>${escapeHtml(m.type)}</td><td>${escapeHtml(m.summary)}</td><td>${new Date(m.date).toLocaleString()}</td>`; communicationsTbody.appendChild(tr); }); }
 
-  function renderTickets(){ const t = window.DataStore.tickets; ticketsTbody.innerHTML=''; if(!t.length) return ticketsTbody.innerHTML = `<tr><td colspan="4" class="muted">Sin tickets</td></tr>`; t.forEach(it=>{ const c = window.DataStore.contacts.find(x=>x.id===it.contactId) || {}; const tr=document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(it.id)}</td><td>${escapeHtml(it.title)}</td><td>${escapeHtml(c.name||'-')}</td><td>${escapeHtml(it.state||'')}</td>`; ticketsTbody.appendChild(tr); }); }
+  function renderTickets(){ const t = window.DataStore.tickets; ticketsTbody.innerHTML=''; if(!t.length) return ticketsTbody.innerHTML = `<tr><td colspan="4" class="muted">No hay tickets.</td></tr>`; t.forEach(ti=>{ const c = window.DataStore.contacts.find(x=>x.id===ti.contactId) || {name:'-'}; const tr = document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(ti.id)}</td><td>${escapeHtml(ti.title)}</td><td>${escapeHtml(c.name)}</td><td>${escapeHtml(ti.state||'')}</td>`; ticketsTbody.appendChild(tr); }); }
 
   function renderPipeline(){
     const stages = ['Lead','Contacto','Prospecto','Cliente'];
@@ -94,7 +94,7 @@
       });
       col.addEventListener('dragover', e => { e.preventDefault(); col.style.background='#f0fbff'; });
       col.addEventListener('dragleave', ()=> col.style.background='');
-      col.addEventListener('drop', e => { e.preventDefault(); col.style.background=''; const id = e.dataTransfer.getData('text/plain'); const idx = window.DataStore.deals.findIndex(x=>x.id===id); if(idx>-1){ const prev = Object.assign({}, window.DataStore.deals[idx]); window.DataStore.deals[idx].stage = col.dataset.stage; window.DataStore.save(); lastAction = { undo: ()=>{ const i = window.DataStore.deals.findIndex(x=>x.id===prev.id); if(i>-1){ window.DataStore.deals[i] = prev; window.DataStore.save(); refreshAll(); } } }; showToast('Oportunidad movida','success'); refreshAll(); } });
+      col.addEventListener('drop', e => { e.preventDefault(); col.style.background=''; const id = e.dataTransfer.getData('text/plain'); const idx = window.DataStore.deals.findIndex(x=>x.id===id); if(idx>-1){ const prev = Object.assign({}, window.DataStore.deals[idx]); window.DataStore.deals[idx].stage = col.getAttribute('data-stage') || col.dataset.stage; window.DataStore.save(); lastAction = { undo: ()=>{ const i = window.DataStore.deals.findIndex(x=>x.id===prev.id); if(i>-1){ window.DataStore.deals[i] = prev; window.DataStore.save(); refreshAll(); } } }; showToast('Deal movido','success'); refreshAll(); }});
       pipelineEl.appendChild(col);
     });
   }
@@ -166,15 +166,17 @@
       <h4>Interacciones</h4>${items}
       <hr/>
       <div style="display:flex;gap:8px"><select id="new-comm-type"><option>Email</option><option>Call</option><option>Meeting</option><option>Form</option></select><input id="new-comm-summary" placeholder="Resumen" /></div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button id="close-detail" class="btn">Cerrar</button><button id="save-comm" class="btn primary">Guardar</button></div>`;
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button id="add-comm-cancel" class="btn">Cancelar</button><button id="add-comm-save" class="btn btn-primary">Guardar</button></div>`;
     const m = createModal('Ficha de contacto', html);
-    m.querySelector('#close-detail').addEventListener('click', ()=> m.remove());
-    m.querySelector('#save-comm').addEventListener('click', ()=> {
-      const type = m.querySelector('#new-comm-type').value; const summary = m.querySelector('#new-comm-summary').value.trim();
-      if(!summary) return showToast('Resumen requerido','error');
+    document.getElementById('add-comm-cancel').addEventListener('click', ()=> m.remove());
+    document.getElementById('add-comm-save').addEventListener('click', ()=>{
+      const type = document.getElementById('new-comm-type').value;
+      const summary = document.getElementById('new-comm-summary').value.trim();
+      if(!summary) return showToast('Agregá un resumen','error');
       const newC = { id: window.DataStore.uid(), contactId: c.id, type, summary, date: new Date().toISOString() };
       window.DataStore.comms.unshift(newC);
-      const idx = window.DataStore.contacts.findIndex(x=>x.id===c.id); if(idx>-1) window.DataStore.contacts[idx].lastInteraction = new Date().toISOString();
+      const idx = window.DataStore.contacts.findIndex(x=>x.id===c.id);
+      if(idx>-1) { window.DataStore.contacts[idx].lastInteraction = new Date().toISOString(); }
       window.DataStore.save();
       lastAction = { undo: ()=>{ window.DataStore.comms = window.DataStore.comms.filter(x=>x.id!==newC.id); window.DataStore.save(); refreshAll(); } };
       showToast('Interacción guardada','success');
@@ -204,12 +206,14 @@
       if(d){
         const prev = Object.assign({}, d);
         const idx = window.DataStore.deals.findIndex(x=>x.id===d.id);
-        window.DataStore.deals[idx] = Object.assign({id:d.id}, window.DataStore.deals[idx], { title, value, stage, contactId });
+        // keep createdAt if present
+        const createdAt = window.DataStore.deals[idx] && window.DataStore.deals[idx].createdAt ? window.DataStore.deals[idx].createdAt : new Date().toISOString();
+        window.DataStore.deals[idx] = Object.assign({id:d.id}, window.DataStore.deals[idx], { title, value, stage, contactId, createdAt });
         window.DataStore.save();
         lastAction = { undo: ()=>{ const i = window.DataStore.deals.findIndex(x=>x.id===prev.id); if(i>-1){ window.DataStore.deals[i]=prev; window.DataStore.save(); refreshAll(); } } };
         showToast('Oportunidad actualizada','success');
       } else {
-        const newD = { id: window.DataStore.uid(), title, value, stage, contactId };
+        const newD = { id: window.DataStore.uid(), title, value, stage, contactId, createdAt: new Date().toISOString() };
         window.DataStore.deals.unshift(newD);
         window.DataStore.save();
         lastAction = { undo: ()=>{ window.DataStore.deals = window.DataStore.deals.filter(x=>x.id!==newD.id); window.DataStore.save(); refreshAll(); } };
@@ -248,17 +252,17 @@
   $('#btn-export').addEventListener('click', ()=> {
     const payload = window.DataStore.exportAll();
     const blob = new Blob([payload], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `dataconecta_export_${(new Date()).toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `dataconecta_export_${(new Date()).toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
     showToast('Exportado JSON','success');
   });
   $('#btn-export-csv-contacts').addEventListener('click', ()=> {
     const csv = window.DataStore.toCSV(window.DataStore.contacts, ['id','name','email','phone','company','stage','location','lastInteraction']);
-    const blob = new Blob([csv], { type: 'text/csv' }); const a=document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='contacts.csv'; document.body.appendChild(a); a.click(); a.remove();
+    const blob = new Blob([csv], { type: 'text/csv' }); const a=document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='contacts.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
     showToast('CSV contactos descargado','success');
   });
   $('#btn-export-csv-deals').addEventListener('click', ()=> {
-    const csv = window.DataStore.toCSV(window.DataStore.deals, ['id','title','value','stage','contactId']);
-    const blob = new Blob([csv], { type: 'text/csv' }); const a=document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='deals.csv'; document.body.appendChild(a); a.click(); a.remove();
+    const csv = window.DataStore.toCSV(window.DataStore.deals, ['id','title','value','stage','contactId','createdAt']);
+    const blob = new Blob([csv], { type: 'text/csv' }); const a=document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='deals.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
     showToast('CSV deals descargado','success');
   });
 
@@ -310,7 +314,7 @@
     renderComms();
     renderTickets();
     renderPipeline();
-    if(window.Analytics && typeof window.Analytics.render === 'function') window.Analytics.render();
+    if(window.Analytics && typeof window.Analytics.renderAll === 'function') window.Analytics.renderAll();
   }
 
   // load + seed + sync
@@ -318,12 +322,12 @@
     const c = window.DataStore.contacts;
     if(!c || !c.length){
       window.DataStore.contacts = [
-        { id: window.DataStore.uid(), name:'María González', email:'maria@example.com', phone:'+34 600111222', company:'ACME S.A.', stage:'Lead', location:'Madrid', lastInteraction:new Date().toISOString(), emailOpened:true, purchased:false },
-        { id: window.DataStore.uid(), name:'Juan Pérez', email:'juan@example.com', phone:'+34 655222333', company:'Beta SRL', stage:'Prospecto', location:'Barcelona', lastInteraction:new Date().toISOString(), emailOpened:false, purchased:false }
+        { id: window.DataStore.uid(), name:'María González', email:'maria@example.com', phone:'+34 600111222', company:'ACME S.A.', stage:'Lead', location:'Madrid', lastInteraction: new Date().toISOString(), emailOpened:true, purchased:false },
+        { id: window.DataStore.uid(), name:'Juan Pérez', email:'juan@example.com', phone:'+34 655222333', company:'Beta SRL', stage:'Prospecto', location:'Barcelona', lastInteraction: new Date().toISOString(), emailOpened:false, purchased:false }
       ];
       window.DataStore.deals = [
-        { id: window.DataStore.uid(), title:'Oferta ACME', value:1200, stage:'Lead', contactId: window.DataStore.contacts[0].id },
-        { id: window.DataStore.uid(), title:'Demo Beta', value:4500, stage:'Prospecto', contactId: window.DataStore.contacts[1].id }
+        { id: window.DataStore.uid(), title:'Oferta ACME', value:1200, stage:'Lead', contactId: window.DataStore.contacts[0].id, createdAt: new Date().toISOString() },
+        { id: window.DataStore.uid(), title:'Demo Beta', value:4500, stage:'Prospecto', contactId: window.DataStore.contacts[1].id, createdAt: new Date().toISOString() }
       ];
       window.DataStore.comms = [
         { id: window.DataStore.uid(), contactId: window.DataStore.contacts[0].id, type:'Email', summary:'Email de bienvenida', date:new Date().toISOString(), opened:true }
@@ -343,7 +347,7 @@
     window.DataStore.load();
     seedIfEmpty();
     refreshAll();
-    if(window.Analytics && typeof window.Analytics.render === 'function') window.Analytics.render();
+    if(window.Analytics && typeof window.Analytics.renderAll === 'function') window.Analytics.renderAll();
   });
 
   // basic keyboard shortcuts
