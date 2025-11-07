@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor Visual de Prototipos | DataConecta</title>
-    <!-- Carga de Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Carga de Konva.js -->
     <script src="https://unpkg.com/konva@9.3.13/konva.min.js"></script>
     <style>
         :root {
@@ -25,15 +23,13 @@
             --bg-darker: #f1f5f9;
             --border-color: #e2e8f0;
         }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        body {
+        body.editor-mode {
             background-color: var(--bg-darker);
             color: var(--text);
             line-height: 1.6;
@@ -42,9 +38,7 @@
             height: 100vh;
             overflow: hidden;
         }
-
-        /* Header */
-        header {
+        header.editor-header {
             background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);
             color: white;
             padding: 10px 20px;
@@ -54,12 +48,10 @@
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-
         .header-left {
             display: flex;
             align-items: center;
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -67,13 +59,10 @@
             font-weight: 700;
             margin-right: 20px;
         }
-        
         .logo i {
             margin-right: 10px;
             color: var(--primary);
         }
-
-        /* Estilos para la nueva navegación */
         .header-nav {
             display: flex;
             list-style: none;
@@ -96,20 +85,16 @@
             border-bottom-color: var(--primary);
             font-weight: 700;
         }
-
-
         #user-display {
             font-size: 12px;
             background-color: rgba(0,0,0,0.2);
             padding: 5px 10px;
             border-radius: 4px;
         }
-
         .editor-toolbar {
             display: flex;
             gap: 10px;
         }
-
         .view-controls button,
         .mode-toggle {
             background-color: transparent;
@@ -120,25 +105,19 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .view-controls button.active {
             background-color: var(--primary);
             border-color: var(--primary);
         }
-
         .view-controls button:hover,
         .mode-toggle:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-
-        /* Main Layout */
         .editor-main {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
-
-        /* Toolbar (Left) */
         aside.components-toolbar {
             width: 220px;
             background-color: white;
@@ -146,25 +125,21 @@
             padding: 20px;
             overflow-y: auto;
         }
-
         .toolbar-section {
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
-
         .toolbar-section h3 {
             font-size: 16px;
             color: var(--secondary);
             margin-bottom: 15px;
         }
-
         .component-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-
         .component-item {
             background-color: var(--bg-light);
             border: 1px solid var(--border-color);
@@ -174,32 +149,26 @@
             cursor: grab;
             transition: all 0.3s;
         }
-
         .component-item:hover {
             background-color: white;
             border-color: var(--primary);
             color: var(--primary);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
-
         .component-item i {
             font-size: 20px;
             display: block;
             margin-bottom: 8px;
         }
-
         .component-item span {
             font-size: 12px;
             font-weight: 500;
         }
-        
         #saved-components-list {
             font-size: 14px;
             color: var(--text-light);
             text-align: center;
         }
-
-        /* Canvas (Center) */
         .canvas-container {
             flex: 1;
             display: flex;
@@ -209,15 +178,12 @@
             padding: 30px;
             background-color: var(--bg-darker);
         }
-
         #canvas-stage {
             background-color: white;
             box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
             transition: width 0.4s ease, height 0.4s ease;
             border: 1px solid var(--border-color);
         }
-
-        /* Properties (Right) */
         aside.properties-panel {
             width: 260px;
             background-color: white;
@@ -225,7 +191,6 @@
             padding: 20px;
             overflow-y: auto;
         }
-
         .properties-panel h3 {
             font-size: 16px;
             color: var(--secondary);
@@ -233,11 +198,9 @@
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
-
         #properties-form .form-group {
             margin-bottom: 15px;
         }
-
         #properties-form .form-label {
             display: block;
             margin-bottom: 5px;
@@ -245,7 +208,6 @@
             font-weight: 600;
             color: var(--text-light);
         }
-
         #properties-form .form-control,
         #properties-form .form-control-color {
             width: 100%;
@@ -254,21 +216,17 @@
             border-radius: 4px;
             font-size: 14px;
         }
-
         #properties-form .form-control-color {
             padding: 4px;
             height: 38px;
         }
-
         #properties-form .form-row {
             display: flex;
             gap: 10px;
         }
-
         #properties-form .form-row .form-group {
             flex: 1;
         }
-
         #properties-form .btn {
             padding: 8px 12px;
             border-radius: 4px;
@@ -281,7 +239,6 @@
             width: 100%;
             font-size: 14px;
         }
-        
         #properties-form .btn-primary {
             background-color: var(--primary);
             color: white;
@@ -289,7 +246,6 @@
         #properties-form .btn-primary:hover {
             background-color: var(--primary-dark);
         }
-
         #properties-form .btn-success {
             background-color: var(--success);
             color: white;
@@ -297,24 +253,19 @@
         #properties-form .btn-success:hover {
             background-color: #27ae60;
         }
-
-
         #properties-form .btn-danger {
             background-color: var(--danger);
             color: white;
         }
         #properties-form .btn-danger:hover {
-            background-color: #c0392b; /* Darker danger */
+            background-color: #c0392b;
         }
-        
         #properties-placeholder {
             text-align: center;
             color: var(--text-light);
             font-size: 14px;
             padding-top: 20px;
         }
-        
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -327,7 +278,6 @@
             align-items: center;
             justify-content: center;
         }
-        
         .modal-content {
             background-color: white;
             border-radius: 8px;
@@ -336,19 +286,16 @@
             padding: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-        
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        
         .modal-title {
             font-size: 18px;
             font-weight: 600;
         }
-        
         .close {
             font-size: 24px;
             cursor: pointer;
@@ -356,22 +303,18 @@
         }
     </style>
 </head>
-<body>
-
-    <!-- Header -->
-    <header>
+<body class="editor-mode">
+    <header class="editor-header">
         <div class="header-left">
             <div class="logo">
                 <i class="fas fa-drafting-compass"></i>
                 <span>DataConecta</span>
             </div>
-            <!-- Nueva Navegación -->
             <ul class="header-nav">
                 <li><a href="./index.html">CRM</a></li>
                 <li><a href="./editor.html" class="active">Editor</a></li>
                 <li><a href="./analitica.html">Analítica</a></li>
             </ul>
-            <!-- Fin de Nueva Navegación -->
             <div id="user-display">Cargando...</div>
         </div>
         <div class="editor-toolbar">
@@ -386,11 +329,7 @@
             </button>
         </div>
     </header>
-
-    <!-- Main Layout -->
     <main class="editor-main">
-        
-        <!-- Toolbar (Left) -->
         <aside class="components-toolbar">
             <div class="toolbar-section">
                 <h3>Componentes</h3>
@@ -420,13 +359,9 @@
                 </div>
             </div>
         </aside>
-
-        <!-- Canvas (Center) -->
         <section class="canvas-container" id="canvas-container">
             <div id="canvas-stage"></div>
         </section>
-
-        <!-- Properties (Right) -->
         <aside class="properties-panel">
             <h3>Propiedades</h3>
             <div id="properties-placeholder">
@@ -435,7 +370,6 @@
             </div>
             <form id="properties-form" style="display: none;">
                 <input type="hidden" id="selected-node-id">
-                
                 <div class="form-group" id="group-text">
                     <label class="form-label" for="prop-text">Texto</label>
                     <input type="text" class="form-control" id="prop-text">
@@ -452,7 +386,7 @@
                 </div>
                 <div class="form-group" id="group-background">
                     <label class="form-label" for="prop-background">Color Fondo</label>
-                    <input type="color" class="form-control-color" id="prop-background">
+                        <input type="color" class="form-control-color" id="prop-background">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -474,23 +408,19 @@
                         <input type="number" class="form-control" id="prop-height" min="10">
                     </div>
                 </div>
-                
                 <hr style="border: 0; border-top: 1px solid var(--light); margin: 20px 0;">
-                
                 <div class="form-group">
                      <label class="form-label">Interacción</label>
                      <button type="button" class="btn btn-primary" id="add-interaction-btn">
                          <i class="fas fa-link"></i> Añadir Interacción
                      </button>
                 </div>
-                
                  <div class="form-group">
                      <label class="form-label">Componente</label>
                      <button type="button" class="btn btn-success" id="save-component-btn">
                          <i class="fas fa-save"></i> Guardar como Componente
                      </button>
                 </div>
-
                 <div class="form-group">
                      <button type="button" class="btn btn-danger" id="delete-element-btn">
                          <i class="fas fa-trash-alt"></i> Eliminar Elemento
@@ -499,8 +429,6 @@
             </form>
         </aside>
     </main>
-
-    <!-- Interaction Modal -->
     <div class="modal" id="interaction-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -533,113 +461,32 @@
             </form>
         </div>
     </div>
-
-    <!-- Firebase SDKs -->
-    <script type="module">
-        // Importar Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- 0. INICIALIZACIÓN DE FIREBASE ---
-        
-        // Variables globales de Firebase
-        let db, auth, userId, appId, elementsCollection;
-
-        // Configuración y autenticación
-        async function initFirebase() {
-            // Cargar configuración y App ID (provistos por el entorno)
-            appId = typeof __app_id !== 'undefined' ? __app_id : 'default-editor-app';
-            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-
-            if (!firebaseConfig.apiKey) {
-                console.error("Configuración de Firebase no encontrada. La colaboración no funcionará.");
-                document.getElementById('user-display').textContent = "Error: Colaboración desactivada";
-                return false;
-            }
-
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            setLogLevel('debug'); // Para depuración
-
-            // Autenticar usuario
-            try {
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Error de autenticación:", error);
-                return false;
-            }
-
-            return true;
-        }
-
-
-        document.addEventListener('DOMContentLoaded', async () => {
-
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             let stage, layer, tr;
             let selectedNode = null;
             let isPreviewMode = false;
-            const userDisplay = document.getElementById('user-display');
-
-            // --- INICIAR FIREBASE Y AUTH ---
-            const firebaseReady = await initFirebase();
-            
-            if (firebaseReady) {
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        userDisplay.textContent = `ID Colaborador: ${userId.substring(0, 8)}`;
-                        
-                        // Definir la colección de Firestore (compartida por todos los usuarios en este "appId")
-                        // Usamos la ruta pública para colaboración
-                        elementsCollection = collection(db, 'artifacts', appId, 'public', 'editor-elements');
-                        
-                        // Iniciar el listener de snapshot *después* de que todo esté listo
-                        setupSnapshotListener();
-
-                    } else {
-                        userDisplay.textContent = "Autenticando...";
-                    }
-                });
-            } else {
-                // Si Firebase falla, iniciar en modo local (sin colaboración)
-                userDisplay.textContent = "Modo Local (sin conexión)";
-            }
-            
-            // --- FIN DE FIREBASE ---
-
-
             const views = {
                 mobile: { width: 375, height: 667 },
                 tablet: { width: 768, height: 1024 },
                 desktop: { width: 1366, height: 768 }
             };
             let currentView = 'desktop';
-
             const propertiesForm = document.getElementById('properties-form');
             const propertiesPlaceholder = document.getElementById('properties-placeholder');
-
-            // --- 1. INICIALIZACIÓN DEL CANVAS ---
-            
+            const userDisplay = document.getElementById('user-display');
+            userDisplay.textContent = "Usuario Anónimo (Modo Local)";
+            // Inicialización del canvas
             function initCanvas() {
                 const container = document.getElementById('canvas-stage');
                 const viewSize = views[currentView];
-                
                 stage = new Konva.Stage({
                     container: 'canvas-stage',
                     width: viewSize.width,
                     height: viewSize.height,
                 });
-
                 layer = new Konva.Layer();
                 stage.add(layer);
-
-                // Transformador (para redimensionar/rotar)
                 tr = new Konva.Transformer({
                     nodes: [],
                     keepRatio: false,
@@ -650,414 +497,60 @@
                     borderDash: [3, 3],
                 });
                 layer.add(tr);
-
-                // --- 2. MANEJO DE SELECCIÓN ---
-                
-                // Clic en el canvas
                 stage.on('click tap', (e) => {
-                    // Si estamos en modo preview, ejecutar interacciones
                     if (isPreviewMode) {
                         handlePreviewClick(e.target);
                         return;
                     }
-
-                    // Si se hizo clic en el fondo, deseleccionar todo
                     if (e.target === stage) {
                         deselectNode();
                         return;
                     }
-
-                    // Si se hizo clic en un elemento
-                    selectNode(e.target);
+                    if (e.target.getParent() && e.target.getParent().className === 'Transformer') {
+                        return;
+                    }
+                    let node = e.target;
+                    if (node.parent && (node.parent.getAttr('data-type') === 'Button' || node.parent.getAttr('data-type') === 'Image' || node.parent.getAttr('data-type') === 'Input')) {
+                         node = node.parent;
+                    }
+                    selectedNode = node;
+                    tr.nodes([node]);
+                    showProperties(node);
+                    layer.draw();
                 });
             }
-
             function selectNode(node) {
-                // Ignorar clics en el transformador
-                if (node.getParent() && node.getParent().className === 'Transformer') {
-                    return;
-                }
-                
-                // Si el nodo es un texto dentro de un grupo (botón), seleccionar el grupo
-                if (node.parent && (node.parent.getAttr('data-type') === 'Button' || node.parent.getAttr('data-type') === 'Image' || node.parent.getAttr('data-type') === 'Input')) {
-                     node = node.parent;
-                }
-
                 selectedNode = node;
                 tr.nodes([node]);
                 showProperties(node);
                 layer.draw();
             }
-
             function deselectNode() {
                 selectedNode = null;
                 tr.nodes([]);
                 hideProperties();
                 layer.draw();
             }
-
-
-            // --- 3. DRAG AND DROP (ARRASTRAR Y SOLTAR) ---
-            
-            let dragItemType = null;
-            
-            // Iniciar arrastre desde la barra de componentes
-            document.querySelectorAll('.component-item').forEach(item => {
-                item.addEventListener('dragstart', (e) => {
-                    dragItemType = e.target.closest('.component-item').dataset.type;
-                });
-            });
-
-            const canvasContainer = document.getElementById('canvas-container');
-
-            // Permitir soltar sobre el canvas
-            canvasContainer.addEventListener('dragover', (e) => {
-                e.preventDefault();
-            });
-
-            // Soltar en el canvas
-            canvasContainer.addEventListener('drop', (e) => {
-                e.preventDefault();
-                if (!dragItemType) return;
-
-                // Asegurarse de que el drop es dentro del stage de Konva
-                stage.setPointersPositions(e);
-                const pos = stage.getPointerPosition();
-
-                // Ajustar posición para que quede centrada
-                pos.x = pos.x - (stage.x() / stage.scaleX());
-                pos.y = pos.y - (stage.y() / stage.scaleY());
-
-                // En lugar de llamar a createElement, creamos los datos y los enviamos a Firestore
-                createAndSaveElement(dragItemType, pos);
-                dragItemType = null;
-            });
-
-
-            // --- 4. CREACIÓN DE ELEMENTOS (NUEVO FLUJO CON FIRESTORE) ---
-
-            // Esta función *solo* crea el objeto de datos y lo guarda en Firestore.
-            // El `onSnapshot` listener se encargará de dibujarlo.
-            async function createAndSaveElement(type, pos) {
-                if (!firebaseReady) {
-                    alert("El modo de colaboración está desactivado. No se pueden guardar elementos.");
-                    return;
-                }
-                
-                let elementData = {
-                    type: type,
-                    x: pos.x,
-                    y: pos.y,
-                    rotation: 0,
-                    scaleX: 1,
-                    scaleY: 1,
-                    interaction: null,
-                    createdBy: userId // Guardamos quién lo creó
-                };
-
-                switch (type) {
-                    case 'Text':
-                        elementData = { ...elementData,
-                            text: 'Texto de ejemplo',
-                            fontSize: 20,
-                            fill: '#333',
-                            width: 200, // Dar un ancho por defecto
-                            height: 22
-                        };
-                        break;
-                    
-                    case 'Button':
-                        elementData = { ...elementData,
-                            text: 'Click Aquí',
-                            fontSize: 16,
-                            fill: 'white',
-                            background: 'var(--primary)',
-                            width: 120,
-                            height: 40,
-                            cornerRadius: 4
-                        };
-                        break;
-
-                    case 'Image':
-                        elementData = { ...elementData,
-                            fill: '#eee',
-                            stroke: '#ccc',
-                            width: 150,
-                            height: 100,
-                        };
-                        break;
-
-                    case 'Input':
-                        elementData = { ...elementData,
-                            text: 'Placeholder...',
-                            fontSize: 14,
-                            fill: '#999',
-                            background: 'white',
-                            stroke: '#ccc',
-                            width: 200,
-                            height: 36,
-                            cornerRadius: 4
-                        };
-                        break;
-                }
-
-                try {
-                    // Añadir el nuevo elemento a Firestore
-                    const docRef = await addDoc(elementsCollection, elementData);
-                    console.log("Elemento creado con ID: ", docRef.id);
-                } catch (e) {
-                    console.error("Error al añadir documento: ", e);
-                }
-            }
-            
-            // --- 4b. RE-CREACIÓN DE NODOS DESDE FIRESTORE ---
-            
-            // Esta función es llamada por el onSnapshot listener
-            // Crea un nodo Konva a partir de los datos de Firestore
-            function createNodeFromData(data, docId) {
-                let node;
-                const type = data.type;
-                
-                // Función de listener para actualizar Firestore en drag/transform
-                const onNodeUpdate = async (e) => {
-                    const node = e.target;
-                    try {
-                        await updateDoc(doc(elementsCollection, docId), {
-                            x: node.x(),
-                            y: node.y(),
-                            rotation: node.rotation(),
-                            scaleX: node.scaleX(),
-                            scaleY: node.scaleY()
-                        });
-                    } catch (error) {
-                        console.error("Error al actualizar nodo: ", error);
-                    }
-                };
-
-                switch (type) {
-                    case 'Text':
-                        node = new Konva.Text({
-                            x: data.x,
-                            y: data.y,
-                            text: data.text,
-                            fontSize: data.fontSize,
-                            fill: data.fill,
-                            width: data.width,
-                            height: data.height,
-                            rotation: data.rotation,
-                            scaleX: data.scaleX,
-                            scaleY: data.scaleY,
-                            draggable: true,
-                            id: docId, // Usar el ID de Firestore
-                            'data-type': type,
-                            'interaction': data.interaction
-                        });
-                        break;
-                    
-                    case 'Button':
-                        node = new Konva.Group({
-                            x: data.x,
-                            y: data.y,
-                            rotation: data.rotation,
-                            scaleX: data.scaleX,
-                            scaleY: data.scaleY,
-                            width: data.width,
-                            height: data.height,
-                            draggable: true,
-                            id: docId,
-                            'data-type': type,
-                            'interaction': data.interaction
-                        });
-                        
-                        const buttonRect = new Konva.Rect({
-                            width: data.width,
-                            height: data.height,
-                            fill: data.background,
-                            cornerRadius: data.cornerRadius,
-                        });
-                        
-                        const buttonText = new Konva.Text({
-                            text: data.text,
-                            fontSize: data.fontSize,
-                            fill: data.fill,
-                            width: data.width,
-                            height: data.height,
-                            align: 'center',
-                            verticalAlign: 'middle',
-                            listening: false // Importante para que el clic vaya al grupo
-                        });
-                        
-                        node.add(buttonRect, buttonText);
-                        break;
-
-                    case 'Image':
-                        node = new Konva.Group({
-                            x: data.x,
-                            y: data.y,
-                            rotation: data.rotation,
-                            scaleX: data.scaleX,
-                            scaleY: data.scaleY,
-                            width: data.width,
-                            height: data.height,
-                            draggable: true,
-                            id: docId,
-                            'data-type': type,
-                            'interaction': data.interaction
-                        });
-
-                        const imgRect = new Konva.Rect({
-                            width: data.width,
-                            height: data.height,
-                            fill: data.fill,
-                            stroke: data.stroke,
-                            strokeWidth: 2,
-                            dash: [5, 5],
-                        });
-                        
-                        const imgLabel = new Konva.Text({
-                            text: 'IMAGEN',
-                            fontSize: 14,
-                            fill: '#aaa',
-                            width: data.width,
-                            height: data.height,
-                            align: 'center',
-                            verticalAlign: 'middle',
-                            listening: false 
-                        });
-                        
-                        node.add(imgRect, imgLabel);
-                        break;
-
-                    case 'Input':
-                         node = new Konva.Group({
-                            x: data.x,
-                            y: data.y,
-                            rotation: data.rotation,
-                            scaleX: data.scaleX,
-                            scaleY: data.scaleY,
-                            width: data.width,
-                            height: data.height,
-                            draggable: true,
-                            id: docId,
-                            'data-type': type,
-                            'interaction': data.interaction
-                        });
-                        
-                        const inputRect = new Konva.Rect({
-                            width: data.width,
-                            height: data.height,
-                            fill: data.background,
-                            stroke: data.stroke,
-                            strokeWidth: 1,
-                            cornerRadius: data.cornerRadius,
-                        });
-                        
-                        const inputText = new Konva.Text({
-                            text: data.text,
-                            fontSize: data.fontSize,
-                            fill: data.fill,
-                            width: data.width,
-                            height: data.height,
-                            align: 'left',
-                            verticalAlign: 'middle',
-                            padding: 10,
-                            listening: false
-                        });
-                        
-                        node.add(inputRect, inputText);
-                        break;
-                }
-
-                if (node) {
-                    // Sincronizar movimiento, redimensión y rotación con Firestore
-                    node.on('transformend dragend', onNodeUpdate);
-                }
-                
-                return node;
-            }
-
-
-            // --- 5. LISTENER DE FIRESTORE (EL NÚCLEO DE LA COLABORACIÓN) ---
-            
-            function setupSnapshotListener() {
-                if (!elementsCollection) return;
-
-                onSnapshot(elementsCollection, (snapshot) => {
-                    console.log("Datos recibidos de Firestore, redibujando...");
-                    
-                    // Guardar el nodo seleccionado actualmente
-                    const selectedId = selectedNode ? selectedNode.id() : null;
-                    
-                    // Limpiar capa
-                    tr.nodes([]);
-                    layer.destroyChildren();
-                    layer.add(tr); // Re-añadir transformador
-
-                    let newSelectedNode = null;
-
-                    snapshot.docs.forEach(doc => {
-                        const data = doc.data();
-                        
-                        // Crear el nodo Konva desde los datos
-                        const node = createNodeFromData(data, doc.id);
-                        
-                        if (node) {
-                            layer.add(node);
-                            
-                            // Si este era el nodo seleccionado, re-seleccionarlo
-                            if (node.id() === selectedId) {
-                                newSelectedNode = node;
-                            }
-                        }
-                    });
-
-                    // Si había un nodo seleccionado, restaurar la selección y el panel
-                    if (newSelectedNode) {
-                        selectNode(newSelectedNode);
-                    } else {
-                        deselectNode();
-                    }
-
-                    layer.batchDraw();
-                }, (error) => {
-                    console.error("Error en listener de snapshot: ", error);
-                    userDisplay.textContent = "Error de conexión";
-                });
-            }
-            
-
-            // --- 6. PANEL DE PROPIEDADES (DERECHA) ---
-            
             function showProperties(node) {
                 propertiesPlaceholder.style.display = 'none';
                 propertiesForm.style.display = 'block';
                 updatePropertiesPanel(node);
             }
-
             function hideProperties() {
                 propertiesPlaceholder.style.display = 'block';
                 propertiesForm.style.display = 'none';
             }
-            
-            // Actualizar el panel con los datos del nodo seleccionado
             function updatePropertiesPanel(node) {
                 if (!node) return;
-
                 const type = node.getAttr('data-type');
-                // Usamos el ID del nodo Konva, que es el ID del doc de Firestore
                 document.getElementById('selected-node-id').value = node.id();
-
-                // Ocultar todos los grupos de propiedades
                 document.getElementById('group-text').style.display = 'none';
                 document.getElementById('group-fill').style.display = 'none';
                 document.getElementById('group-background').style.display = 'none';
-
-                // Propiedades comunes
                 document.getElementById('prop-x').value = Math.round(node.x());
                 document.getElementById('prop-y').value = Math.round(node.y());
                 document.getElementById('prop-width').value = Math.round(node.width() * node.scaleX());
                 document.getElementById('prop-height').value = Math.round(node.height() * node.scaleY());
-
                 if (type === 'Text') {
                     const textNode = node;
                     document.getElementById('group-text').style.display = 'block';
@@ -1069,11 +562,9 @@
                 else if (type === 'Button' || type === 'Input') {
                     const rect = node.findOne('Rect');
                     const text = node.findOne('Text');
-                    
                     document.getElementById('group-text').style.display = 'block';
                     document.getElementById('group-fill').style.display = 'block';
                     document.getElementById('group-background').style.display = 'block';
-
                     document.getElementById('prop-text').value = text.text();
                     document.getElementById('prop-fontsize').value = text.fontSize();
                     document.getElementById('prop-fill').value = text.fill();
@@ -1084,8 +575,6 @@
                     document.getElementById('group-background').style.display = 'block';
                     document.getElementById('prop-background').value = rect.fill();
                 }
-
-                // Cargar datos de interacción
                 const interaction = node.getAttr('interaction');
                 const interactionBtn = document.getElementById('add-interaction-btn');
                 if (interaction) {
@@ -1096,21 +585,167 @@
                     interactionBtn.style.backgroundColor = 'var(--primary)';
                 }
             }
-            
-            // Aplicar cambios del panel de propiedades al nodo (Y A FIRESTORE)
-            propertiesForm.addEventListener('input', async (e) => {
-                if (!selectedNode || !firebaseReady) return;
-
+            // Drag and Drop
+            let dragItemType = null;
+            document.querySelectorAll('.component-item').forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    dragItemType = e.target.closest('.component-item').dataset.type;
+                });
+            });
+            const canvasContainer = document.getElementById('canvas-container');
+            canvasContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+            canvasContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (!dragItemType) return;
+                stage.setPointersPositions(e);
+                const pos = stage.getPointerPosition();
+                pos.x = pos.x - (stage.x() / stage.scaleX());
+                pos.y = pos.y - (stage.y() / stage.scaleY());
+                createElement(dragItemType, pos);
+                dragItemType = null;
+            });
+            function createElement(type, pos) {
+                let element;
+                switch (type) {
+                    case 'Text':
+                        element = new Konva.Text({
+                            x: pos.x,
+                            y: pos.y,
+                            text: 'Texto de ejemplo',
+                            fontSize: 20,
+                            fill: '#333',
+                            width: 200,
+                            height: 22,
+                            draggable: true,
+                            'data-type': type
+                        });
+                        break;
+                    case 'Button':
+                        element = new Konva.Group({
+                            x: pos.x,
+                            y: pos.y,
+                            width: 120,
+                            height: 40,
+                            draggable: true,
+                            'data-type': type
+                        });
+                        const buttonRect = new Konva.Rect({
+                            width: 120,
+                            height: 40,
+                            fill: 'var(--primary)',
+                            cornerRadius: 4,
+                        });
+                        const buttonText = new Konva.Text({
+                            text: 'Click Aquí',
+                            fontSize: 16,
+                            fill: 'white',
+                            width: 120,
+                            height: 40,
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            listening: false
+                        });
+                        element.add(buttonRect, buttonText);
+                        break;
+                    case 'Image':
+                        element = new Konva.Group({
+                            x: pos.x,
+                            y: pos.y,
+                            width: 150,
+                            height: 100,
+                            draggable: true,
+                            'data-type': type
+                        });
+                        const imgRect = new Konva.Rect({
+                            width: 150,
+                            height: 100,
+                            fill: '#eee',
+                            stroke: '#ccc',
+                            strokeWidth: 2,
+                            dash: [5, 5],
+                        });
+                        const imgLabel = new Konva.Text({
+                            text: 'IMAGEN',
+                            fontSize: 14,
+                            fill: '#aaa',
+                            width: 150,
+                            height: 100,
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            listening: false
+                        });
+                        element.add(imgRect, imgLabel);
+                        break;
+                    case 'Input':
+                        element = new Konva.Group({
+                            x: pos.x,
+                            y: pos.y,
+                            width: 200,
+                            height: 36,
+                            draggable: true,
+                            'data-type': type
+                        });
+                        const inputRect = new Konva.Rect({
+                            width: 200,
+                            height: 36,
+                            fill: 'white',
+                            stroke: '#ccc',
+                            strokeWidth: 1,
+                            cornerRadius: 4,
+                        });
+                        const inputText = new Konva.Text({
+                            text: 'Placeholder...',
+                            fontSize: 14,
+                            fill: '#999',
+                            width: 200,
+                            height: 36,
+                            align: 'left',
+                            verticalAlign: 'middle',
+                            padding: 10,
+                            listening: false
+                        });
+                        element.add(inputRect, inputText);
+                        break;
+                }
+                if (element) {
+                    element.on('transformend dragend', () => {
+                        // Actualizar panel de propiedades si es el nodo seleccionado
+                        if (selectedNode && selectedNode.id() === element.id()) {
+                            updatePropertiesPanel(selectedNode);
+                        }
+                    });
+                    layer.add(element);
+                    layer.draw();
+                }
+            }
+            // Controles de vista
+            document.querySelectorAll('.view-controls button').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.view-controls button').forEach(b => b.classList.remove('active'));
+                    const clickedBtn = e.target.closest('button');
+                    clickedBtn.classList.add('active');
+                    if (clickedBtn.id === 'view-mobile') currentView = 'mobile';
+                    else if (clickedBtn.id === 'view-tablet') currentView = 'tablet';
+                    else currentView = 'desktop';
+                    resizeCanvas();
+                });
+            });
+            function resizeCanvas() {
+                const viewSize = views[currentView];
+                stage.width(viewSize.width);
+                stage.height(viewSize.height);
+                stage.draw();
+            }
+            // Propiedades
+            propertiesForm.addEventListener('input', (e) => {
+                if (!selectedNode) return;
                 const prop = e.target.id;
                 let value = e.target.value;
-                const docId = selectedNode.id(); // El ID del nodo es el ID de Firestore
-
-                // Convertir a número si es necesario
                 if (e.target.type === 'number') {
                     value = parseInt(value, 10);
                 }
-
-                // Mapear IDs de formulario a nombres de campo en Firestore
                 let dbField = '';
                 switch (prop) {
                     case 'prop-text': dbField = 'text'; break;
@@ -1122,87 +757,57 @@
                     case 'prop-width': dbField = 'width'; value = parseInt(value, 10); break;
                     case 'prop-height': dbField = 'height'; value = parseInt(value, 10); break;
                 }
-
                 if (dbField) {
-                    try {
-                        // Actualizar el documento en Firestore
-                        await updateDoc(doc(elementsCollection, docId), { [dbField]: value });
-                        
-                        // Si es ancho/alto, también reseteamos escala
-                        if (dbField === 'width') {
-                             await updateDoc(doc(elementsCollection, docId), { 'scaleX': 1 });
+                    if (selectedNode.getAttr('data-type') === 'Text') {
+                        selectedNode.setAttr(dbField, value);
+                    } else if (selectedNode.getAttr('data-type') === 'Button' || selectedNode.getAttr('data-type') === 'Input') {
+                        if (dbField === 'text') {
+                            const textNode = selectedNode.findOne('Text');
+                            textNode.setAttr(dbField, value);
+                        } else if (dbField === 'fontSize') {
+                            const textNode = selectedNode.findOne('Text');
+                            textNode.setAttr(dbField, value);
+                        } else if (dbField === 'fill') {
+                            const textNode = selectedNode.findOne('Text');
+                            textNode.setAttr(dbField, value);
+                        } else if (dbField === 'background') {
+                            const rect = selectedNode.findOne('Rect');
+                            rect.setAttr('fill', value);
+                        } else {
+                            selectedNode.setAttr(dbField, value);
                         }
-                        if (dbField === 'height') {
-                             await updateDoc(doc(elementsCollection, docId), { 'scaleY': 1 });
+                    } else if (selectedNode.getAttr('data-type') === 'Image') {
+                        if (dbField === 'background') {
+                            const rect = selectedNode.findOne('Rect');
+                            rect.setAttr('fill', value);
+                        } else {
+                            selectedNode.setAttr(dbField, value);
                         }
-
-                    } catch (error) {
-                        console.error("Error al actualizar propiedad: ", error);
+                    } else {
+                        selectedNode.setAttr(dbField, value);
                     }
-                }
-                // El onSnapshot listener se encargará de redibujar el cambio
-            });
-
-            // Botón Eliminar (DE FIRESTORE)
-            document.getElementById('delete-element-btn').addEventListener('click', async () => {
-                if (selectedNode && firebaseReady) {
-                    const docId = selectedNode.id();
-                    try {
-                        await deleteDoc(doc(elementsCollection, docId));
-                        // El onSnapshot listener se encargará de quitarlo
-                        deselectNode();
-                    } catch (error) {
-                        console.error("Error al eliminar: ", error);
-                    }
+                    layer.draw();
                 }
             });
-
-            // Botón Guardar Componente (Simulado)
+            // Botones de acciones
+            document.getElementById('delete-element-btn').addEventListener('click', () => {
+                if (selectedNode) {
+                    selectedNode.destroy();
+                    deselectNode();
+                    layer.draw();
+                }
+            });
             document.getElementById('save-component-btn').addEventListener('click', () => {
                 if(!selectedNode) return;
                 const componentData = selectedNode.toObject();
                 componentData.type = selectedNode.getAttr('data-type');
                 console.log("Guardando componente (simulado):", componentData);
-                // Aquí, en una app real, guardarías 'componentData' en otra colección
-                // de Firestore (ej: 'user-components')
                 alert("Componente guardado (simulado). Mira la consola.");
             });
-
-
-            // --- 7. CONTROLES DE VISTA RESPONSIVA ---
-            
-            document.querySelectorAll('.view-controls button').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    // Quitar 'active' de todos
-                    document.querySelectorAll('.view-controls button').forEach(b => b.classList.remove('active'));
-                    
-                    // Añadir 'active' al clickeado
-                    const clickedBtn = e.target.closest('button');
-                    clickedBtn.classList.add('active');
-
-                    if (clickedBtn.id === 'view-mobile') currentView = 'mobile';
-                    else if (clickedBtn.id === 'view-tablet') currentView = 'tablet';
-                    else currentView = 'desktop';
-                    
-                    resizeCanvas();
-                });
-            });
-
-            function resizeCanvas() {
-                const viewSize = views[currentView];
-                stage.width(viewSize.width);
-                stage.height(viewSize.height);
-                stage.draw();
-            }
-
-            // --- 8. MODO VISTA PREVIA E INTERACCIONES ---
-            
+            // Interacciones
             const modal = document.getElementById('interaction-modal');
-
-            // Abrir modal de interacción
             document.getElementById('add-interaction-btn').addEventListener('click', () => {
                 if (!selectedNode) return;
-                
                 const interaction = selectedNode.getAttr('interaction');
                 if (interaction) {
                     document.getElementById('interaction-event').value = interaction.event;
@@ -1215,53 +820,35 @@
                 }
                 modal.style.display = 'flex';
             });
-
-            // Cerrar modal
             document.getElementById('close-modal').addEventListener('click', () => {
                 modal.style.display = 'none';
             });
-            
-            // Guardar interacción (EN FIRESTORE)
-            document.getElementById('interaction-form').addEventListener('submit', async (e) => {
+            document.getElementById('interaction-form').addEventListener('submit', (e) => {
                 e.preventDefault();
-                if (!selectedNode || !firebaseReady) return;
-
-                const docId = selectedNode.id();
+                if (!selectedNode) return;
                 const interactionData = {
                     event: document.getElementById('interaction-event').value,
                     action: document.getElementById('interaction-action').value,
                     target: document.getElementById('interaction-target').value,
                 };
-                
-                try {
-                    await updateDoc(doc(elementsCollection, docId), { interaction: interactionData });
-                    modal.style.display = 'none';
-                } catch (error) {
-                    console.error("Error al guardar interacción: ", error);
-                }
+                selectedNode.setAttr('interaction', interactionData);
+                modal.style.display = 'none';
+                updatePropertiesPanel(selectedNode);
             });
-            
-            // Eliminar interacción (DE FIRESTORE)
-            document.getElementById('remove-interaction-btn').addEventListener('click', async () => {
-                 if (selectedNode && firebaseReady) {
-                     const docId = selectedNode.id();
-                     try {
-                         await updateDoc(doc(elementsCollection, docId), { interaction: null });
-                         modal.style.display = 'none';
-                     } catch (error) {
-                         console.error("Error al eliminar interacción: ", error);
-                     }
+            document.getElementById('remove-interaction-btn').addEventListener('click', () => {
+                 if (selectedNode) {
+                     selectedNode.setAttr('interaction', null);
+                     modal.style.display = 'none';
+                     updatePropertiesPanel(selectedNode);
                  }
             });
-
-            // Activar/Desactivar modo Vista Previa
+            // Vista previa
             document.getElementById('toggle-preview').addEventListener('click', () => {
                 isPreviewMode = !isPreviewMode;
                 const btn = document.getElementById('toggle-preview');
                 const text = document.getElementById('preview-text');
-                
                 if (isPreviewMode) {
-                    deselectNode(); // Oculta el transformador
+                    deselectNode();
                     btn.innerHTML = '<i class="fas fa-edit"></i>';
                     text.textContent = 'Modo Edición';
                     btn.style.backgroundColor = 'var(--success)';
@@ -1273,26 +860,17 @@
                     stage.container().style.cursor = 'default';
                 }
             });
-
             function handlePreviewClick(node) {
                  if (node === stage) return;
-                
-                 // Subir al grupo padre si es necesario
                  if (node.parent && (node.parent.getAttr('data-type') === 'Button' || node.parent.getAttr('data-type') === 'Image' || node.parent.getAttr('data-type') === 'Input')) {
                      node = node.parent;
                 }
-                
                 const interaction = node.getAttr('interaction');
-                
                 if (interaction && interaction.event === 'click') {
-                    // Simulación de acción
-                    // NO USAR ALERT()
-                    // Simulación de acción
                     const modalTitle = document.getElementById('interaction-modal').querySelector('.modal-title');
                     const modalContent = document.getElementById('interaction-modal').querySelector('.modal-content');
                     const originalTitle = modalTitle.textContent;
                     const originalContent = modalContent.innerHTML;
-
                     modalTitle.textContent = "Vista Previa de Interacción";
                     modalContent.innerHTML = `
                         <p><strong>Evento:</strong> ${interaction.event}</p>
@@ -1300,29 +878,24 @@
                         <p><strong>Destino:</strong> ${interaction.target}</p>
                         <button id="close-preview-modal" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Cerrar</button>
                     `;
-                    
                     document.getElementById('interaction-modal').style.display = 'flex';
-
                     document.getElementById('close-preview-modal').onclick = () => {
                         document.getElementById('interaction-modal').style.display = 'none';
                         modalTitle.textContent = originalTitle;
                         modalContent.innerHTML = originalContent;
-                        // Re-adjuntar listeners del modal original
                          document.getElementById('close-modal').addEventListener('click', () => {
                             modal.style.display = 'none';
                         });
-                        document.getElementById('interaction-form').addEventListener('submit', async (e) => { e.preventDefault(); /* ... lógica de guardado ... */ });
-                        document.getElementById('remove-interaction-btn').addEventListener('click', async () => { /* ... lógica de borrado ... */ });
+                        document.getElementById('interaction-form').addEventListener('submit', (e) => { e.preventDefault(); /* ... lógica de guardado ... */ });
+                        document.getElementById('remove-interaction-btn').addEventListener('click', () => { /* ... lógica de borrado ... */ });
                     };
                 }
             }
-
-
-            // --- INICIALIZAR ---
+            // Inicializar
             initCanvas();
             resizeCanvas();
-
         });
     </script>
 </body>
 </html>
+
