@@ -29,3 +29,10 @@ tbody td{padding:8px 6px;border-bottom:1px solid #f3f4f6}
 .kpis-row{display:flex;gap:12px;margin-bottom:12px}
 .kpi{background:#fff;padding:10px;border-radius:8px;min-width:120px}
 .footer{margin-top:16px;color:var(--muted)}
+.modal-root{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:9999}
+.modal{background:#fff;padding:14px;border-radius:8px;width:420px;box-shadow:0 5px 30px rgba(2,6,23,.35);max-height:90vh;overflow:auto}
+body.dc-modal-open{overflow:hidden} /* evita que la página haga scroll mientras modal abierto */
+/* pequeño ajuste para que el modal responda en móviles */
+@media (max-width:480px){
+  .modal{width:92%;margin:0 4%}
+}
