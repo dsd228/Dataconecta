@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Dataconecta — Panel (CRM local)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <header>
+    <h1>Dataconecta — Panel</h1>
+    <nav>
+      <button id="btn-refresh">Actualizar todo</button>
+      <input id="search-email" placeholder="Buscar contacto por email">
+      <button id="btn-search">Buscar</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="contacts-section" class="panel">
+      <h2>Contactos</h2>
+      <div id="contacts-list" class="list">Cargando contactos...</div>
+    </section>
+
+    <section id="contact-detail-section" class="panel">
+      <h2>Detalle contacto</h2>
+      <div id="contact-detail">Selecciona un contacto para ver actividades.</div>
+    </section>
+
+    <section id="analytics-section" class="panel">
+      <h2>Analytics — Resumen</h2>
+      <div id="analytics-summary">Cargando resumen...</div>
+      <h3>Eventos recientes</h3>
+      <div id="analytics-events">Cargando eventos...</div>
+    </section>
+  </main>
+
+  <footer>
+    <small>Panel local — datos almacenados en SQLite (endpoints: /api/contacts, /api/analytics, /api/editor, /api/track)</small>
+  </footer>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
