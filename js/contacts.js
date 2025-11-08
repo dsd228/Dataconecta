@@ -1,13 +1,11 @@
-// contacts.js — módulo de Contactos (CRUD, búsqueda, paginado) usando DC_Storage
+// contacts.js — CRUD, búsqueda, paginado y ficha con timeline (usa interactions)
 (function () {
   function $id(id){ return document.getElementById(id); }
   const PAGE_SIZE = 10;
   let page = 1;
   let allContacts = [];
 
-  function loadContacts(){
-    allContacts = DC_Storage.get('contacts', []) || [];
-  }
+  function loadContacts(){ allContacts = DC_Storage.get('contacts', []) || []; }
 
   function renderTable(q='', stage=''){
     const tbody = $id('contacts-tbody');
@@ -32,6 +30,7 @@
         tr.innerHTML = `<td>${c.name||''}</td><td>${c.email||''}</td><td>${c.tel||''}</td><td>${c.company||''}</td><td>${c.stage||''}</td><td>${(c.createdAt||'').slice(0,10)}</td>
           <td>
             <button class="btn tiny edit" data-id="${c.id}">Editar</button>
+            <button class="btn tiny" data-id="${c.id}" data-action="view">Ver</button>
             <button class="btn tiny danger delete" data-id="${c.id}">Eliminar</button>
           </td>`;
         tbody.appendChild(tr);
@@ -54,22 +53,13 @@
     }
   }
 
-  // Modal handlers (mejorados)
+  // Modal handlers
   function openModal(editId){
-    const modalRoot = $id('modal-root');
-    if (!modalRoot) {
-      console.warn('modal-root no encontrado');
-      return;
-    }
+    const modal = $id('modal-root');
+    if (!modal) return;
+    const modalBox = modal.querySelector('.modal');
+    if (!modalBox) return;
 
-    // ensure .modal (content) exists
-    const modalBox = modalRoot.querySelector('.modal');
-    if (!modalBox) {
-      console.warn('modal box (.modal) no encontrado dentro de modal-root');
-      return;
-    }
-
-    // populate fields
     if (editId) {
       const c = allContacts.find(x=>x.id===editId) || {};
       $id('modal-title').textContent = 'Editar contacto';
@@ -78,7 +68,7 @@
       $id('m-tel').value = c.tel || '';
       $id('m-company').value = c.company || '';
       $id('m-stage').value = c.stage || 'Lead';
-      modalRoot._editing = editId;
+      modal._editing = editId;
     } else {
       $id('modal-title').textContent = 'Nuevo contacto';
       $id('m-name').value = '';
@@ -86,65 +76,38 @@
       $id('m-tel').value = '';
       $id('m-company').value = '';
       $id('m-stage').value = 'Lead';
-      modalRoot._editing = null;
+      modal._editing = null;
     }
 
-    // show modal and lock scroll
-    modalRoot.classList.remove('hidden');
+    modal.classList.remove('hidden');
     document.body.classList.add('dc-modal-open');
 
-    // focus first input
-    setTimeout(() => {
-      const first = $id('m-name');
-      if (first) first.focus();
-    }, 60);
+    setTimeout(() => { const first = $id('m-name'); if (first) first.focus(); }, 60);
 
-    // overlay handler: close when click is outside the modal box
-    if (!modalRoot._overlayHandler) {
-      modalRoot._overlayHandler = function (ev) {
-        // if click target is not within the modal box, close
-        if (!modalBox.contains(ev.target)) {
-          closeModal();
-        }
-      };
-      modalRoot.addEventListener('click', modalRoot._overlayHandler, true);
+    if (!modal._overlayHandler) {
+      modal._overlayHandler = function (ev) { if (!modalBox.contains(ev.target)) closeModal(); };
+      modal.addEventListener('click', modal._overlayHandler, true);
     }
-
-    // ESC handler (on document)
-    if (!modalRoot._escHandler) {
-      modalRoot._escHandler = function (ev) {
-        if (ev.key === 'Escape' || ev.key === 'Esc') {
-          closeModal();
-        }
-      };
-      document.addEventListener('keydown', modalRoot._escHandler);
+    if (!modal._escHandler) {
+      modal._escHandler = function (ev) { if (ev.key === 'Escape') closeModal(); };
+      document.addEventListener('keydown', modal._escHandler);
     }
   }
 
   function closeModal(){
-    const modalRoot = $id('modal-root');
-    if (!modalRoot) return;
-    modalRoot.classList.add('hidden');
-    // clear editing state
-    modalRoot._editing = null;
-    // unlock scroll
+    const modal = $id('modal-root');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal._editing = null;
     document.body.classList.remove('dc-modal-open');
-
-    // remove handlers safely
-    if (modalRoot._overlayHandler) {
-      modalRoot.removeEventListener('click', modalRoot._overlayHandler, true);
-      modalRoot._overlayHandler = null;
-    }
-    if (modalRoot._escHandler) {
-      document.removeEventListener('keydown', modalRoot._escHandler);
-      modalRoot._escHandler = null;
-    }
+    if (modal._overlayHandler) { modal.removeEventListener('click', modal._overlayHandler, true); modal._overlayHandler = null; }
+    if (modal._escHandler) { document.removeEventListener('keydown', modal._escHandler); modal._escHandler = null; }
   }
 
   function saveModal(){
-    const modalRoot = $id('modal-root');
-    if (!modalRoot) return;
-    const id = modalRoot._editing || ('c_' + Date.now());
+    const modal = $id('modal-root');
+    if (!modal) return;
+    const id = modal._editing || ('c_' + Date.now());
     const existing = allContacts.find(x => x.id === id);
     const obj = {
       id,
@@ -156,8 +119,7 @@
       createdAt: existing ? existing.createdAt : new Date().toISOString()
     };
     const idx = allContacts.findIndex(x=>x.id===id);
-    if (idx >= 0) allContacts[idx] = obj;
-    else allContacts.unshift(obj);
+    if (idx >= 0) allContacts[idx] = obj; else allContacts.unshift(obj);
     DC_Storage.set('contacts', allContacts);
     closeModal();
     renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : '');
@@ -170,29 +132,46 @@
     renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : '');
   }
 
-  // Events wiring
+  // View contact (profile with timeline)
+  function viewContact(id){
+    const c = allContacts.find(x=>x.id===id);
+    if (!c) return alert('Contacto no encontrado');
+    // open a simple modal showing timeline
+    const interactions = DC_Storage.get('interactions', []) || [];
+    const events = interactions.filter(i => i.contactId === id).sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
+    const content = ['<strong>' + (c.name||'') + '</strong><br/><small>' + (c.email||'') + '</small><hr/>'];
+    if (!events.length) content.push('<div class="muted">Sin interacciones</div>');
+    else events.forEach(ev => content.push(`<div><b>${ev.type}</b> ${ev.subject||''} <div class="small muted">${(new Date(ev.timestamp)).toLocaleString()}</div></div><hr/>`));
+    const modal = $id('modal-root');
+    if (!modal) return;
+    modal.querySelector('.modal').innerHTML = `<h3>${c.name}</h3><div class="modal-body">${content.join('')}</div><div class="modal-actions"><button id="m-close-view" class="btn">Cerrar</button></div>`;
+    modal.classList.remove('hidden'); document.body.classList.add('dc-modal-open');
+    document.getElementById('m-close-view').addEventListener('click', () => {
+      // restore original modal content
+      modal.querySelector('.modal').innerHTML = document.querySelector('#modal-root-template').innerHTML;
+      closeModal();
+    }, { once:true });
+  }
+
+  // init and events
   window.addEventListener('load', () => {
     loadContacts();
     renderTable();
 
-    // global filters
     const gFilter = $id('global-filter');
     if (gFilter) gFilter.addEventListener('click', () => { page = 1; renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); });
     const gq = $id('global-q');
     if (gq) gq.addEventListener('keydown', (e) => { if (e.key === 'Enter') { page = 1; renderTable(gq.value, $id('global-stage') ? $id('global-stage').value : ''); } });
 
-    // New contact
     window.addEventListener('contacts.openNew', () => openModal(null));
     const newBtn = $id('btn-new-contact');
     if (newBtn) newBtn.addEventListener('click', () => openModal(null));
 
-    // Modal buttons
     const btnCancel = $id('m-cancel');
     if (btnCancel) btnCancel.addEventListener('click', closeModal);
     const btnSave = $id('m-save');
     if (btnSave) btnSave.addEventListener('click', saveModal);
 
-    // table action delegation
     const contactsTable = $id('contacts-table');
     if (contactsTable) {
       contactsTable.addEventListener('click', (e) => {
@@ -200,13 +179,14 @@
         if (!btn) return;
         const id = btn.getAttribute('data-id');
         if (btn.classList.contains('edit')) openModal(id);
-        if (btn.classList.contains('delete')) deleteContact(id);
+        else if (btn.getAttribute('data-action') === 'view') viewContact(id);
+        else if (btn.classList.contains('delete')) deleteContact(id);
       });
     }
 
-    // listen storage changes
     window.addEventListener('dataconecta.change', (e) => {
-      if (e.detail && e.detail.key === 'contacts') { loadContacts(); renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); }
+      if (!e.detail || !e.detail.key) { loadContacts(); renderTable(); return; }
+      if (e.detail.key === 'contacts') { loadContacts(); renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); }
     });
   });
 
