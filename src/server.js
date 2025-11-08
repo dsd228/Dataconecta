@@ -1,41 +1,60 @@
-// src/server.js - arranque del servidor y montaje de rutas
-require('dotenv').config();
+// src/server.js
+// Minimal Express server serving repo root and a small API + health check.
+// NOTE: Add this file if src/ currently missing.
+
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');
-const { init } = require('./db');
+const createDb = require('./db');
 
-async function main() {
-  const db = await init();
-  const app = express();
-  const PORT = process.env.PORT || 3000;
+require('dotenv').config();
 
-  app.use(cors());
-  app.use(bodyParser.json({ limit: '5mb' }));
-  app.use(bodyParser.urlencoded({ extended: true }));
+const PORT = process.env.PORT || 3000;
+const app = express();
 
-  // inyectar db
-  app.use((req, res, next) => {
-    req.db = db;
-    next();
-  });
+app.use(cors());
+app.use(bodyParser.json());
 
-  // rutas API
-  app.use('/api/track', require('./routes/track'));
-  app.use('/api/editor', require('./routes/editor'));
-  app.use('/api/contacts', require('./routes/contacts'));
-  app.use('/api/analytics', require('./routes/analytics'));
+// Serve repository root as static (so index.html, editor.html, analitica.html work)
+app.use(express.static(path.resolve(__dirname, '..')));
 
-  // servir archivos estáticos en raíz (usa los html que ya están en repo)
-  const publicRoot = path.join(__dirname, '..');
-  app.use(express.static(publicRoot));
+// Simple health endpoint
+app.get('/_health', (req, res) => res.json({ ok: true }));
 
-  app.get('/_health', (req, res) => res.json({ ok: true, ts: new Date().toISOString() }));
+// Initialize DB and make it available via req.app.locals.db
+(async () => {
+  try {
+    const db = await createDb();
+    app.locals.db = db;
 
-  app.listen(PORT, () => {
-    console.log(`Dataconecta server listening on http://localhost:${PORT}`);
-  });
-}
+    // Minimal example endpoints (extend as needed)
+    app.get('/api/analytics/events', async (req, res) => {
+      try {
+        const rows = await db.all('SELECT * FROM analytics_events ORDER BY ts DESC LIMIT 200');
+        res.json({ ok: true, events: rows });
+      } catch (err) {
+        res.status(500).json({ ok: false, error: err.message });
+      }
+    });
 
-main().catch(err => { console.error(err); process.exit(1); });
+    app.post('/api/track', async (req, res) => {
+      try {
+        const { type, payload } = req.body;
+        const ts = Date.now();
+        await db.run('INSERT INTO analytics_events (type, payload, ts) VALUES (?, ?, ?)', [type, JSON.stringify(payload || {}), ts]);
+        res.json({ ok: true });
+      } catch (err) {
+        res.status(500).json({ ok: false, error: err.message });
+      }
+    });
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`Dataconecta server listening on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to initialize DB', err);
+    process.exit(1);
+  }
+})();
