@@ -3,75 +3,57 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DataConecta — Editor Premium</title>
+  <title>DataConecta — Editor (completo)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/editor.css">
-  <script src="https://unpkg.com/konva@9.3.13/konva.min.js"></script>
-  <script src="js/editor.js" defer></script>
+  <style>
+    html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#1f2937;color:#fff}
+    .toolbar{display:flex;gap:8px;align-items:center}
+    .canvas-wrap{height:calc(100% - 52px);display:flex}
+    #canvas{flex:1;border-left:1px solid #ddd}
+    .panel{width:320px;padding:10px;box-sizing:border-box;background:#f7f7f7}
+    .row{margin:6px 0}
+    button.btn{padding:6px 8px;border:0;background:#2563eb;color:#fff;border-radius:4px;cursor:pointer}
+    button.secondary{background:#6b7280}
+    input,select{width:100%;padding:6px;margin-top:4px;box-sizing:border-box}
+  </style>
+  <!-- Fabric.js para editor de lienzo vectorial simple -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js" defer></script>
+  <script src="js/editor-full.js" defer></script>
 </head>
-<body class="editor-body">
-  <header class="editor-topbar">
-    <div class="brand"><i class="fas fa-drafting-compass"></i> Editor Premium</div>
+<body>
+  <header class="topbar">
+    <div><strong>Editor (completo)</strong> — lienzo de diseño</div>
     <div class="toolbar">
-      <select id="view-select">
-        <option value="desktop">Escritorio</option>
-        <option value="tablet">Tablet</option>
-        <option value="mobile">Móvil</option>
-      </select>
-      <button id="btn-undo" title="Deshacer" class="btn"><i class="fas fa-undo"></i></button>
-      <button id="btn-redo" title="Rehacer" class="btn"><i class="fas fa-redo"></i></button>
-      <button id="btn-save-components" title="Guardar componente" class="btn"><i class="fas fa-save"></i></button>
-      <button id="btn-export-html" title="Exportar HTML" class="btn primary"><i class="fas fa-file-code"></i> Exportar HTML</button>
-      <div id="editor-save-state" class="muted">—</div>
+      <a href="index.html" class="btn secondary" style="display:inline-flex;align-items:center"><i class="fas fa-arrow-left" style="margin-right:6px"></i> Volver</a>
+      <button id="btn-export-png" class="btn"><i class="fas fa-image" style="margin-right:6px"></i> Export PNG</button>
+      <button id="btn-export-json" class="btn"><i class="fas fa-file-export" style="margin-right:6px"></i> Export JSON</button>
     </div>
   </header>
 
-  <main class="editor-main">
-    <aside class="editor-left">
-      <section class="panel">
-        <h4>Componentes</h4>
-        <div class="component-grid" id="component-palette">
-          <div class="component-item" data-type="Text"><i class="fas fa-font"></i><div>Texto</div></div>
-          <div class="component-item" data-type="Button"><i class="fas fa-mouse-pointer"></i><div>Botón</div></div>
-          <div class="component-item" data-type="Image"><i class="fas fa-image"></i><div>Imagen</div></div>
-          <div class="component-item" data-type="Input"><i class="fas fa-keyboard"></i><div>Input</div></div>
-        </div>
-        <hr/>
-        <h4>Componentes guardados</h4>
-        <div id="saved-components" class="saved-list">
-          <div class="muted">Sin componentes guardados.</div>
-        </div>
-      </section>
-    </aside>
-
-    <section class="editor-canvas">
-      <div id="canvas-stage" class="canvas-stage"></div>
-      <div class="canvas-footer">
-        <label><input type="checkbox" id="show-grid"/> Mostrar grilla</label>
-        <label><input type="checkbox" id="snap-grid" checked/> Snap</label>
-        <label>Zoom: <input type="range" id="zoom-range" min="0.5" max="2" step="0.05" value="1"/></label>
+  <div class="canvas-wrap">
+    <div class="panel">
+      <h4>Propiedades</h4>
+      <div class="row">
+        <label>Elemento seleccionado:</label>
+        <div id="selected-info" class="muted">Ninguno</div>
       </div>
-    </section>
+      <div class="row">
+        <label>Texto / Color:</label>
+        <input id="prop-text" placeholder="Texto"/>
+        <input id="prop-fill" type="color" value="#000000" style="margin-top:6px"/>
+      </div>
+      <div class="row">
+        <button id="btn-add-rect" class="btn">Agregar rectángulo</button>
+        <button id="btn-add-text" class="btn">Agregar texto</button>
+        <button id="btn-add-circle" class="btn">Agregar círculo</button>
+      </div>
+      <div class="row">
+        <button id="btn-delete" class="btn secondary">Eliminar seleccionado</button>
+      </div>
+    </div>
 
-    <aside class="editor-right">
-      <section class="panel">
-        <h4>Propiedades</h4>
-        <div id="properties-panel">
-          <div class="muted">Selecciona un elemento para ver propiedades</div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h4>Export / Import</h4>
-        <div style="display:flex;gap:8px">
-          <button id="btn-export-components" class="btn">Exportar comps</button>
-          <button id="btn-import-components" class="btn">Importar comps</button>
-          <input type="file" id="components-file" accept="application/json" style="display:none" />
-        </div>
-      </section>
-    </aside>
-  </main>
-
-  <div id="editor-toast" class="toast-wrap"></div>
+    <canvas id="canvas"></canvas>
+  </div>
 </body>
 </html>
