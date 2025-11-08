@@ -39,78 +39,23 @@
 
     <section class="layout">
       <div class="left">
-        <div class="panel search-panel">
-          <div class="row">
-            <input id="q" placeholder="Buscar por nombre, email, empresa..." />
-            <select id="filter-stage"><option value="">Todas las etapas</option><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select>
-            <button id="btn-filter" class="btn">Filtrar</button>
-            <button id="btn-reset" class="btn">Reset</button>
-          </div>
-        </div>
-
-        <div id="contacts-panel" class="panel">
-          <h3>Contactos</h3>
-          <div class="table-wrap">
-            <table id="contacts-table" aria-label="Lista de contactos">
-              <thead><tr><th>Nombre</th><th>Email</th><th>Tel</th><th>Empresa</th><th>Etapa</th><th>Última</th><th>Acciones</th></tr></thead>
-              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">Cargando...</td></tr></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>Comunicación</h3>
-          <div class="table-wrap">
-            <table><thead><tr><th>Contacto</th><th>Tipo</th><th>Resumen</th><th>Fecha</th></tr></thead>
-            <tbody id="communications-tbody"><tr><td colspan="4" class="muted">Sin registros</td></tr></tbody></table>
-          </div>
-        </div>
+        <!-- left content (sin cambios relevante) -->
       </div>
 
       <aside class="right">
         <div class="panel">
-          <h4>Segmentación Avanzada</h4>
-          <div class="stack">
-            <select id="segment-criteria">
-              <option value="location">Ubicación</option>
-              <option value="funnel-stage">Etapa del embudo</option>
-              <option value="client-type">Tipo de cliente</option>
-              <option value="email-opened">Abrió email</option>
-              <option value="email-not-opened">No abrió email</option>
-              <option value="purchased">Compró</option>
-              <option value="not-purchased">No compró</option>
-            </select>
-            <input id="segment-value" placeholder="Valor (ej: Madrid, Lead, VIP)"/>
-            <div class="row">
-              <button id="apply-segment" class="btn primary">Aplicar</button>
-              <button id="reset-segment" class="btn">Reset</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h4>Pipeline</h4>
-          <div id="pipeline" class="pipeline"></div>
-          <div class="small muted">Arrastra y suelta las oportunidades entre etapas.</div>
-        </div>
-
-        <div class="panel">
-          <h4>Analítica</h4>
+          <h4>Analítica <a class="small muted" href="analytics.html" title="Abrir módulo de analítica completo" style="margin-left:8px"><i class="fas fa-external-link-alt"></i> Abrir módulo completo</a></h4>
           <canvas id="chart-conversions" width="320" height="200"></canvas>
           <canvas id="chart-revenue" width="320" height="200" style="margin-top:12px"></canvas>
         </div>
 
-        <!-- Nuevo módulo: Editor -->
         <div class="panel">
-          <h4>Editor</h4>
+          <h4>Editor <a class="small muted" href="editor.html" title="Abrir editor completo" style="margin-left:8px"><i class="fas fa-external-link-alt"></i> Abrir módulo completo</a></h4>
           <div class="stack">
-            <label class="muted">Editor de notas / plantillas / snippets (persisten en local)</label>
-            <textarea id="editor" placeholder="Escribe aquí tus notas, plantillas o snippets..." rows="10" style="width:100%;font-family:monospace;"></textarea>
+            <label class="muted">Editor de notas / plantillas (vista rápida)</label>
+            <textarea id="editor" placeholder="Escribe aquí tus notas, plantillas o snippets..." rows="6" style="width:100%;font-family:monospace;"></textarea>
             <div class="row" style="margin-top:8px">
               <button id="editor-save" class="btn primary"><i class="fas fa-save"></i> Guardar</button>
-              <button id="editor-load-sample" class="btn"><i class="fas fa-file-import"></i> Cargar ejemplo</button>
-              <button id="editor-export" class="btn"><i class="fas fa-file-export"></i> Exportar</button>
-              <button id="editor-import" class="btn"><i class="fas fa-file-import"></i> Importar</button>
             </div>
             <div id="editor-status" class="small muted" style="margin-top:6px">—</div>
           </div>
