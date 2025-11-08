@@ -1,27 +1,22 @@
+// src/routes/contacts.js
 const express = require('express');
 const router = express.Router();
 
-// POST /api/contacts  { email, name, metadata }
-// GET  /api/contacts?email=...  -> buscar por email
-// GET  /api/contacts/:id/activities -> listar actividades
-
+// POST /api/contacts { email, name, metadata }
 router.post('/', async (req, res) => {
   try {
     const db = req.db;
     const { email, name, metadata } = req.body;
     if (!email) return res.status(400).json({ ok: false, error: 'email required' });
 
-    // Upsert simple: intentar insertar, si falla por unique actualizar
     try {
       const ins = await db.run(
         `INSERT INTO contacts (email, name, metadata) VALUES (?, ?, ?)`,
         [email, name || null, metadata ? JSON.stringify(metadata) : null]
       );
-      const id = ins.lastID;
-      const contact = await db.get(`SELECT * FROM contacts WHERE id = ?`, [id]);
+      const contact = await db.get(`SELECT * FROM contacts WHERE id = ?`, [ins.lastID]);
       return res.json({ ok: true, contact });
     } catch (e) {
-      // Si ya existe, actualizar
       await db.run(
         `UPDATE contacts SET name = COALESCE(?, name), metadata = COALESCE(?, metadata), updated_at = datetime('now') WHERE email = ?`,
         [name || null, metadata ? JSON.stringify(metadata) : null, email]
