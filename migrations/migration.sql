@@ -1,56 +1,46 @@
-PRAGMA foreign_keys = ON;
-
-CREATE TABLE IF NOT EXISTS editor_contents (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  title TEXT,
-  content TEXT,
-  status TEXT DEFAULT 'draft',
-  author_email TEXT,
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now'))
-);
-
-CREATE TABLE IF NOT EXISTS editor_revisions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  content_id INTEGER NOT NULL,
-  content TEXT,
-  author_email TEXT,
-  created_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY (content_id) REFERENCES editor_contents(id) ON DELETE CASCADE
-);
+-- migrations/migration.sql
+-- Basic schema for Dataconecta (run once if you prefer SQL migration)
 
 CREATE TABLE IF NOT EXISTS contacts (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE,
+  id TEXT PRIMARY KEY,
   name TEXT,
-  metadata TEXT,
-  created_at TEXT DEFAULT (datetime('now')),
-  updated_at TEXT DEFAULT (datetime('now'))
+  email TEXT,
+  phone TEXT,
+  company TEXT,
+  stage TEXT,
+  created_at INTEGER DEFAULT (strftime('%s','now'))
 );
 
 CREATE TABLE IF NOT EXISTS activities (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  contact_id INTEGER,
+  id TEXT PRIMARY KEY,
+  contact_id TEXT,
   type TEXT,
-  title TEXT,
-  content_id INTEGER,
-  snippet TEXT,
-  payload TEXT,
-  created_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE SET NULL,
-  FOREIGN KEY (content_id) REFERENCES editor_contents(id) ON DELETE SET NULL
+  summary TEXT,
+  ts INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS analytics_events (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  client_id TEXT,
-  event_name TEXT,
+  id TEXT PRIMARY KEY,
+  type TEXT,
   payload TEXT,
-  crm_contact_id INTEGER,
-  created_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY (crm_contact_id) REFERENCES contacts(id) ON DELETE SET NULL
+  ts INTEGER
 );
 
-CREATE INDEX IF NOT EXISTS idx_analytics_event_name ON analytics_events(event_name);
-CREATE INDEX IF NOT EXISTS idx_analytics_crm_contact_id ON analytics_events(crm_contact_id);
-CREATE INDEX IF NOT EXISTS idx_activities_contact_id ON activities(contact_id);
+CREATE TABLE IF NOT EXISTS editor_contents (
+  id TEXT PRIMARY KEY,
+  slug TEXT,
+  title TEXT,
+  content TEXT,
+  created_at INTEGER,
+  updated_at INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS editor_revisions (
+  id TEXT PRIMARY KEY,
+  content_id TEXT,
+  content TEXT,
+  ts INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_analytics_ts ON analytics_events(ts);
+CREATE INDEX IF NOT EXISTS idx_activities_ts ON activities(ts);
