@@ -1,344 +1,154 @@
-// Analytics conectado a localStorage (más robusto).
-// Busca claves comunes para contactos y deals, parsea fechas flexiblemente,
-// calcula KPIs reales y dibuja charts con Chart.js.
-// Espera objetos tipo:
-// contact: {id, name, email, createdAt | created | timestamp}
-// deal: {id, contactId, amount, stage, createdAt, closedAt, won}
-// Si no encuentra datos muestra un mensaje y puede dibujar demo.
-
+// analytics-full.js — toma datos reales desde DC_Storage (contacts, deals, interactions)
+// Dibuja KPIs y charts (Chart.js)
 (function () {
-  // — Utilities
-  const CONTACT_KEYS_CANDIDATES = ['dataconecta-contacts','contacts','contacts_list','dc_contacts'];
-  const DEAL_KEYS_CANDIDATES = ['dataconecta-deals','deals','opportunities','dc_deals'];
-
-  function tryParseJSON(raw) {
-    try { return JSON.parse(raw); } catch (e) { return null; }
-  }
-
-  function readKey(key) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return null;
-      const parsed = tryParseJSON(raw);
-      if (Array.isArray(parsed)) return parsed;
-      return null;
-    } catch (e) { return null; }
-  }
-
-  function findFirstNonEmpty(keys) {
-    for (const k of keys) {
-      const v = readKey(k);
-      if (v && v.length) return { key: k, data: v };
-    }
-    return null;
-  }
-
-  function parseDateFlexible(val) {
+  function safeParse(it){ try { return JSON.parse(it); } catch(e) { return null; } }
+  function formatISO(d){ return d.toISOString().slice(0,10); }
+  function parseDateFlexible(val){
     if (!val && val !== 0) return null;
-    // number -> timestamp (ms or s)
-    if (typeof val === 'number') {
-      // if seconds (10 digits) convert to ms
-      if (val < 1e12) val = val * 1000;
-      return new Date(val);
-    }
-    // string
-    if (typeof val === 'string') {
-      // iso-like
-      const maybe = new Date(val);
-      if (!isNaN(maybe)) return maybe;
-      // try parse integer
-      const n = Number(val);
-      if (!isNaN(n)) {
-        if (n < 1e12) return new Date(n * 1000);
-        return new Date(n);
-      }
+    if (typeof val === 'number') { if (val < 1e12) val = val * 1000; return new Date(val); }
+    if (typeof val === 'string') { const maybe = new Date(val); if (!isNaN(maybe)) return maybe; const n = Number(val); if (!isNaN(n)) return new Date(n < 1e12 ? n*1000 : n); }
+    return null;
+  }
+
+  function safeParseItemDate(item, fields=['createdAt','created','timestamp','date']){
+    for (const f of fields) if (item[f]) { const d = parseDateFlexible(item[f]); if (d) return d; }
+    for (const k of Object.keys(item)) if (k.toLowerCase().includes('date')||k.toLowerCase().includes('at')||k.toLowerCase().includes('time')) {
+      const d = parseDateFlexible(item[k]); if (d) return d;
     }
     return null;
   }
 
-  function safeParseItemDate(item, possibleFields = ['createdAt','created','timestamp','date']) {
-    for (const f of possibleFields) {
-      if (item[f]) {
-        const d = parseDateFlexible(item[f]);
-        if (d) return d;
-      }
-    }
-    // try any field that looks like date
-    for (const k of Object.keys(item)) {
-      if (k.toLowerCase().includes('date') || k.toLowerCase().includes('at') || k.toLowerCase().includes('time')) {
-        const d = parseDateFlexible(item[k]);
-        if (d) return d;
-      }
-    }
-    return null;
-  }
+  function listAndLoad(key){ return DC_Storage.get(key, []) || []; }
 
-  function formatISODate(d) {
-    return d.toISOString().slice(0,10);
-  }
-
-  // — Data loader
-  function loadData() {
-    const contactsEntry = findFirstNonEmpty(CONTACT_KEYS_CANDIDATES);
-    const dealsEntry = findFirstNonEmpty(DEAL_KEYS_CANDIDATES);
-    const contacts = contactsEntry ? contactsEntry.data : [];
-    const deals = dealsEntry ? dealsEntry.data : [];
-    return {
-      contacts, contactsKey: contactsEntry ? contactsEntry.key : null,
-      deals, dealsKey: dealsEntry ? dealsEntry.key : null
-    };
-  }
-
-  // — Filtering and series builders
-  function clampDates(fromISO, toISO) {
-    const from = fromISO ? new Date(fromISO) : null;
-    const to = toISO ? new Date(toISO) : null;
-    return { from, to };
-  }
-
-  function buildEmptyDayMap(startDate, endDate) {
-    const map = {};
-    const labels = [];
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-      const key = formatISODate(new Date(d));
-      map[key] = 0;
-      labels.push(key);
-    }
-    return { map, labels };
-  }
-
-  function buildSeriesByDay(items, dateFieldCandidates, fromISO, toISO) {
-    const { from, to } = clampDates(fromISO, toISO);
-    const end = to || new Date();
-    const start = from || new Date(Date.now() - 29 * 24*60*60*1000);
-    const { map, labels } = buildEmptyDayMap(new Date(start), new Date(end));
+  function buildDaySeries(items, dateFields, fromISO, toISO){
+    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
+    const end = to || new Date(); const start = from || new Date(Date.now() - 29*86400000);
+    const map = {}; const labels = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){ const k=formatISO(new Date(d)); map[k]=0; labels.push(k); }
     items.forEach(it => {
-      const d = safeParseItemDate(it, dateFieldCandidates);
-      if (!d) return;
-      const key = formatISODate(d);
-      if (key in map) map[key] += 1;
+      const d = safeParseItemDate(it, dateFields); if (!d) return; const k = formatISO(d); if (k in map) map[k] += 1;
     });
-    const series = labels.map(l => map[l] || 0);
-    return { labels, series, map };
+    return { labels, series: labels.map(l=>map[l]||0) };
   }
 
-  function buildRevenueSeries(deals, fromISO, toISO) {
-    const { from, to } = clampDates(fromISO, toISO);
-    const end = to || new Date();
-    const start = from || new Date(Date.now() - 29 * 24*60*60*1000);
-    const { map, labels } = buildEmptyDayMap(new Date(start), new Date(end));
+  function revenueSeries(deals, fromISO, toISO) {
+    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
+    const end = to || new Date(); const start = from || new Date(Date.now() - 29*86400000);
+    const map = {}; const labels = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){ const k=formatISO(new Date(d)); map[k]=0; labels.push(k); }
     deals.forEach(d => {
-      if (!d) return;
-      // consider only won deals when computing revenue by close date, fallback to created date
-      const closed = safeParseItemDate(d, ['closedAt','closed_at','closed','closedAtDate']);
-      const created = safeParseItemDate(d, ['createdAt','created','timestamp']);
-      const dateRef = closed || created;
-      if (!dateRef) return;
-      const key = formatISODate(dateRef);
-      if (!(key in map)) return;
-      const amount = Number(d.amount || d.value || d.total || 0) || 0;
-      // if deal has a won flag, prefer it; otherwise include it but mark later
-      const won = d.won === true || String(d.stage || '').toLowerCase().includes('won') || String(d.stage || '').toLowerCase().includes('closed');
-      map[key] += won ? amount : 0;
-    });
-    const series = labels.map(l => map[l] || 0);
-    return { labels, series };
-  }
-
-  // — KPIs
-  function computeKPIs(contacts, deals, fromISO, toISO) {
-    const { from, to } = clampDates(fromISO, toISO);
-    const contactsInRange = contacts.filter(c => {
-      const d = safeParseItemDate(c);
-      if (!d) return false;
-      if (from && d < from) return false;
-      if (to && d > to) return false;
-      return true;
-    });
-    const dealsInRange = deals.filter(d => {
-      const dCreated = safeParseItemDate(d, ['createdAt','created']);
-      if (!dCreated) return false;
-      if (from && dCreated < from) return false;
-      if (to && dCreated > to) return false;
-      return true;
-    });
-    const wonDeals = deals.filter(d => {
       const closed = safeParseItemDate(d, ['closedAt','closed_at','closed']);
-      if (!closed) return false;
-      if (from && closed < from) return false;
-      if (to && closed > to) return false;
-      const won = d.won === true || String(d.stage || '').toLowerCase().includes('won') || String(d.stage || '').toLowerCase().includes('closed');
-      return !!won;
+      const created = safeParseItemDate(d, ['createdAt','created','timestamp']);
+      const ref = closed || created; if (!ref) return;
+      const key = formatISO(ref); if (!(key in map)) return;
+      const amount = Number(d.amount || d.value || d.total) || 0;
+      const won = d.won === true || String(d.stage||'').toLowerCase().includes('won') || String(d.stage||'').toLowerCase().includes('closed');
+      if (won) map[key] += amount;
     });
-    const revenue = wonDeals.reduce((s,d) => s + (Number(d.amount || d.value || d.total) || 0), 0);
-    const conversionRate = dealsInRange.length ? Math.round((wonDeals.length / dealsInRange.length) * 10000) / 100 : 0;
-    return {
-      contactsCount: contactsInRange.length,
-      dealsCount: dealsInRange.length,
-      wonDeals: wonDeals.length,
-      revenue,
-      conversionRate
-    };
+    return { labels, series: labels.map(l => map[l] || 0) };
   }
 
-  // — Charts (global refs)
   let chartSessions, chartConversions, chartRevenue, chartDevices;
 
-  function safeDestroy(ch) { if (ch && ch.destroy) ch.destroy(); }
+  function safeDestroy(ch){ if (ch && ch.destroy) ch.destroy(); }
 
-  function drawCharts(contacts, deals, fromISO, toISO) {
-    const sessionsSeries = buildSeriesByDay(contacts, ['createdAt','created','timestamp'], fromISO, toISO);
-    const dealsSeries = buildSeriesByDay(deals, ['createdAt','created','timestamp'], fromISO, toISO);
-    const revenueSeries = buildRevenueSeries(deals, fromISO, toISO);
+  function draw(fromISO, toISO){
+    const contacts = listAndLoad('contacts');
+    const deals = listAndLoad('deals');
+    const interactions = listAndLoad('interactions');
 
-    // Sessions
+    const sessions = buildDaySeries(contacts, ['createdAt','created','timestamp'], fromISO, toISO);
+    const dealsSeries = buildDaySeries(deals, ['createdAt','created','timestamp'], fromISO, toISO);
+    const revenue = revenueSeries(deals, fromISO, toISO);
+
     safeDestroy(chartSessions);
     const c1 = document.getElementById('chart-sessions').getContext('2d');
-    chartSessions = new Chart(c1, {
-      type: 'line',
-      data: { labels: sessionsSeries.labels, datasets: [{ label: 'Nuevos contactos', data: sessionsSeries.series, borderColor:'#2563eb', backgroundColor:'rgba(37,99,235,0.08)', fill:true, tension:0.3 }] },
-      options: { responsive:true, plugins:{legend:{display:false}} }
-    });
+    chartSessions = new Chart(c1, { type:'line', data:{labels:sessions.labels,datasets:[{label:'Nuevos contactos',data:sessions.series,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.08)',fill:true,tension:0.3}]}, options:{responsive:true,plugins:{legend:{display:false}}}});
 
-    // Conversions (deals)
     safeDestroy(chartConversions);
     const c2 = document.getElementById('chart-conversions-full').getContext('2d');
-    chartConversions = new Chart(c2, {
-      type: 'bar',
-      data: { labels: dealsSeries.labels, datasets: [{ label: 'Oportunidades creadas', data: dealsSeries.series, backgroundColor:'#10b981' }] },
-      options: { responsive:true, plugins:{legend:{display:false}} }
-    });
+    chartConversions = new Chart(c2, { type:'bar', data:{labels:dealsSeries.labels,datasets:[{label:'Oportunidades',data:dealsSeries.series,backgroundColor:'#10b981'}]}, options:{responsive:true,plugins:{legend:{display:false}}}});
 
-    // Revenue
     safeDestroy(chartRevenue);
     const c3 = document.getElementById('chart-revenue-full').getContext('2d');
-    chartRevenue = new Chart(c3, {
-      type: 'line',
-      data: { labels: revenueSeries.labels, datasets: [{ label:'Ingresos (won)', data: revenueSeries.series, borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,0.07)', fill:true, tension:0.25 }] },
-      options: { responsive:true, plugins:{legend:{display:false}} }
-    });
+    chartRevenue = new Chart(c3, { type:'line', data:{labels:revenue.labels,datasets:[{label:'Ingresos (won)',data:revenue.series,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.07)',fill:true,tension:0.25}]}, options:{responsive:true,plugins:{legend:{display:false}}}});
 
-    // Devices (simulated distribution) — you can later replace by source field
     safeDestroy(chartDevices);
     const c4 = document.getElementById('chart-devices').getContext('2d');
-    const desktop = Math.max(5, Math.round(sessionsSeries.series.reduce((a,b)=>a+b,0) * 0.6));
-    const mobile = Math.max(3, Math.round(sessionsSeries.series.reduce((a,b)=>a+b,0) * 0.3));
-    const tablet = Math.max(1, Math.round(sessionsSeries.series.reduce((a,b)=>a+b,0) * 0.1));
-    chartDevices = new Chart(c4, {
-      type: 'doughnut',
-      data: { labels:['Desktop','Mobile','Tablet'], datasets:[{ data:[desktop,mobile,tablet], backgroundColor:['#2563eb','#f59e0b','#ef4444'] }] },
-      options: { responsive:true, plugins:{legend:{position:'bottom'}} }
-    });
+    const totalSessions = sessions.series.reduce((a,b)=>a+b,0) || 1;
+    const desktop = Math.max(1, Math.round(totalSessions * 0.6));
+    const mobile = Math.max(1, Math.round(totalSessions * 0.3));
+    const tablet = Math.max(1, Math.round(totalSessions * 0.1));
+    chartDevices = new Chart(c4, { type:'doughnut', data:{labels:['Desktop','Mobile','Tablet'],datasets:[{data:[desktop,mobile,tablet],backgroundColor:['#2563eb','#f59e0b','#ef4444']}]}, options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
   }
 
-  // — Details table render
-  function renderDetailsTable(contacts, deals, fromISO, toISO) {
+  function computeKPIs(fromISO, toISO){
+    const contacts = DC_Storage.get('contacts',[]) || [];
+    const deals = DC_Storage.get('deals',[]) || [];
+    const interactions = DC_Storage.get('interactions',[]) || [];
+    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
+    const contactsIn = contacts.filter(c => { const d = safeParseItemDate(c); if (!d) return false; if (from && d < from) return false; if (to && d > to) return false; return true; });
+    const dealsIn = deals.filter(d => { const dC = safeParseItemDate(d, ['createdAt','created']); if (!dC) return false; if (from && dC < from) return false; if (to && dC > to) return false; return true; });
+    const won = deals.filter(d => { const cl = safeParseItemDate(d, ['closedAt','closed']); if (!cl) return false; if (from && cl < from) return false; if (to && cl > to) return false; const w = d.won === true || String(d.stage||'').toLowerCase().includes('won') || String(d.stage||'').toLowerCase().includes('closed'); return !!w; });
+    const revenue = won.reduce((s,d)=> s + (Number(d.amount||d.value||d.total)||0), 0);
+    const conversionRate = dealsIn.length ? Math.round((won.length / dealsIn.length) * 10000) / 100 : 0;
+    return { contactsCount: contactsIn.length, dealsCount: dealsIn.length, wonCount: won.length, revenue, conversionRate };
+  }
+
+  function renderDetails(fromISO, toISO){
     const tbody = document.getElementById('details-tbody');
-    tbody.innerHTML = '';
-    // merge events: contacts created + deals created + deals won
+    if (!tbody) return;
+    const contacts = DC_Storage.get('contacts',[]) || [];
+    const deals = DC_Storage.get('deals',[]) || [];
     const rows = [];
-    contacts.forEach(c => {
-      const d = safeParseItemDate(c) || new Date();
-      const iso = formatISODate(d);
-      rows.push({ type: 'contact', name: c.name || c.fullname || c.email || '—', date: iso, rawDate: d, amount: '' });
-    });
-    deals.forEach(d => {
-      const created = safeParseItemDate(d, ['createdAt','created','timestamp']) || new Date();
-      const closed = safeParseItemDate(d, ['closedAt','closed_at','closed']);
-      const won = d.won === true || String(d.stage||'').toLowerCase().includes('won') || String(d.stage||'').toLowerCase().includes('closed');
-      rows.push({ type: 'deal', name: d.title || d.name || ('Deal #' + (d.id||'')), date: formatISODate(created), rawDate: created, amount: won ? (Number(d.amount||d.value||d.total)||0) : '' });
-    });
-
-    // apply date filter
-    const { from, to } = clampDates(fromISO, toISO);
-    const filtered = rows.filter(r => {
-      const d = r.rawDate;
-      if (!d) return false;
-      if (from && d < from) return false;
-      if (to && d > to) return false;
-      return true;
-    });
-
-    // sort desc by date
-    filtered.sort((a,b) => b.rawDate - a.rawDate);
-
-    if (!filtered.length) {
-      tbody.innerHTML = '<tr><td colspan="4" class="small">No hay eventos para el rango seleccionado</td></tr>';
-      return;
-    }
-
+    contacts.forEach(c => { const d = safeParseItemDate(c) || new Date(); rows.push({ type:'contact', name:c.name||c.email||'', date:d, amount:'' }); });
+    deals.forEach(d => { const created = safeParseItemDate(d, ['createdAt','created']) || new Date(); const closed = safeParseItemDate(d, ['closedAt','closed']); const won = d.won === true || String(d.stage||'').toLowerCase().includes('won'); rows.push({ type:'deal', name:d.title||'', date:created, amount: won ? Number(d.amount||0) : '' }); });
+    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
+    const filtered = rows.filter(r => { if (!r.date) return false; if (from && r.date < from) return false; if (to && r.date > to) return false; return true; }).sort((a,b)=> b.date - a.date);
+    tbody.innerHTML = '';
+    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="4" class="small">No hay eventos para el rango seleccionado</td></tr>'; return; }
     filtered.forEach(r => {
       const tr = document.createElement('tr');
-      const tdType = document.createElement('td'); tdType.textContent = (r.type === 'contact') ? 'Contacto' : 'Deal';
-      const tdName = document.createElement('td'); tdName.textContent = r.name;
-      const tdDate = document.createElement('td'); tdDate.textContent = r.date;
-      const tdAmount = document.createElement('td'); tdAmount.textContent = r.amount ? ('$' + Number(r.amount).toLocaleString()) : '';
-      tr.appendChild(tdType); tr.appendChild(tdName); tr.appendChild(tdDate); tr.appendChild(tdAmount);
+      const td1 = document.createElement('td'); td1.textContent = r.type;
+      const td2 = document.createElement('td'); td2.textContent = r.name;
+      const td3 = document.createElement('td'); td3.textContent = r.date.toISOString().slice(0,10);
+      const td4 = document.createElement('td'); td4.textContent = r.amount ? ('$' + Number(r.amount).toLocaleString()) : '';
+      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
       tbody.appendChild(tr);
     });
   }
 
-  // — CSV Export
-  function exportCSVFromData(name, items) {
-    if (!items || !items.length) return alert('No hay datos para exportar: ' + name);
-    const keys = Array.from(items.reduce((acc,it) => {
-      Object.keys(it).forEach(k => acc.add(k));
-      return acc;
-    }, new Set()));
-    const lines = [keys.join(',')].concat(items.map(r => keys.map(k => `"${String(r[k]||'').replace(/"/g,'""')}"`).join(',')));
-    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `dataconecta-${name}.csv`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  function refreshUI(){
+    const fromISO = document.getElementById('from') ? document.getElementById('from').value : '';
+    const toISO = document.getElementById('to') ? document.getElementById('to').value : '';
+    const k = computeKPIs(fromISO, toISO);
+    const elContacts = document.getElementById('kpi-contacts'); if (elContacts) elContacts.textContent = k.contactsCount;
+    const elDeals = document.getElementById('kpi-deals'); if (elDeals) elDeals.textContent = k.dealsCount;
+    const elRev = document.getElementById('kpi-revenue'); if (elRev) elRev.textContent = '$' + k.revenue.toLocaleString();
+    const elConv = document.getElementById('kpi-conv'); if (elConv) elConv.textContent = k.conversionRate + '%';
+    draw(fromISO, toISO);
+    renderDetails(fromISO, toISO);
   }
 
-  // — UI wiring
-  function refreshUI() {
-    const fromISO = document.getElementById('from').value || '';
-    const toISO = document.getElementById('to').value || '';
-    const { contacts, deals, contactsKey, dealsKey } = loadData();
-    // if no keys found, show helpful message
-    if ((!contacts || !contacts.length) && (!deals || !deals.length)) {
-      // show "no data" in KPIs and draw demo charts
-      document.getElementById('kpi-contacts').textContent = '0';
-      document.getElementById('kpi-deals').textContent = '0';
-      document.getElementById('kpi-revenue').textContent = '$0';
-      document.getElementById('kpi-conv').textContent = '0%';
-      // draw demo (random) if desired
-      drawCharts([], [], fromISO, toISO);
-      const tbody = document.getElementById('details-tbody');
-      tbody.innerHTML = '<tr><td colspan="4" class="small">No se detectaron datos en localStorage. Claves buscadas: ' + CONTACT_KEYS_CANDIDATES.join(', ') + ' / ' + DEAL_KEYS_CANDIDATES.join(', ') + '</td></tr>';
-      return;
-    }
+  document.addEventListener('DOMContentLoaded', () => {
+    const btnRefresh = document.getElementById('btn-refresh');
+    if (btnRefresh) btnRefresh.addEventListener('click', refreshUI);
+    const btnExpC = document.getElementById('btn-export-contacts'); if (btnExpC) btnExpC.addEventListener('click', () => {
+      const chosen = { key:'contacts', data: DC_Storage.get('contacts',[]) || [] }; if (!chosen.data.length) return alert('No hay contactos'); const keys = Object.keys(chosen.data[0]||{}); const lines = [keys.join(',')].concat(chosen.data.map(r => keys.map(k => `"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))); const blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'dataconecta-contacts.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+    const btnExpD = document.getElementById('btn-export-deals'); if (btnExpD) btnExpD.addEventListener('click', () => {
+      const chosen = { key:'deals', data: DC_Storage.get('deals',[]) || [] }; if (!chosen.data.length) return alert('No hay deals'); const keys = Object.keys(chosen.data[0]||{}); const lines = [keys.join(',')].concat(chosen.data.map(r => keys.map(k => `"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))); const blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'dataconecta-deals.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
 
-    const kpis = computeKPIs(contacts, deals, fromISO, toISO);
-    document.getElementById('kpi-contacts').textContent = kpis.contactsCount;
-    document.getElementById('kpi-deals').textContent = kpis.dealsCount;
-    document.getElementById('kpi-revenue').textContent = '$' + kpis.revenue.toLocaleString();
-    document.getElementById('kpi-conv').textContent = kpis.conversionRate + '%';
+    // set defaults and draw initial
+    const to = new Date(); const from = new Date(); from.setDate(to.getDate()-29);
+    if (document.getElementById('to')) document.getElementById('to').value = to.toISOString().slice(0,10);
+    if (document.getElementById('from')) document.getElementById('from').value = from.toISOString().slice(0,10);
+    refreshUI();
 
-    drawCharts(contacts, deals, fromISO, toISO);
-    renderDetailsTable(contacts, deals, fromISO, toISO);
-  }
-
-  document.getElementById('btn-refresh').addEventListener('click', refreshUI);
-  document.getElementById('btn-export-contacts').addEventListener('click', () => {
-    const chosen = findFirstNonEmpty(CONTACT_KEYS_CANDIDATES);
-    if (!chosen) return alert('No se encontraron contactos para exportar (localStorage).');
-    exportCSVFromData('contacts', chosen.data);
+    // refresh when data changes
+    window.addEventListener('dataconecta.change', refreshUI);
+    window.addEventListener('dataconecta.interaction', refreshUI);
+    window.addEventListener('dataconecta.email.opened', refreshUI);
   });
-  document.getElementById('btn-export-deals').addEventListener('click', () => {
-    const chosen = findFirstNonEmpty(DEAL_KEYS_CANDIDATES);
-    if (!chosen) return alert('No se encontraron deals para exportar (localStorage).');
-    exportCSVFromData('deals', chosen.data);
-  });
-
-  // set defaults and init
-  (function setDefaultDates() {
-    const to = new Date();
-    const from = new Date(); from.setDate(to.getDate() - 29);
-    document.getElementById('to').value = to.toISOString().slice(0,10);
-    document.getElementById('from').value = from.toISOString().slice(0,10);
-  })();
-
-  window.addEventListener('load', refreshUI);
 })();
