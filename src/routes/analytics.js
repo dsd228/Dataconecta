@@ -1,8 +1,6 @@
+// src/routes/analytics.js
 const express = require('express');
 const router = express.Router();
-
-// GET /api/analytics/events?limit=50
-// GET /api/analytics/summary
 
 router.get('/events', async (req, res) => {
   try {
@@ -19,7 +17,6 @@ router.get('/events', async (req, res) => {
 router.get('/summary', async (req, res) => {
   try {
     const db = req.db;
-    // Conteo por event_name
     const counts = await db.all(`
       SELECT event_name, COUNT(*) as count
       FROM analytics_events
