@@ -11,6 +11,7 @@
 
   function renderTable(q='', stage=''){
     const tbody = $id('contacts-tbody');
+    if (!tbody) return;
     tbody.innerHTML = '';
     let items = allContacts.slice();
     if (q) {
@@ -41,20 +42,33 @@
 
   function renderPagination(total, pages){
     const wrap = $id('contacts-pagination');
+    if (!wrap) return;
     wrap.innerHTML = '';
     if (pages <= 1) return;
     for (let i=1;i<=pages;i++){
       const b = document.createElement('button');
       b.className = 'btn tiny' + (i===page?' active':'');
       b.textContent = i;
-      b.addEventListener('click', () => { page = i; renderTable($id('global-q').value, $id('global-stage').value); });
+      b.addEventListener('click', () => { page = i; renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); });
       wrap.appendChild(b);
     }
   }
 
   // Modal handlers (mejorados)
   function openModal(editId){
-    const modal = $id('modal-root');
+    const modalRoot = $id('modal-root');
+    if (!modalRoot) {
+      console.warn('modal-root no encontrado');
+      return;
+    }
+
+    // ensure .modal (content) exists
+    const modalBox = modalRoot.querySelector('.modal');
+    if (!modalBox) {
+      console.warn('modal box (.modal) no encontrado dentro de modal-root');
+      return;
+    }
+
     // populate fields
     if (editId) {
       const c = allContacts.find(x=>x.id===editId) || {};
@@ -64,7 +78,7 @@
       $id('m-tel').value = c.tel || '';
       $id('m-company').value = c.company || '';
       $id('m-stage').value = c.stage || 'Lead';
-      modal._editing = editId;
+      modalRoot._editing = editId;
     } else {
       $id('modal-title').textContent = 'Nuevo contacto';
       $id('m-name').value = '';
@@ -72,11 +86,11 @@
       $id('m-tel').value = '';
       $id('m-company').value = '';
       $id('m-stage').value = 'Lead';
-      modal._editing = null;
+      modalRoot._editing = null;
     }
 
     // show modal and lock scroll
-    modal.classList.remove('hidden');
+    modalRoot.classList.remove('hidden');
     document.body.classList.add('dc-modal-open');
 
     // focus first input
@@ -85,50 +99,53 @@
       if (first) first.focus();
     }, 60);
 
-    // attach overlay click handler (close when clicking outside modal content)
-    if (!modal._overlayHandler) {
-      modal._overlayHandler = function (ev) {
-        // if clicked directly on the overlay (not inside the modal box)
-        if (ev.target === modal) {
+    // overlay handler: close when click is outside the modal box
+    if (!modalRoot._overlayHandler) {
+      modalRoot._overlayHandler = function (ev) {
+        // if click target is not within the modal box, close
+        if (!modalBox.contains(ev.target)) {
           closeModal();
         }
       };
-      modal.addEventListener('click', modal._overlayHandler);
+      modalRoot.addEventListener('click', modalRoot._overlayHandler, true);
     }
 
-    // attach ESC key handler
-    if (!modal._escHandler) {
-      modal._escHandler = function (ev) {
+    // ESC handler (on document)
+    if (!modalRoot._escHandler) {
+      modalRoot._escHandler = function (ev) {
         if (ev.key === 'Escape' || ev.key === 'Esc') {
           closeModal();
         }
       };
-      document.addEventListener('keydown', modal._escHandler);
+      document.addEventListener('keydown', modalRoot._escHandler);
     }
   }
 
   function closeModal(){
-    const modal = $id('modal-root');
-    if (!modal) return;
-    modal.classList.add('hidden');
+    const modalRoot = $id('modal-root');
+    if (!modalRoot) return;
+    modalRoot.classList.add('hidden');
     // clear editing state
-    modal._editing = null;
+    modalRoot._editing = null;
     // unlock scroll
     document.body.classList.remove('dc-modal-open');
-    // remove temporary handlers (we keep them attached but safe to remove)
-    if (modal._overlayHandler) {
-      modal.removeEventListener('click', modal._overlayHandler);
-      modal._overlayHandler = null;
+
+    // remove handlers safely
+    if (modalRoot._overlayHandler) {
+      modalRoot.removeEventListener('click', modalRoot._overlayHandler, true);
+      modalRoot._overlayHandler = null;
     }
-    if (modal._escHandler) {
-      document.removeEventListener('keydown', modal._escHandler);
-      modal._escHandler = null;
+    if (modalRoot._escHandler) {
+      document.removeEventListener('keydown', modalRoot._escHandler);
+      modalRoot._escHandler = null;
     }
   }
 
   function saveModal(){
-    const modal = $id('modal-root');
-    const id = modal._editing || ('c_' + Date.now());
+    const modalRoot = $id('modal-root');
+    if (!modalRoot) return;
+    const id = modalRoot._editing || ('c_' + Date.now());
+    const existing = allContacts.find(x => x.id === id);
     const obj = {
       id,
       name: $id('m-name').value,
@@ -136,21 +153,21 @@
       tel: $id('m-tel').value,
       company: $id('m-company').value,
       stage: $id('m-stage').value,
-      createdAt: modal._editing ? (allContacts.find(x=>x.id===id).createdAt) : new Date().toISOString()
+      createdAt: existing ? existing.createdAt : new Date().toISOString()
     };
     const idx = allContacts.findIndex(x=>x.id===id);
     if (idx >= 0) allContacts[idx] = obj;
     else allContacts.unshift(obj);
     DC_Storage.set('contacts', allContacts);
     closeModal();
-    renderTable($id('global-q').value, $id('global-stage').value);
+    renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : '');
   }
 
   function deleteContact(id){
     if (!confirm('Eliminar contacto?')) return;
     allContacts = allContacts.filter(c => c.id !== id);
     DC_Storage.set('contacts', allContacts);
-    renderTable($id('global-q').value, $id('global-stage').value);
+    renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : '');
   }
 
   // Events wiring
@@ -159,29 +176,37 @@
     renderTable();
 
     // global filters
-    $id('global-filter').addEventListener('click', () => { page = 1; renderTable($id('global-q').value, $id('global-stage').value); });
-    $id('global-q').addEventListener('keydown', (e) => { if (e.key === 'Enter') { page = 1; renderTable($id('global-q').value, $id('global-stage').value); } });
+    const gFilter = $id('global-filter');
+    if (gFilter) gFilter.addEventListener('click', () => { page = 1; renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); });
+    const gq = $id('global-q');
+    if (gq) gq.addEventListener('keydown', (e) => { if (e.key === 'Enter') { page = 1; renderTable(gq.value, $id('global-stage') ? $id('global-stage').value : ''); } });
 
     // New contact
     window.addEventListener('contacts.openNew', () => openModal(null));
-    $id('btn-new-contact').addEventListener('click', () => openModal(null));
+    const newBtn = $id('btn-new-contact');
+    if (newBtn) newBtn.addEventListener('click', () => openModal(null));
 
     // Modal buttons
-    $id('m-cancel').addEventListener('click', closeModal);
-    $id('m-save').addEventListener('click', saveModal);
+    const btnCancel = $id('m-cancel');
+    if (btnCancel) btnCancel.addEventListener('click', closeModal);
+    const btnSave = $id('m-save');
+    if (btnSave) btnSave.addEventListener('click', saveModal);
 
     // table action delegation
-    document.getElementById('contacts-table').addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if (!btn) return;
-      const id = btn.getAttribute('data-id');
-      if (btn.classList.contains('edit')) openModal(id);
-      if (btn.classList.contains('delete')) deleteContact(id);
-    });
+    const contactsTable = $id('contacts-table');
+    if (contactsTable) {
+      contactsTable.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const id = btn.getAttribute('data-id');
+        if (btn.classList.contains('edit')) openModal(id);
+        if (btn.classList.contains('delete')) deleteContact(id);
+      });
+    }
 
     // listen storage changes
     window.addEventListener('dataconecta.change', (e) => {
-      if (e.detail && e.detail.key === 'contacts') { loadContacts(); renderTable($id('global-q').value, $id('global-stage').value); }
+      if (e.detail && e.detail.key === 'contacts') { loadContacts(); renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); }
     });
   });
 
