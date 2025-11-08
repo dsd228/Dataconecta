@@ -1,111 +1,213 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DataConecta — CRM mejorado</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-  <script src="js/storage.js" defer></script>
-  <script src="js/app.js" defer></script>
-  <script src="js/contacts.js" defer></script>
-  <!-- Agregar más módulos: companies.js, deals.js, analytics-full.js, editor-full.js -->
-</head>
-<body>
-  <aside class="sidebar">
-    <div class="brand"><i class="fas fa-database"></i> DataConecta</div>
-    <nav>
-      <a href="#/dashboard" data-route>Dashboard</a>
-      <a href="#/contacts" data-route class="active">Contactos</a>
-      <a href="#/companies" data-route>Empresas</a>
-      <a href="#/deals" data-route>Deals</a>
-      <a href="#/tasks" data-route>Tareas</a>
-      <a href="analytics.html" target="_self">Analítica</a>
-      <a href="editor.html" target="_self">Editor</a>
-      <a href="#/settings" data-route>Settings</a>
-    </nav>
-    <div class="sidebar-footer">
-      <button id="btn-seed" class="btn tiny">Cargar ejemplo</button>
-      <button id="btn-clear" class="btn tiny danger">Borrar datos</button>
-    </div>
-  </aside>
+// contacts.js — módulo de Contactos (CRUD, búsqueda, paginado) usando DC_Storage
+(function () {
+  function $id(id){ return document.getElementById(id); }
+  const PAGE_SIZE = 10;
+  let page = 1;
+  let allContacts = [];
 
-  <main class="main">
-    <header class="topbar">
-      <div class="top-left">
-        <h1 id="page-title">Contactos</h1>
-        <div class="search-inline">
-          <input id="global-q" placeholder="Buscar..." />
-          <select id="global-stage"><option value="">Todas</option><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select>
-          <button id="global-filter" class="btn">Filtrar</button>
-        </div>
-      </div>
-      <div class="top-right">
-        <button id="btn-new-contact" class="btn primary"><i class="fas fa-plus"></i> Nuevo</button>
-        <button id="btn-export-json" class="btn"><i class="fas fa-file-export"></i></button>
-        <button id="btn-import-json" class="btn"><i class="fas fa-file-import"></i></button>
-      </div>
-    </header>
+  function loadContacts(){
+    allContacts = DC_Storage.get('contacts', []) || [];
+  }
 
-    <section id="view-container" class="view">
-      <!-- Vistas se insertan aquí por app.js -->
-      <div id="view-contacts" class="view-panel">
-        <div class="panel">
-          <h3>Contactos</h3>
-          <div class="table-wrap">
-            <table id="contacts-table" aria-label="Lista de contactos">
-              <thead><tr><th>Nombre</th><th>Email</th><th>Tel</th><th>Empresa</th><th>Etapa</th><th>Creado</th><th>Acciones</th></tr></thead>
-              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">Cargando...</td></tr></tbody>
-            </table>
-          </div>
+  function renderTable(q='', stage=''){
+    const tbody = $id('contacts-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    let items = allContacts.slice();
+    if (q) {
+      const ql = q.toLowerCase();
+      items = items.filter(c => (c.name||'').toLowerCase().includes(ql) || (c.email||'').toLowerCase().includes(ql) || (c.company||'').toLowerCase().includes(ql));
+    }
+    if (stage) items = items.filter(c => (c.stage||'') === stage);
+    const total = items.length;
+    const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (page > pages) page = pages;
+    const start = (page-1)*PAGE_SIZE;
+    const pageItems = items.slice(start, start + PAGE_SIZE);
+    if (!pageItems.length) {
+      tbody.innerHTML = '<tr><td colspan="7" class="muted">Sin contactos</td></tr>';
+    } else {
+      pageItems.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${c.name||''}</td><td>${c.email||''}</td><td>${c.tel||''}</td><td>${c.company||''}</td><td>${c.stage||''}</td><td>${(c.createdAt||'').slice(0,10)}</td>
+          <td>
+            <button class="btn tiny edit" data-id="${c.id}">Editar</button>
+            <button class="btn tiny danger delete" data-id="${c.id}">Eliminar</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    renderPagination(total, pages);
+  }
 
-          <div class="pagination" id="contacts-pagination"></div>
-        </div>
-      </div>
+  function renderPagination(total, pages){
+    const wrap = $id('contacts-pagination');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    if (pages <= 1) return;
+    for (let i=1;i<=pages;i++){
+      const b = document.createElement('button');
+      b.className = 'btn tiny' + (i===page?' active':'');
+      b.textContent = i;
+      b.addEventListener('click', () => { page = i; renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); });
+      wrap.appendChild(b);
+    }
+  }
 
-      <div id="view-dashboard" class="view-panel hidden">
-        <div class="panel">
-          <h3>Dashboard</h3>
-          <div id="dashboard-kpis" class="kpis-row"></div>
-          <canvas id="dashboard-chart" height="120"></canvas>
-        </div>
-      </div>
+  // Modal handlers (mejorados)
+  function openModal(editId){
+    const modalRoot = $id('modal-root');
+    if (!modalRoot) {
+      console.warn('modal-root no encontrado');
+      return;
+    }
 
-      <div id="view-placeholder" class="view-panel hidden">
-        <div class="panel">
-          <h3>Próximamente</h3>
-          <p class="muted">Módulo en construcción. Puedo priorizar Companies, Deals o Tareas según prefieras.</p>
-        </div>
-      </div>
-    </section>
+    // ensure .modal (content) exists
+    const modalBox = modalRoot.querySelector('.modal');
+    if (!modalBox) {
+      console.warn('modal box (.modal) no encontrado dentro de modal-root');
+      return;
+    }
 
-    <footer class="footer">DataConecta — Demo local. Los datos se guardan en localStorage.</footer>
-  </main>
+    // populate fields
+    if (editId) {
+      const c = allContacts.find(x=>x.id===editId) || {};
+      $id('modal-title').textContent = 'Editar contacto';
+      $id('m-name').value = c.name || '';
+      $id('m-email').value = c.email || '';
+      $id('m-tel').value = c.tel || '';
+      $id('m-company').value = c.company || '';
+      $id('m-stage').value = c.stage || 'Lead';
+      modalRoot._editing = editId;
+    } else {
+      $id('modal-title').textContent = 'Nuevo contacto';
+      $id('m-name').value = '';
+      $id('m-email').value = '';
+      $id('m-tel').value = '';
+      $id('m-company').value = '';
+      $id('m-stage').value = 'Lead';
+      modalRoot._editing = null;
+    }
 
-  <!-- Modal: Contact form -->
-  <div id="modal-root" class="modal-root hidden" role="dialog" aria-modal="true">
-    <div class="modal">
-      <h3 id="modal-title">Nuevo contacto</h3>
-      <div class="modal-body">
-        <label>Nombre <input id="m-name"/></label>
-        <label>Email <input id="m-email"/></label>
-        <label>Teléfono <input id="m-tel"/></label>
-        <label>Empresa <input id="m-company"/></label>
-        <label>Etapa
-          <select id="m-stage">
-            <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
-          </select>
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button id="m-save" class="btn primary">Guardar</button>
-        <button id="m-cancel" class="btn">Cancelar</button>
-      </div>
-    </div>
-  </div>
+    // show modal and lock scroll
+    modalRoot.classList.remove('hidden');
+    document.body.classList.add('dc-modal-open');
 
-  <input id="file-import" type="file" accept="application/json" class="hidden"/>
+    // focus first input
+    setTimeout(() => {
+      const first = $id('m-name');
+      if (first) first.focus();
+    }, 60);
 
-</body>
-</html>
+    // overlay handler: close when click is outside the modal box
+    if (!modalRoot._overlayHandler) {
+      modalRoot._overlayHandler = function (ev) {
+        // if click target is not within the modal box, close
+        if (!modalBox.contains(ev.target)) {
+          closeModal();
+        }
+      };
+      modalRoot.addEventListener('click', modalRoot._overlayHandler, true);
+    }
+
+    // ESC handler (on document)
+    if (!modalRoot._escHandler) {
+      modalRoot._escHandler = function (ev) {
+        if (ev.key === 'Escape' || ev.key === 'Esc') {
+          closeModal();
+        }
+      };
+      document.addEventListener('keydown', modalRoot._escHandler);
+    }
+  }
+
+  function closeModal(){
+    const modalRoot = $id('modal-root');
+    if (!modalRoot) return;
+    modalRoot.classList.add('hidden');
+    // clear editing state
+    modalRoot._editing = null;
+    // unlock scroll
+    document.body.classList.remove('dc-modal-open');
+
+    // remove handlers safely
+    if (modalRoot._overlayHandler) {
+      modalRoot.removeEventListener('click', modalRoot._overlayHandler, true);
+      modalRoot._overlayHandler = null;
+    }
+    if (modalRoot._escHandler) {
+      document.removeEventListener('keydown', modalRoot._escHandler);
+      modalRoot._escHandler = null;
+    }
+  }
+
+  function saveModal(){
+    const modalRoot = $id('modal-root');
+    if (!modalRoot) return;
+    const id = modalRoot._editing || ('c_' + Date.now());
+    const existing = allContacts.find(x => x.id === id);
+    const obj = {
+      id,
+      name: $id('m-name').value,
+      email: $id('m-email').value,
+      tel: $id('m-tel').value,
+      company: $id('m-company').value,
+      stage: $id('m-stage').value,
+      createdAt: existing ? existing.createdAt : new Date().toISOString()
+    };
+    const idx = allContacts.findIndex(x=>x.id===id);
+    if (idx >= 0) allContacts[idx] = obj;
+    else allContacts.unshift(obj);
+    DC_Storage.set('contacts', allContacts);
+    closeModal();
+    renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : '');
+  }
+
+  function deleteContact(id){
+    if (!confirm('Eliminar contacto?')) return;
+    allContacts = allContacts.filter(c => c.id !== id);
+    DC_Storage.set('contacts', allContacts);
+    renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : '');
+  }
+
+  // Events wiring
+  window.addEventListener('load', () => {
+    loadContacts();
+    renderTable();
+
+    // global filters
+    const gFilter = $id('global-filter');
+    if (gFilter) gFilter.addEventListener('click', () => { page = 1; renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); });
+    const gq = $id('global-q');
+    if (gq) gq.addEventListener('keydown', (e) => { if (e.key === 'Enter') { page = 1; renderTable(gq.value, $id('global-stage') ? $id('global-stage').value : ''); } });
+
+    // New contact
+    window.addEventListener('contacts.openNew', () => openModal(null));
+    const newBtn = $id('btn-new-contact');
+    if (newBtn) newBtn.addEventListener('click', () => openModal(null));
+
+    // Modal buttons
+    const btnCancel = $id('m-cancel');
+    if (btnCancel) btnCancel.addEventListener('click', closeModal);
+    const btnSave = $id('m-save');
+    if (btnSave) btnSave.addEventListener('click', saveModal);
+
+    // table action delegation
+    const contactsTable = $id('contacts-table');
+    if (contactsTable) {
+      contactsTable.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const id = btn.getAttribute('data-id');
+        if (btn.classList.contains('edit')) openModal(id);
+        if (btn.classList.contains('delete')) deleteContact(id);
+      });
+    }
+
+    // listen storage changes
+    window.addEventListener('dataconecta.change', (e) => {
+      if (e.detail && e.detail.key === 'contacts') { loadContacts(); renderTable($id('global-q') ? $id('global-q').value : '', $id('global-stage') ? $id('global-stage').value : ''); }
+    });
+  });
+
+})();
