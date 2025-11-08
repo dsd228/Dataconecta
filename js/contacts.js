@@ -52,12 +52,12 @@
     }
   }
 
-  // Modal handlers
+  // Modal handlers (mejorados)
   function openModal(editId){
     const modal = $id('modal-root');
-    modal.classList.remove('hidden');
+    // populate fields
     if (editId) {
-      const c = allContacts.find(x=>x.id===editId);
+      const c = allContacts.find(x=>x.id===editId) || {};
       $id('modal-title').textContent = 'Editar contacto';
       $id('m-name').value = c.name || '';
       $id('m-email').value = c.email || '';
@@ -74,9 +74,57 @@
       $id('m-stage').value = 'Lead';
       modal._editing = null;
     }
+
+    // show modal and lock scroll
+    modal.classList.remove('hidden');
+    document.body.classList.add('dc-modal-open');
+
+    // focus first input
+    setTimeout(() => {
+      const first = $id('m-name');
+      if (first) first.focus();
+    }, 60);
+
+    // attach overlay click handler (close when clicking outside modal content)
+    if (!modal._overlayHandler) {
+      modal._overlayHandler = function (ev) {
+        // if clicked directly on the overlay (not inside the modal box)
+        if (ev.target === modal) {
+          closeModal();
+        }
+      };
+      modal.addEventListener('click', modal._overlayHandler);
+    }
+
+    // attach ESC key handler
+    if (!modal._escHandler) {
+      modal._escHandler = function (ev) {
+        if (ev.key === 'Escape' || ev.key === 'Esc') {
+          closeModal();
+        }
+      };
+      document.addEventListener('keydown', modal._escHandler);
+    }
   }
 
-  function closeModal(){ $id('modal-root').classList.add('hidden'); }
+  function closeModal(){
+    const modal = $id('modal-root');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    // clear editing state
+    modal._editing = null;
+    // unlock scroll
+    document.body.classList.remove('dc-modal-open');
+    // remove temporary handlers (we keep them attached but safe to remove)
+    if (modal._overlayHandler) {
+      modal.removeEventListener('click', modal._overlayHandler);
+      modal._overlayHandler = null;
+    }
+    if (modal._escHandler) {
+      document.removeEventListener('keydown', modal._escHandler);
+      modal._escHandler = null;
+    }
+  }
 
   function saveModal(){
     const modal = $id('modal-root');
