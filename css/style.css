@@ -16,23 +16,25 @@ body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:#f3f4f6;co
 .btn.tiny{padding:6px 8px;font-size:13px}
 .btn.danger{background:#ef4444;color:#fff}
 .panel{background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.table-wrap{overflow:auto}
+.table-wrap{overflow:auto;max-height:360px}
 table{width:100%;border-collapse:collapse}
 thead th{font-size:12px;color:var(--muted);text-align:left;padding:8px 6px;border-bottom:1px solid #eef2f7}
 tbody td{padding:8px 6px;border-bottom:1px solid #f3f4f6}
 .muted{color:var(--muted)}
 .hidden{display:none}
-.modal-root{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45)}
-.modal{background:#fff;padding:14px;border-radius:8px;width:420px;box-shadow:0 5px 30px rgba(2,6,23,.35)}
-.modal input, .modal select{width:100%;padding:8px;margin-top:6px}
+.modal-root{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:9999;pointer-events:auto}
+.modal-root.hidden{display:none}
+.modal{background:#fff;padding:14px;border-radius:8px;width:420px;box-shadow:0 8px 40px rgba(2,6,23,.35);max-height:90vh;overflow:auto}
+.modal input, .modal select{width:100%;padding:8px;margin-top:6px;box-sizing:border-box}
+body.dc-modal-open{overflow:hidden}
 .pagination{margin-top:10px;display:flex;gap:6px;align-items:center}
 .kpis-row{display:flex;gap:12px;margin-bottom:12px}
 .kpi{background:#fff;padding:10px;border-radius:8px;min-width:120px}
-.footer{margin-top:16px;color:var(--muted)}
-.modal-root{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:9999}
-.modal{background:#fff;padding:14px;border-radius:8px;width:420px;box-shadow:0 5px 30px rgba(2,6,23,.35);max-height:90vh;overflow:auto}
-body.dc-modal-open{overflow:hidden} /* evita que la página haga scroll mientras modal abierto */
-/* pequeño ajuste para que el modal responda en móviles */
-@media (max-width:480px){
-  .modal{width:92%;margin:0 4%}
+.pipeline{display:flex;gap:12px;align-items:flex-start}
+.pipeline .col{width:260px;background:#fff;border-radius:8px;padding:10px;min-height:120px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card{background:#f8fafc;padding:8px;border-radius:6px;margin-bottom:8px;cursor:grab}
+@media (max-width:800px){
+  .sidebar{display:none}
+  .main{margin-left:12px}
+  .modal{width:92%}
 }
