@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DataConecta — Analítica (con datos reales)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--bg:#0f172a;--panel:#ffffff;--muted:#9ca3af;--accent:#2563eb}
+    html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:#f3f4f6}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--bg);color:#fff}
+    .top-left{display:flex;gap:12px;align-items:center}
+    .kpis{display:flex;gap:12px;align-items:center}
+    .kpi{background:var(--panel);color:#111827;padding:10px 14px;border-radius:8px;min-width:130px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .kpi .label{font-size:12px;color:var(--muted)}
+    .kpi .value{font-size:20px;font-weight:600;margin-top:6px}
+    .controls{display:flex;gap:8px;align-items:center}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;padding:12px}
+    .panel{background:var(--panel);padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(16,24,40,.04)}
+    .filters{display:flex;gap:8px;align-items:center;margin-left:8px}
+    input[type="date"]{padding:6px;border-radius:6px;border:1px solid #e5e7eb}
+    button.btn{padding:8px 10px;border-radius:6px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+    .small{font-size:13px;color:var(--muted)}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    thead th{font-size:12px;text-align:left;color:var(--muted);padding:8px 6px;border-bottom:1px solid #eef2f7}
+    tbody td{padding:8px 6px;border-bottom:1px solid #f3f4f6}
+    .table-wrap{max-height:360px;overflow:auto}
+    .toolbar-actions{display:flex;gap:8px;align-items:center}
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <script src="js/analytics-full.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-left">
+      <div style="font-weight:700">Analítica — DataConecta</div>
+      <div class="filters">
+        <label class="small" style="color:#d1d5db">Desde</label>
+        <input id="from" type="date"/>
+        <label class="small" style="color:#d1d5db">Hasta</label>
+        <input id="to" type="date"/>
+        <button id="btn-refresh" class="btn">Aplicar</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="toolbar-actions">
+        <button id="btn-export-contacts" class="btn" title="Exportar contactos CSV"><i class="fas fa-file-csv" style="margin-right:8px"></i>Contacts CSV</button>
+        <button id="btn-export-deals" class="btn" title="Exportar deals CSV"><i class="fas fa-file-csv" style="margin-right:8px"></i>Deals CSV</button>
+        <a href="index.html" class="btn" style="background:#374151;text-decoration:none;color:#fff"><i class="fas fa-arrow-left" style="margin-right:8px"></i>Volver</a>
+      </div>
+    </div>
+  </header>
+
+  <div style="padding:12px 12px 0 12px">
+    <div class="kpis" style="margin-bottom:12px">
+      <div class="kpi">
+        <div class="label">Nuevos contactos</div>
+        <div id="kpi-contacts" class="value">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Oportunidades</div>
+        <div id="kpi-deals" class="value">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Ingresos (ganadas)</div>
+        <div id="kpi-revenue" class="value">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Tasa conversión</div>
+        <div id="kpi-conv" class="value">—</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="grid">
+    <section>
+      <div class="panel">
+        <h4 style="margin:0 0 8px 0">Visión temporal</h4>
+        <canvas id="chart-sessions" height="110"></canvas>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="panel" style="margin-top:12px">
+        <h4 style="margin:0 0 8px 0">Conversiones y revenue</h4>
+        <canvas id="chart-conversions-full" height="110"></canvas>
+        <div style="height:12px"></div>
+        <canvas id="chart-revenue-full" height="110"></canvas>
+      </div>
+    </section>
+
+    <aside>
+      <div class="panel">
+        <h4 style="margin:0 0 8px 0">Distribución / Detalle</h4>
+        <canvas id="chart-devices" height="150"></canvas>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h4 style="margin:0">Tabla de events</h4>
+          <div class="small">Detalle exportable</div>
+        </div>
+        <div class="table-wrap" id="table-details">
+          <table id="details-table">
+            <thead><tr><th>Tipo</th><th>Nombre / Email</th><th>Fecha</th><th>Importe</th></tr></thead>
+            <tbody id="details-tbody"><tr><td colspan="4" class="small">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer style="padding:12px;color:#6b7280;font-size:13px">Analítica conectada a localStorage — busco automáticamente claves comunes. Si tus datos usan otras claves, ajusta js/analytics-full.js</footer>
+</body>
+</html>
