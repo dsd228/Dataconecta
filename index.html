@@ -3,77 +3,109 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DataConecta CRM — Premium Local</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>DataConecta — CRM mejorado</title>
   <link rel="stylesheet" href="css/style.css">
-  <!-- Chart.js (analytics) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="js/storage.js" defer></script>
-  <script src="js/analytics.js" defer></script>
-  <script src="js/ui.js" defer></script>
-  <script src="js/editor.js" defer></script>
-  <script src="js/main.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/contacts.js" defer></script>
+  <!-- Agregar más módulos: companies.js, deals.js, analytics-full.js, editor-full.js -->
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand"><i class="fas fa-database"></i> DataConecta <span class="tag">Premium (Local)</span></div>
-    <div class="controls">
-      <button id="btn-export" class="btn" title="Exportar JSON"><i class="fas fa-file-export"></i></button>
-      <button id="btn-export-csv-contacts" class="btn" title="Exportar CSV contactos"><i class="fas fa-file-csv"></i></button>
-      <button id="btn-export-csv-deals" class="btn" title="Exportar CSV deals"><i class="fas fa-file-csv"></i></button>
-      <button id="btn-import" class="btn" title="Importar"><i class="fas fa-file-import"></i></button>
-      <button id="btn-undo" class="btn" title="Deshacer"><i class="fas fa-undo"></i></button>
-      <div id="save-indicator" class="save-indicator">—</div>
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-database"></i> DataConecta</div>
+    <nav>
+      <a href="#/dashboard" data-route>Dashboard</a>
+      <a href="#/contacts" data-route class="active">Contactos</a>
+      <a href="#/companies" data-route>Empresas</a>
+      <a href="#/deals" data-route>Deals</a>
+      <a href="#/tasks" data-route>Tareas</a>
+      <a href="analytics.html" target="_self">Analítica</a>
+      <a href="editor.html" target="_self">Editor</a>
+      <a href="#/settings" data-route>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button id="btn-seed" class="btn tiny">Cargar ejemplo</button>
+      <button id="btn-clear" class="btn tiny danger">Borrar datos</button>
     </div>
-  </header>
+  </aside>
 
-  <main class="container">
-    <section class="hero panel">
-      <h1>Gestión de contactos — DataConecta Premium (Local)</h1>
-      <p class="muted">Guarda y organiza tus contactos, leads y empresas. Historial de interacciones, pipeline visual, segmentación avanzada, analítica y automatizaciones simuladas — todo en local[...]
-      <div class="hero-actions">
-        <button id="btn-add-contact" class="btn primary"><i class="fas fa-plus"></i> Agregar contacto</button>
-        <button id="btn-add-deal" class="btn"><i class="fas fa-briefcase"></i> Nueva Oportunidad</button>
-      </div>
-    </section>
-
-    <section class="layout">
-      <div class="left">
-        <!-- left content (sin cambios relevante) -->
-      </div>
-
-      <aside class="right">
-        <div class="panel">
-          <h4>Analítica <a class="small muted" href="analytics.html" title="Abrir módulo de analítica completo" style="margin-left:8px"><i class="fas fa-external-link-alt"></i> Abrir módulo completo</a></h4>
-          <canvas id="chart-conversions" width="320" height="200"></canvas>
-          <canvas id="chart-revenue" width="320" height="200" style="margin-top:12px"></canvas>
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <h1 id="page-title">Contactos</h1>
+        <div class="search-inline">
+          <input id="global-q" placeholder="Buscar..." />
+          <select id="global-stage"><option value="">Todas</option><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select>
+          <button id="global-filter" class="btn">Filtrar</button>
         </div>
+      </div>
+      <div class="top-right">
+        <button id="btn-new-contact" class="btn primary"><i class="fas fa-plus"></i> Nuevo</button>
+        <button id="btn-export-json" class="btn"><i class="fas fa-file-export"></i></button>
+        <button id="btn-import-json" class="btn"><i class="fas fa-file-import"></i></button>
+      </div>
+    </header>
 
+    <section id="view-container" class="view">
+      <!-- Vistas se insertan aquí por app.js -->
+      <div id="view-contacts" class="view-panel">
         <div class="panel">
-          <h4>Editor <a class="small muted" href="editor.html" title="Abrir editor completo" style="margin-left:8px"><i class="fas fa-external-link-alt"></i> Abrir módulo completo</a></h4>
-          <div class="stack">
-            <label class="muted">Editor de notas / plantillas (vista rápida)</label>
-            <textarea id="editor" placeholder="Escribe aquí tus notas, plantillas o snippets..." rows="6" style="width:100%;font-family:monospace;"></textarea>
-            <div class="row" style="margin-top:8px">
-              <button id="editor-save" class="btn primary"><i class="fas fa-save"></i> Guardar</button>
-            </div>
-            <div id="editor-status" class="small muted" style="margin-top:6px">—</div>
+          <h3>Contactos</h3>
+          <div class="table-wrap">
+            <table id="contacts-table" aria-label="Lista de contactos">
+              <thead><tr><th>Nombre</th><th>Email</th><th>Tel</th><th>Empresa</th><th>Etapa</th><th>Creado</th><th>Acciones</th></tr></thead>
+              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">Cargando...</td></tr></tbody>
+            </table>
           </div>
-        </div>
 
-      </aside>
+          <div class="pagination" id="contacts-pagination"></div>
+        </div>
+      </div>
+
+      <div id="view-dashboard" class="view-panel hidden">
+        <div class="panel">
+          <h3>Dashboard</h3>
+          <div id="dashboard-kpis" class="kpis-row"></div>
+          <canvas id="dashboard-chart" height="120"></canvas>
+        </div>
+      </div>
+
+      <div id="view-placeholder" class="view-panel hidden">
+        <div class="panel">
+          <h3>Próximamente</h3>
+          <p class="muted">Módulo en construcción. Puedo priorizar Companies, Deals o Tareas según prefieras.</p>
+        </div>
+      </div>
     </section>
+
+    <footer class="footer">DataConecta — Demo local. Los datos se guardan en localStorage.</footer>
   </main>
 
-  <footer class="muted">Demo premium local — todo persiste en localStorage. Puedo subir la rama al repo y abrir PR si querés.</footer>
+  <!-- Modal: Contact form -->
+  <div id="modal-root" class="modal-root hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="modal-title">Nuevo contacto</h3>
+      <div class="modal-body">
+        <label>Nombre <input id="m-name"/></label>
+        <label>Email <input id="m-email"/></label>
+        <label>Teléfono <input id="m-tel"/></label>
+        <label>Empresa <input id="m-company"/></label>
+        <label>Etapa
+          <select id="m-stage">
+            <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button id="m-save" class="btn primary">Guardar</button>
+        <button id="m-cancel" class="btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
-  <!-- Hidden file inputs -->
-  <input id="import-file" type="file" accept="application/json" class="hidden" />
-  <input id="editor-import-file" type="file" accept=".txt,application/json,text/plain" class="hidden" />
-
-  <!-- Modals and Toast container -->
-  <div id="modal-root"></div>
-  <div id="toast-wrap" class="toast-wrap"></div>
+  <input id="file-import" type="file" accept="application/json" class="hidden"/>
 
 </body>
 </html>
