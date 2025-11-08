@@ -3,149 +3,112 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DataConecta — CRM completo (MVP)</title>
-
+  <title>DataConecta — CRM Moderno</title>
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='14'>DC</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js" defer></script>
-
-  <script src="js/storage.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <script src="js/app.js" defer></script>
-  <script src="js/contacts.js" defer></script>
-  <script src="js/companies.js" defer></script>
-  <script src="js/deals.js" defer></script>
-  <script src="js/communications.js" defer></script>
-  <script src="js/analytics-full.js" defer></script>
 </head>
-<body>
+<body style="font-family: 'Inter', sans-serif;">
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-database"></i> DataConecta</div>
     <nav>
-      <a href="#/dashboard" data-route>Dashboard</a>
-      <a href="#/contacts" data-route class="active">Contactos</a>
-      <a href="#/companies" data-route>Empresas</a>
-      <a href="#/deals" data-route>Deals</a>
-      <a href="#/communications" data-route>Comunicaciones</a>
-      <a href="analytics.html" target="_self">Analítica</a>
-      <a href="editor.html" target="_self">Editor</a>
-      <a href="#/settings" data-route>Settings</a>
+      <a href="#dashboard" class="active"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a href="#contacts"><i class="fas fa-address-book"></i> Contactos</a>
+      <a href="#companies"><i class="fas fa-building"></i> Empresas</a>
+      <a href="#deals"><i class="fas fa-rocket"></i> Ventas</a>
+      <a href="#communications"><i class="fas fa-envelope"></i> Comunicación</a>
+      <a href="#marketing"><i class="fas fa-bullhorn"></i> Marketing</a>
+      <a href="#service"><i class="fas fa-headset"></i> Servicio</a>
+      <a href="#analytics"><i class="fas fa-chart-bar"></i> Analítica</a>
+      <a href="#settings"><i class="fas fa-cog"></i> Ajustes</a>
     </nav>
     <div class="sidebar-footer">
-      <button id="btn-seed" class="btn tiny">Cargar ejemplo</button>
-      <button id="btn-clear" class="btn tiny danger">Borrar datos</button>
+      <button class="btn tiny"><i class="fas fa-magic"></i> Demo</button>
+      <button class="btn tiny danger"><i class="fas fa-trash"></i> Borrar datos</button>
     </div>
   </aside>
-
-  <main class="main">
-    <header class="topbar">
-      <div class="top-left">
-        <h1 id="page-title">Contactos</h1>
-        <div class="search-inline">
-          <input id="global-q" placeholder="Buscar por nombre, email, empresa..." />
-          <select id="global-stage"><option value="">Todas</option><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select>
-          <button id="global-filter" class="btn">Filtrar</button>
-        </div>
-      </div>
-      <div class="top-right">
-        <button id="btn-new-contact" class="btn primary"><i class="fas fa-plus"></i> Nuevo</button>
-        <button id="btn-export-json" class="btn" title="Exportar JSON"><i class="fas fa-file-export"></i></button>
-        <button id="btn-import-json" class="btn" title="Importar JSON"><i class="fas fa-file-import"></i></button>
-      </div>
+  <main class="main" style="background:#F7FBFC;">
+    <header class="topbar" style="padding: 1.5rem 2rem; background: #fff; border-bottom:1px solid #e0e0e0;">
+      <h1 style="font-weight:700;font-size:2rem;">CRM Gestión Integral de Contactos</h1>
+      <p style="color:#888;">Unifica clientes, gestiona comunicación y acelera ventas desde una plataforma moderna.</p>
     </header>
-
-    <section id="view-container" class="view">
-      <!-- Contacts view -->
-      <div id="view-contacts" class="view-panel">
-        <div class="panel">
-          <h3>Contactos</h3>
-          <div class="table-wrap">
-            <table id="contacts-table" aria-label="Lista de contactos">
-              <thead><tr><th>Nombre</th><th>Email</th><th>Tel</th><th>Empresa</th><th>Etapa</th><th>Creado</th><th>Acciones</th></tr></thead>
-              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">Cargando...</td></tr></tbody>
-            </table>
-          </div>
-          <div class="pagination" id="contacts-pagination"></div>
-        </div>
+    <section style="padding:2rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:2rem;">
+      <div class="card">
+        <h2>Gestión de contactos <i class="fas fa-users" style="color:#316AFF;"></i></h2>
+        <ul>
+          <li>Guarda y organiza todos los datos de clientes, leads y empresas.</li>
+          <li>Historial de interacciones: emails, llamadas, reuniones, formularios.</li>
+          <li>Segmenta según criterios (ubicación, etapa, tipo de cliente...).</li>
+        </ul>
+        <div class="example"><i class="fas fa-filter"></i> Ejemplo: Filtra leads que abrieron un email pero no compraron.</div>
       </div>
-
-      <!-- Companies view -->
-      <div id="view-companies" class="view-panel hidden">
-        <div class="panel">
-          <h3>Empresas</h3>
-          <div class="table-wrap">
-            <table id="companies-table"><thead><tr><th>Empresa</th><th>Dominio</th><th>Ingresos</th><th>Acciones</th></tr></thead>
-              <tbody id="companies-tbody"><tr><td colspan="4" class="muted">Cargando...</td></tr></tbody>
-            </table>
-          </div>
-          <div style="margin-top:10px"><button id="btn-new-company" class="btn">Nueva empresa</button></div>
-        </div>
+      <div class="card">
+        <h2>Comunicación y Seguimiento <i class="fas fa-comments" style="color:#18BFA6;"></i></h2>
+        <ul>
+          <li>Email tracking: avisa cuándo se abre un correo o se hace clic.</li>
+          <li>Plantillas y envíos automáticos por comportamiento.</li>
+          <li>Chat en vivo y chatbots en el sitio web.</li>
+          <li>Registro de llamadas y reuniones en el CRM.</li>
+        </ul>
       </div>
-
-      <!-- Deals / pipeline view -->
-      <div id="view-deals" class="view-panel hidden">
-        <div class="panel">
-          <h3>Pipeline</h3>
-          <div id="pipeline" class="pipeline"></div>
-          <div style="margin-top:8px"><button id="btn-new-deal" class="btn">Nueva oportunidad</button></div>
-        </div>
+      <div class="card">
+        <h2>Ventas <i class="fas fa-briefcase" style="color:#FFB746;"></i></h2>
+        <ul>
+          <li>Pipeline visual del proceso de ventas.</li>
+          <li>Tareas automáticas y recordatorios.</li>
+          <li>Forecast y métricas de desempeño.</li>
+        </ul>
+        <div class="example"><i class="fas fa-eye"></i> Ejemplo: Visualiza acuerdos por cerrar esta semana y su valor.</div>
       </div>
-
-      <!-- Communications view -->
-      <div id="view-communications" class="view-panel hidden">
-        <div class="panel">
-          <h3>Comunicaciones</h3>
-          <div style="display:flex;gap:8px;margin-bottom:8px">
-            <select id="comm-type"><option value="email">Email</option><option value="call">Llamada</option><option value="meeting">Reunión</option></select>
-            <input id="comm-contact" placeholder="Contact ID (o dejar vacío)"/>
-            <input id="comm-subject" placeholder="Asunto"/>
-            <button id="btn-log-comm" class="btn">Registrar</button>
-            <button id="btn-sim-open" class="btn">Simular apertura</button>
-          </div>
-          <div class="table-wrap">
-            <table id="interactions-table"><thead><tr><th>Tipo</th><th>Contacto</th><th>Asunto</th><th>Fecha</th><th>Meta</th></tr></thead>
-              <tbody id="interactions-tbody"><tr><td colspan="5" class="muted">Cargando...</td></tr></tbody>
-            </table>
-          </div>
-        </div>
+      <div class="card">
+        <h2>Marketing <i class="fas fa-bullhorn" style="color:#A46CFF;"></i></h2>
+        <ul>
+          <li>Automatización con flujos y acciones por conducta.</li>
+          <li>Gestión campañas: email, redes, anuncios.</li>
+          <li>Landing pages y formularios integrados.</li>
+          <li>Analítica de tráfico y conversiones.</li>
+        </ul>
       </div>
-
-      <!-- Dashboard placeholder -->
-      <div id="view-dashboard" class="view-panel hidden">
-        <div class="panel">
-          <h3>Dashboard</h3>
-          <div id="dashboard-kpis" class="kpis-row"></div>
-          <canvas id="dashboard-chart" height="120"></canvas>
-        </div>
+      <div class="card">
+        <h2>Servicio al Cliente <i class="fas fa-headset" style="color:#5F70FF;"></i></h2>
+        <ul>
+          <li>Tickets de soporte y consultas.</li>
+          <li>Base de conocimientos y guías.</li>
+          <li>Encuestas de satisfacción (NPS, CES, CSAT).</li>
+        </ul>
       </div>
-
-      <div id="view-placeholder" class="view-panel hidden">
-        <div class="panel">
-          <h3>Próximamente</h3>
-          <p class="muted">Módulo en construcción.</p>
-        </div>
+      <div class="card">
+        <h2>Analítica & Informes <i class="fas fa-chart-line" style="color:#FF6978;"></i></h2>
+        <ul>
+          <li>Paneles personalizados para ventas, marketing y servicio.</li>
+          <li>Medición de ROI y efectividad comercial.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Integraciones <i class="fas fa-plug" style="color:#444;"></i></h2>
+        <ul>
+          <li>Conexión fácil: Gmail, Outlook, Shopify, Stripe, WhatsApp, Slack, Zapier...</li>
+        </ul>
       </div>
     </section>
-
-    <footer class="footer">DataConecta — Demo local. Los datos se guardan en localStorage.</footer>
+    <footer class="footer" style="text-align:center;padding:1rem;color:#888;background:#fff;border-top:1px solid #e0e0e0;">
+      DataConecta — Demo local. Los datos se guardan en localStorage.
+    </footer>
   </main>
-
-  <!-- Modal: Contact form -->
-  <div id="modal-root" class="modal-root hidden" role="dialog" aria-modal="true">
+  <!-- Modal de ejemplo, para crear contacto -->
+  <div class="modal-root hidden" role="dialog" aria-modal="true" id="modal-root">
     <div class="modal">
       <h3 id="modal-title">Nuevo contacto</h3>
       <div class="modal-body">
-        <label>Nombre <input id="m-name"/></label>
-        <label>Email <input id="m-email"/></label>
-        <label>Teléfono <input id="m-tel"/></label>
-        <label>Empresa <input id="m-company"/></label>
-        <label>Etapa
-          <select id="m-stage">
-            <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
-          </select>
-        </label>
+        <label>Nombre <input id="m-name" /></label>
+        <label>Email <input id="m-email" /></label>
+        <label>Teléfono <input id="m-tel" /></label>
+        <label>Empresa <input id="m-company" /></label>
+        <label>Etapa <select id="m-stage">
+          <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
+        </select></label>
       </div>
       <div class="modal-actions">
         <button id="m-save" class="btn primary">Guardar</button>
@@ -153,8 +116,6 @@
       </div>
     </div>
   </div>
-
   <input id="file-import" type="file" accept="application/json" class="hidden"/>
-
 </body>
 </html>
