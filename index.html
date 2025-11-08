@@ -11,6 +11,7 @@
   <script src="js/storage.js" defer></script>
   <script src="js/analytics.js" defer></script>
   <script src="js/ui.js" defer></script>
+  <script src="js/editor.js" defer></script>
   <script src="js/main.js" defer></script>
 </head>
 <body>
@@ -29,7 +30,7 @@
   <main class="container">
     <section class="hero panel">
       <h1>Gestión de contactos — DataConecta Premium (Local)</h1>
-      <p class="muted">Guarda y organiza tus contactos, leads y empresas. Historial de interacciones, pipeline visual, segmentación avanzada, analítica y automatizaciones simuladas — todo en localStorage.</p>
+      <p class="muted">Guarda y organiza tus contactos, leads y empresas. Historial de interacciones, pipeline visual, segmentación avanzada, analítica y automatizaciones simuladas — todo en local[...]
       <div class="hero-actions">
         <button id="btn-add-contact" class="btn primary"><i class="fas fa-plus"></i> Agregar contacto</button>
         <button id="btn-add-deal" class="btn"><i class="fas fa-briefcase"></i> Nueva Oportunidad</button>
@@ -98,14 +99,32 @@
           <canvas id="chart-conversions" width="320" height="200"></canvas>
           <canvas id="chart-revenue" width="320" height="200" style="margin-top:12px"></canvas>
         </div>
+
+        <!-- Nuevo módulo: Editor -->
+        <div class="panel">
+          <h4>Editor</h4>
+          <div class="stack">
+            <label class="muted">Editor de notas / plantillas / snippets (persisten en local)</label>
+            <textarea id="editor" placeholder="Escribe aquí tus notas, plantillas o snippets..." rows="10" style="width:100%;font-family:monospace;"></textarea>
+            <div class="row" style="margin-top:8px">
+              <button id="editor-save" class="btn primary"><i class="fas fa-save"></i> Guardar</button>
+              <button id="editor-load-sample" class="btn"><i class="fas fa-file-import"></i> Cargar ejemplo</button>
+              <button id="editor-export" class="btn"><i class="fas fa-file-export"></i> Exportar</button>
+              <button id="editor-import" class="btn"><i class="fas fa-file-import"></i> Importar</button>
+            </div>
+            <div id="editor-status" class="small muted" style="margin-top:6px">—</div>
+          </div>
+        </div>
+
       </aside>
     </section>
   </main>
 
   <footer class="muted">Demo premium local — todo persiste en localStorage. Puedo subir la rama al repo y abrir PR si querés.</footer>
 
-  <!-- Hidden file input -->
+  <!-- Hidden file inputs -->
   <input id="import-file" type="file" accept="application/json" class="hidden" />
+  <input id="editor-import-file" type="file" accept=".txt,application/json,text/plain" class="hidden" />
 
   <!-- Modals and Toast container -->
   <div id="modal-root"></div>
