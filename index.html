@@ -1,103 +1,160 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dataconecta CRM</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DataConecta — CRM completo (MVP)</title>
+
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='14'>DC</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js" defer></script>
+
+  <script src="js/storage.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/contacts.js" defer></script>
+  <script src="js/companies.js" defer></script>
+  <script src="js/deals.js" defer></script>
+  <script src="js/communications.js" defer></script>
+  <script src="js/analytics-full.js" defer></script>
 </head>
 <body>
-  <header>
-    <h1>📊 Dataconecta CRM</h1>
+  <aside class="sidebar">
+    <div class="brand"><i class="fas fa-database"></i> DataConecta</div>
     <nav>
-      <button id="btn-view-contacts">Contactos</button>
-      <button id="btn-view-analytics">Analítica</button>
-      <button id="btn-view-editor">Editor</button>
+      <a href="#/dashboard" data-route>Dashboard</a>
+      <a href="#/contacts" data-route class="active">Contactos</a>
+      <a href="#/companies" data-route>Empresas</a>
+      <a href="#/deals" data-route>Deals</a>
+      <a href="#/communications" data-route>Comunicaciones</a>
+      <a href="analytics.html" target="_self">Analítica</a>
+      <a href="editor.html" target="_self">Editor</a>
+      <a href="#/settings" data-route>Settings</a>
     </nav>
-  </header>
+    <div class="sidebar-footer">
+      <button id="btn-seed" class="btn tiny">Cargar ejemplo</button>
+      <button id="btn-clear" class="btn tiny danger">Borrar datos</button>
+    </div>
+  </aside>
 
-  <main id="main-content">
-    <!-- Vista de Contactos -->
-    <section id="contacts-view" class="view">
-      <h2>Contactos</h2>
-      <div class="toolbar">
-        <input type="text" id="global-q" placeholder="Buscar contacto..." />
-        <select id="global-stage">
-          <option value="">Todas las etapas</option>
-          <option value="Lead">Lead</option>
-          <option value="Cliente">Cliente</option>
-        </select>
-        <button id="global-filter">Filtrar</button>
-        <button id="btn-new-contact">Nuevo contacto</button>
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <h1 id="page-title">Contactos</h1>
+        <div class="search-inline">
+          <input id="global-q" placeholder="Buscar por nombre, email, empresa..." />
+          <select id="global-stage"><option value="">Todas</option><option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option></select>
+          <button id="global-filter" class="btn">Filtrar</button>
+        </div>
       </div>
-      <table id="contacts-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Teléfono</th>
-            <th>Empresa</th>
-            <th>Etapa</th>
-            <th>Creado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="contacts-tbody">
-          <!-- Los contactos se cargarán aquí -->
-        </tbody>
-      </table>
-      <div id="contacts-pagination" class="pagination"></div>
-    </section>
+      <div class="top-right">
+        <button id="btn-new-contact" class="btn primary"><i class="fas fa-plus"></i> Nuevo</button>
+        <button id="btn-export-json" class="btn" title="Exportar JSON"><i class="fas fa-file-export"></i></button>
+        <button id="btn-import-json" class="btn" title="Importar JSON"><i class="fas fa-file-import"></i></button>
+      </div>
+    </header>
 
-    <!-- Vista de Analítica -->
-    <section id="analytics-view" class="view hidden">
-      <h2>Analítica</h2>
-      <canvas id="analytics-chart" width="400" height="200"></canvas>
-    </section>
+    <section id="view-container" class="view">
+      <!-- Contacts view -->
+      <div id="view-contacts" class="view-panel">
+        <div class="panel">
+          <h3>Contactos</h3>
+          <div class="table-wrap">
+            <table id="contacts-table" aria-label="Lista de contactos">
+              <thead><tr><th>Nombre</th><th>Email</th><th>Tel</th><th>Empresa</th><th>Etapa</th><th>Creado</th><th>Acciones</th></tr></thead>
+              <tbody id="contacts-tbody"><tr><td colspan="7" class="muted">Cargando...</td></tr></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="contacts-pagination"></div>
+        </div>
+      </div>
 
-    <!-- Vista de Editor -->
-    <section id="editor-view" class="view hidden">
-      <h2>Editor</h2>
-      <canvas id="editor-canvas" width="600" height="400" style="border:1px solid #ccc;"></canvas>
-      <div class="tools">
-        <button id="add-rect">Rectángulo</button>
-        <button id="add-circle">Círculo</button>
-        <button id="add-text">Texto</button>
-        <button id="clear-canvas">Limpiar</button>
+      <!-- Companies view -->
+      <div id="view-companies" class="view-panel hidden">
+        <div class="panel">
+          <h3>Empresas</h3>
+          <div class="table-wrap">
+            <table id="companies-table"><thead><tr><th>Empresa</th><th>Dominio</th><th>Ingresos</th><th>Acciones</th></tr></thead>
+              <tbody id="companies-tbody"><tr><td colspan="4" class="muted">Cargando...</td></tr></tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px"><button id="btn-new-company" class="btn">Nueva empresa</button></div>
+        </div>
+      </div>
+
+      <!-- Deals / pipeline view -->
+      <div id="view-deals" class="view-panel hidden">
+        <div class="panel">
+          <h3>Pipeline</h3>
+          <div id="pipeline" class="pipeline"></div>
+          <div style="margin-top:8px"><button id="btn-new-deal" class="btn">Nueva oportunidad</button></div>
+        </div>
+      </div>
+
+      <!-- Communications view -->
+      <div id="view-communications" class="view-panel hidden">
+        <div class="panel">
+          <h3>Comunicaciones</h3>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <select id="comm-type"><option value="email">Email</option><option value="call">Llamada</option><option value="meeting">Reunión</option></select>
+            <input id="comm-contact" placeholder="Contact ID (o dejar vacío)"/>
+            <input id="comm-subject" placeholder="Asunto"/>
+            <button id="btn-log-comm" class="btn">Registrar</button>
+            <button id="btn-sim-open" class="btn">Simular apertura</button>
+          </div>
+          <div class="table-wrap">
+            <table id="interactions-table"><thead><tr><th>Tipo</th><th>Contacto</th><th>Asunto</th><th>Fecha</th><th>Meta</th></tr></thead>
+              <tbody id="interactions-tbody"><tr><td colspan="5" class="muted">Cargando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard placeholder -->
+      <div id="view-dashboard" class="view-panel hidden">
+        <div class="panel">
+          <h3>Dashboard</h3>
+          <div id="dashboard-kpis" class="kpis-row"></div>
+          <canvas id="dashboard-chart" height="120"></canvas>
+        </div>
+      </div>
+
+      <div id="view-placeholder" class="view-panel hidden">
+        <div class="panel">
+          <h3>Próximamente</h3>
+          <p class="muted">Módulo en construcción.</p>
+        </div>
       </div>
     </section>
+
+    <footer class="footer">DataConecta — Demo local. Los datos se guardan en localStorage.</footer>
   </main>
 
-  <!-- Modal para nuevo contacto -->
-  <div id="modal-root" class="hidden">
+  <!-- Modal: Contact form -->
+  <div id="modal-root" class="modal-root hidden" role="dialog" aria-modal="true">
     <div class="modal">
       <h3 id="modal-title">Nuevo contacto</h3>
-      <label>Nombre <input type="text" id="m-name" /></label>
-      <label>Email <input type="email" id="m-email" /></label>
-      <label>Teléfono <input type="text" id="m-tel" /></label>
-      <label>Empresa <input type="text" id="m-company" /></label>
-      <label>Etapa 
-        <select id="m-stage">
-          <option value="Lead">Lead</option>
-          <option value="Cliente">Cliente</option>
-        </select>
-      </label>
-      <div class="actions">
-        <button id="m-save">Guardar</button>
-        <button id="m-cancel">Cancelar</button>
+      <div class="modal-body">
+        <label>Nombre <input id="m-name"/></label>
+        <label>Email <input id="m-email"/></label>
+        <label>Teléfono <input id="m-tel"/></label>
+        <label>Empresa <input id="m-company"/></label>
+        <label>Etapa
+          <select id="m-stage">
+            <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button id="m-save" class="btn primary">Guardar</button>
+        <button id="m-cancel" class="btn">Cancelar</button>
       </div>
     </div>
   </div>
 
-  <!-- Scripts principales -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fabric@5.2.4/dist/fabric.min.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/contacts.js"></script>
-  <script src="js/analytics.js"></script>
-  <script src="js/editor.js"></script>
-  <script src="js/app.js"></script>
+  <input id="file-import" type="file" accept="application/json" class="hidden"/>
+
 </body>
 </html>
