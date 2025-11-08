@@ -1,90 +1,99 @@
-// storage.js
-// Responsible for persisting and syncing data (localStorage + BroadcastChannel)
-(function(window){
-  const KV = {
-    CONTACTS: 'dataconecta_contacts_v3',
-    DEALS: 'dataconecta_deals_v3',
-    COMMS: 'dataconecta_comms_v3',
-    TICKETS: 'dataconecta_tickets_v3'
-  };
+// storage.js — wrapper robusto para localStorage con versionado y undo stack
+(function (global) {
+  const PREFIX = 'dataconecta:v1:'; // incrementar versión cuando cambie esquema
+  const UNDO_KEY = PREFIX + '__undo';
+  function key(k){ return PREFIX + k; }
 
-  function uid(){ return 'id_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-  function safeParse(v){ try{ return JSON.parse(v||'[]') }catch(e){ return [] } }
-
-  // simple in-memory caches
-  let contacts = [], deals = [], comms = [], tickets = [];
-  let bc = null;
-  try { bc = new BroadcastChannel('dataconecta_sync_v3'); } catch(e){ bc = null; }
-
-  // load from localStorage
-  function load(){
-    contacts = safeParse(localStorage.getItem(KV.CONTACTS));
-    deals = safeParse(localStorage.getItem(KV.DEALS));
-    comms = safeParse(localStorage.getItem(KV.COMMS));
-    tickets = safeParse(localStorage.getItem(KV.TICKETS));
-    return { contacts, deals, comms, tickets };
+  function safeParse(raw){
+    try { return JSON.parse(raw); } catch(e){ return null; }
   }
 
-  function save(opts = { broadcast: true }){
-    localStorage.setItem(KV.CONTACTS, JSON.stringify(contacts));
-    localStorage.setItem(KV.DEALS, JSON.stringify(deals));
-    localStorage.setItem(KV.COMMS, JSON.stringify(comms));
-    localStorage.setItem(KV.TICKETS, JSON.stringify(tickets));
-    if(opts.broadcast && bc) try{ bc.postMessage({ type: 'sync' }); }catch(e){}
+  function get(k, fallback){
+    const raw = localStorage.getItem(key(k));
+    if (!raw) return fallback === undefined ? null : fallback;
+    const parsed = safeParse(raw);
+    return parsed === null ? raw : parsed;
   }
 
-  function reset(){
-    contacts = []; deals = []; comms = []; tickets = [];
-    save();
-  }
-
-  function exportAll(){
-    return JSON.stringify({ contacts, deals, comms, tickets, exportedAt: new Date().toISOString() }, null, 2);
-  }
-
-  function importAll(obj){
-    if(!obj) return false;
-    contacts = Array.isArray(obj.contacts) ? obj.contacts : contacts;
-    deals = Array.isArray(obj.deals) ? obj.deals : deals;
-    comms = Array.isArray(obj.comms) ? obj.comms : comms;
-    tickets = Array.isArray(obj.tickets) ? obj.tickets : tickets;
-    save();
+  function set(k, v){
+    // push undo
+    pushUndo(k, get(k));
+    localStorage.setItem(key(k), JSON.stringify(v));
+    dispatchChange(k);
     return true;
   }
 
-  // CSV helper
-  function toCSV(arr, fields){
-    const esc = v => `"${String(v||'').replace(/"/g,'""')}"`;
-    const head = fields.join(',');
-    const rows = arr.map(r => fields.map(f=>esc(r[f])).join(',')).join('\n');
-    return head + '\n' + rows;
+  function remove(k){
+    pushUndo(k, get(k));
+    localStorage.removeItem(key(k));
+    dispatchChange(k);
   }
 
-  // API
-  window.DataStore = {
-    uid,
-    load,
-    save,
-    reset,
-    exportAll,
-    importAll,
-    toCSV,
-    get contacts(){ return contacts; },
-    set contacts(v){ contacts = v; },
-    get deals(){ return deals; },
-    set deals(v){ deals = v; },
-    get comms(){ return comms; },
-    set comms(v){ comms = v; },
-    get tickets(){ return tickets; },
-    set tickets(v){ tickets = v; },
-    onSync(cb){
-      if(!bc) return;
-      bc.onmessage = (e)=>{ if(e.data && e.data.type === 'sync'){ cb && cb(); } };
+  function listKeys(){
+    const out = [];
+    for (let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if (k && k.startsWith(PREFIX)) out.push(k.slice(PREFIX.length));
     }
-  };
+    return out;
+  }
 
-  // initialize with current storage
-  load();
-  // expose storage keys (for debugging)
-  window.DataStoreKeys = KV;
+  // Undo stack (simple LIFO, mantiene últimos 50)
+  function pushUndo(k, prev){
+    const stack = safeParse(localStorage.getItem(UNDO_KEY)) || [];
+    stack.push({k, prev, time: Date.now()});
+    while (stack.length > 50) stack.shift();
+    localStorage.setItem(UNDO_KEY, JSON.stringify(stack));
+  }
+  function undoLast(){
+    const stack = safeParse(localStorage.getItem(UNDO_KEY)) || [];
+    if (!stack.length) return null;
+    const last = stack.pop();
+    if (last.prev === null) localStorage.removeItem(key(last.k));
+    else localStorage.setItem(key(last.k), JSON.stringify(last.prev));
+    localStorage.setItem(UNDO_KEY, JSON.stringify(stack));
+    dispatchChange(last.k);
+    return last;
+  }
+
+  // Export / Import
+  function exportAll(){
+    const data = {};
+    listKeys().forEach(k => data[k] = get(k));
+    return JSON.stringify({ exportedAt: new Date().toISOString(), data }, null, 2);
+  }
+
+  function importAll(raw){
+    const parsed = safeParse(raw);
+    if (!parsed || !parsed.data) throw new Error('Formato inválido');
+    Object.entries(parsed.data).forEach(([k,v]) => localStorage.setItem(key(k), JSON.stringify(v)));
+    dispatchChange();
+  }
+
+  // Seeder demo
+  function seedDemo(){
+    const contacts = [
+      { id:'c_1', name:'María López', email:'maria@empresa.com', tel:'600111222', company:'ACME', stage:'Lead', createdAt: new Date(Date.now()-10*86400000).toISOString() },
+      { id:'c_2', name:'Javier Ruiz', email:'jruiz@example.com', tel:'600222333', company:'Beta SL', stage:'Contacto', createdAt: new Date(Date.now()-5*86400000).toISOString() },
+      { id:'c_3', name:'Lucía Pérez', email:'lucia@perez.es', tel:'600333444', company:'Gamma', stage:'Prospecto', createdAt: new Date().toISOString() }
+    ];
+    const deals = [
+      { id:'d_1', title:'Deal ACME', contactId:'c_1', amount:1200, stage:'proposal', createdAt:new Date(Date.now()-9*86400000).toISOString(), closedAt:null, won:false },
+      { id:'d_2', title:'Deal Beta', contactId:'c_2', amount:3200, stage:'won', createdAt:new Date(Date.now()-4*86400000).toISOString(), closedAt:new Date(Date.now()-1*86400000).toISOString(), won:true }
+    ];
+    set('contacts', contacts);
+    set('deals', deals);
+    return { contacts, deals };
+  }
+
+  // Simple event dispatch to listen changes
+  function dispatchChange(k){
+    const ev = new CustomEvent('dataconecta.change', { detail: { key:k }});
+    window.dispatchEvent(ev);
+  }
+
+  // Public API
+  global.DC_Storage = {
+    get, set, remove, listKeys, exportAll, importAll, undoLast, seedDemo, keyPrefix: PREFIX
+  };
 })(window);
