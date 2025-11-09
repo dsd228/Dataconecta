@@ -1,55 +1,43 @@
-#editor-container {
-  display: grid;
-  grid-template-columns: 60px 1fr 250px;
-  grid-template-rows: auto 1fr;
-  gap: 10px;
-  height: 80vh;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 10px;
-  padding: 10px;
-}
-
-#editor-toolbar {
-  grid-column: 1 / 4;
+/* modules/editor.css — ajustes para que la pizarra ocupe todo el espacio disponible */
+.module-editor { display:flex; flex-direction:column; height:100%; min-height:640px; box-sizing:border-box; }
+.editor-body { display:flex; gap:12px; align-items:flex-start; height: calc(100vh - 120px); } /* header + footer space */
+.editor-left { width:260px; flex: 0 0 260px; overflow:auto; }
+.editor-right { width:320px; flex: 0 0 320px; overflow:auto; }
+.editor-center { flex:1; display:flex; flex-direction:column; gap:8px; min-width: 0; } /* min-width:0 prevents flex overflow */
+.canvas-wrap {
+  flex: 1 1 auto;
   display: flex;
-  gap: 8px;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 6px 8px;
-}
-
-.tool, #export-json {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.tool:hover, #export-json:hover {
-  color: #4f46e5;
-}
-
-#editor-main {
-  background: #111827;
-  border-radius: 10px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
+  align-items: stretch;   /* stretch so child canvas fills vertically */
   justify-content: center;
+  position: relative;
+  border:1px solid #e6e6e6;
+  border-radius:6px;
+  background: #fff;
+  overflow: hidden;
+  min-width: 480px; /* allow narrow screens but keep usable */
+  min-height: 360px;
+}
+/* Make the canvas fill the wrapper visually */
+.canvas-wrap > canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
-#editor-sidebar {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 10px;
-  color: #e6eef6;
-  overflow-y: auto;
+/* overlay canvases (heatmap, cursors) must match wrapper and sit on top */
+.canvas-wrap > canvas.heatmap-overlay,
+.canvas-wrap > canvas.realtime-overlay,
+#realtime-cursors {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-#properties-panel {
-  margin-top: 10px;
-  font-size: 14px;
-}
+/* toolbar & controls */
+.controls-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+
+/* ensure editor-main expands */
+.editor-main { height: calc(100vh - 64px); display:flex; gap:12px; padding:12px; box-sizing:border-box; }
