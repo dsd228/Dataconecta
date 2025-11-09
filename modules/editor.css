@@ -1,4 +1,20 @@
-/* modules/editor.css */
-.module-editor { font-family: Inter, system-ui, Arial, sans-serif; }
-.module-editor .btn { background:#4f46e5;color:#fff;border:none;padding:8px;border-radius:6px;cursor:pointer;margin-right:6px; }
-#editor-canvas { max-width:100%; height:auto; display:block; }
+/* modules/editor.css - styles for advanced Editor module */
+.editor-module { font-family: Inter, system-ui, Arial, sans-serif; color:#0b1220; padding:12px; box-sizing:border-box; }
+.editor-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.editor-body { display:flex; gap:12px; align-items:flex-start; }
+.panel { background:#fff; border-radius:8px; padding:12px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+.editor-left { width:280px; display:flex; flex-direction:column; gap:12px; }
+.editor-right { width:320px; display:flex; flex-direction:column; gap:12px; }
+.editor-center { flex:1; display:flex; flex-direction:column; gap:8px; }
+.canvas-wrap { position:relative; border:1px solid #e6e6e6; border-radius:6px; height:520px; background:linear-gradient(#f8fafc,#fff); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+canvas { display:block; background:#fff; }
+.heatmap-overlay { position:absolute; left:0; top:0; pointer-events:none; }
+.tool-grid { display:flex; gap:6px; flex-wrap:wrap; }
+.components-list { max-height:160px; overflow:auto; display:flex; flex-direction:column; gap:6px; }
+.component-card { padding:6px; border:1px solid #eee; border-radius:6px; background:#fafafa; display:flex; justify-content:space-between; align-items:center; }
+.muted { color:#6b7280; font-size:13px; }
+.comments-list { max-height:140px; overflow:auto; }
+.comment-item { padding:6px; border-bottom:1px solid #eee; }
+.btn { background:#4f46e5; color:#fff; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
+.btn.small { padding:6px 8px; font-size:13px; }
+.hidden { display:none; }
