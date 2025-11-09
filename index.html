@@ -25,6 +25,8 @@
     nav.shell-nav{ display:flex; gap:8px; justify-content:center; margin-top:18px; }
     .btn{ background:var(--accent); color:#fff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; }
     footer{ text-align:center; color:var(--muted); margin-top:18px; font-size:13px; }
+    /* Ensure module container scrolls if needed */
+    #app-root { margin-top: 18px; max-height: 60vh; overflow:auto; }
   </style>
 </head>
 <body>
@@ -80,47 +82,75 @@
     async function loadModule({ name, html, js, css, params = {} }) {
       const container = document.getElementById('app-root');
       if (!container) throw new Error('No app root');
-      // destroy previous
+
+      // try to destroy previous module cleanly
       if (window.__currentModule && window.__currentModule.apiName) {
-        try { window[window.__currentModule.apiName]?.destroy?.(); } catch(e){ console.warn('destroy error', e); }
+        try {
+          const prevApi = window[window.__currentModule.apiName];
+          if (prevApi && typeof prevApi.destroy === 'function') {
+            await prevApi.destroy();
+          }
+        } catch (e) { console.warn('previous destroy error', e); }
         container.innerHTML = '';
       }
+
       // load HTML
       const resp = await fetch(html, { cache: 'no-cache' });
-      if (!resp.ok) throw new Error('Failed to load module HTML: ' + html);
+      if (!resp.ok) throw new Error('Failed to load module HTML: ' + html + ' (status ' + resp.status + ')');
       const htmlText = await resp.text();
       container.innerHTML = htmlText;
-      // load css
+
+      // load css if provided and not yet loaded
       if (css && !document.querySelector(`link[data-module="${name}"]`)) {
         const link = document.createElement('link');
         link.rel = 'stylesheet'; link.href = css; link.setAttribute('data-module', name);
         document.head.appendChild(link);
       }
-      // load js
+
+      // load js (if not already loaded)
       if (js && !document.querySelector(`script[data-module="${name}"]`)) {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script');
           s.src = js; s.async = true; s.setAttribute('data-module', name);
           s.onload = () => resolve();
-          s.onerror = (e) => reject(new Error('Failed to load module script: ' + js));
+          s.onerror = (e) => reject(new Error('Failed to load module script: ' + js + ' (' + (e && e.message) + ')'));
           document.body.appendChild(s);
         });
       }
+
       // set current
       const apiName = name + 'API';
       window.__currentModule = { name, apiName };
-      // init
+
+      // call init if available
       if (window[apiName] && typeof window[apiName].init === 'function') {
-        try { await window[apiName].init(params); } catch (err) { console.error('module init failed', err); }
+        try {
+          await window[apiName].init(params);
+        } catch (err) {
+          // bubble up
+          throw err;
+        }
       } else {
         console.warn(`${apiName}.init not found`);
       }
     }
 
-    // bind UI triggers
-    document.getElementById('open-crm')?.addEventListener('click', () => loadModule({ name:'crm', html:'modules/crm.html', js:'modules/crm.js', css:'modules/crm.css' }));
-    document.getElementById('open-editor')?.addEventListener('click', () => loadModule({ name:'editor', html:'modules/editor.html', js:'modules/editor.js', css:'modules/editor.css' }));
-    document.getElementById('open-analytics')?.addEventListener('click', () => loadModule({ name:'analytics', html:'modules/analytics.html', js:'modules/analytics.js', css:'modules/analytics.css' }));
+    // wrapper that shows friendly error UI
+    async function safeLoadModule(opts) {
+      try {
+        await loadModule(opts);
+      } catch (err) {
+        console.error('loadModule failed', err);
+        const container = document.getElementById('app-root');
+        container.innerHTML = '<div style="padding:18px;background:#fff;border-radius:8px;color:#111">Error al cargar el módulo: ' + (err.message || err) + '</div>';
+        alert('No se pudo cargar el módulo. Revisa la consola Network para ver rutas 404 y corrígelas.');
+      }
+    }
+
+    // bind UI triggers using safe loader
+    document.getElementById('open-crm')?.addEventListener('click', () => safeLoadModule({ name:'crm', html:'modules/crm.html', js:'modules/crm.js', css:'modules/crm.css' }));
+    document.getElementById('open-editor')?.addEventListener('click', () => safeLoadModule({ name:'editor', html:'modules/editor.html', js:'modules/editor.js', css:'modules/editor.css' }));
+    document.getElementById('open-analytics')?.addEventListener('click', () => safeLoadModule({ name:'analytics', html:'modules/analytics.html', js:'modules/analytics.js', css:'modules/analytics.css' }));
 
     document.getElementById('btn-open-crm')?.addEventListener('click', () => document.getElementById('open-crm').click());
     document.getElementById('btn-open-editor-shell')?.addEventListener('click', () => document.getElementById('open-editor').click());
