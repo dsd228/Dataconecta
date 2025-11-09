@@ -4,28 +4,27 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>DataConecta — CRM Moderno</title>
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14' font-size='14'>DC</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
   <link rel="stylesheet" href="css/style.css">
-  <!-- Scripts del repositorio -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js" defer></script>
+  <!-- El orden importa -->
   <script src="js/storage.js" defer></script>
   <script src="js/app.js" defer></script>
   <script src="js/contacts.js" defer></script>
   <script src="js/companies.js" defer></script>
   <script src="js/deals.js" defer></script>
   <script src="js/communications.js" defer></script>
-  <script src="js/analytics-full.js" defer></script>
   <script src="js/editor.js" defer></script>
+  <script src="js/analytics-full.js" defer></script>
 </head>
 <body style="font-family: 'Inter', sans-serif;">
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-database"></i> DataConecta</div>
     <nav>
       <a href="#/dashboard" data-route><i class="fas fa-th-large"></i> Dashboard</a>
-      <a href="#/contacts" data-route class="active"><i class="fas fa-address-book"></i> Contactos</a>
+      <a href="#/contacts" data-route><i class="fas fa-address-book"></i> Contactos</a>
       <a href="#/companies" data-route><i class="fas fa-building"></i> Empresas</a>
       <a href="#/deals" data-route><i class="fas fa-rocket"></i> Ventas</a>
       <a href="#/communications" data-route><i class="fas fa-envelope"></i> Comunicación</a>
@@ -42,7 +41,7 @@
     <header class="topbar">
       <div class="top-left">
         <h1 id="page-title">Contactos</h1>
-        <p style="color:#777;font-size:1rem;margin:0;">Unifica clientes, gestiona comunicación y acelera ventas desde una plataforma moderna.</p>
+        <p style="color:#777;font-size:1rem;">Unifica clientes, gestiona comunicación y acelera ventas desde una plataforma moderna.</p>
         <div class="search-inline">
           <input id="global-q" placeholder="Buscar por nombre, email, empresa..." />
           <select id="global-stage">
@@ -61,37 +60,25 @@
         <button id="btn-import-json" class="btn" title="Importar JSON"><i class="fas fa-file-import"></i></button>
       </div>
     </header>
-
     <section id="view-container" class="view">
-      <!-- Contactos -->
       <div id="view-contacts" class="view-panel">
-        <div class="panel">
-          <h3>Contactos</h3>
+        <div class="panel"><h3>Contactos</h3>
           <div class="table-wrap">
             <table id="contacts-table" aria-label="Lista de contactos">
               <thead>
                 <tr>
-                  <th>Nombre</th>
-                  <th>Email</th>
-                  <th>Tel</th>
-                  <th>Empresa</th>
-                  <th>Etapa</th>
-                  <th>Creado</th>
-                  <th>Acciones</th>
+                  <th>Nombre</th><th>Email</th><th>Tel</th>
+                  <th>Empresa</th><th>Etapa</th><th>Creado</th><th>Acciones</th>
                 </tr>
               </thead>
               <tbody id="contacts-tbody">
-                <tr>
-                  <td colspan="7" class="muted">Cargando...</td>
-                </tr>
+                <tr><td colspan="7" class="muted">Sin contactos</td></tr>
               </tbody>
             </table>
           </div>
           <div class="pagination" id="contacts-pagination"></div>
         </div>
       </div>
-
-      <!-- Empresas -->
       <div id="view-companies" class="view-panel hidden">
         <div class="panel">
           <h3>Empresas</h3>
@@ -99,33 +86,24 @@
             <table id="companies-table">
               <thead>
                 <tr>
-                  <th>Empresa</th>
-                  <th>Dominio</th>
-                  <th>Ingresos</th>
-                  <th>Acciones</th>
+                  <th>Empresa</th><th>Dominio</th><th>Ingresos</th><th>Acciones</th>
                 </tr>
               </thead>
               <tbody id="companies-tbody">
-                <tr>
-                  <td colspan="4" class="muted">Cargando...</td>
-                </tr>
+                <tr><td colspan="4" class="muted">Sin empresas</td></tr>
               </tbody>
             </table>
           </div>
-          <div style="margin-top:10px"><button id="btn-new-company" class="btn">Nueva empresa</button></div>
+          <button id="btn-new-company" class="btn" style="margin-top:10px;">Nueva empresa</button>
         </div>
       </div>
-
-      <!-- Pipeline/Deals -->
       <div id="view-deals" class="view-panel hidden">
         <div class="panel">
           <h3>Pipeline de Ventas</h3>
           <div id="pipeline" class="pipeline"></div>
-          <div style="margin-top:8px"><button id="btn-new-deal" class="btn">Nueva oportunidad</button></div>
+          <button id="btn-new-deal" class="btn" style="margin-top:8px;">Nueva oportunidad</button>
         </div>
       </div>
-
-      <!-- Comunicaciones -->
       <div id="view-communications" class="view-panel hidden">
         <div class="panel">
           <h3>Comunicaciones</h3>
@@ -144,33 +122,22 @@
             <table id="interactions-table">
               <thead>
                 <tr>
-                  <th>Tipo</th>
-                  <th>Contacto</th>
-                  <th>Asunto</th>
-                  <th>Fecha</th>
-                  <th>Meta</th>
+                  <th>Tipo</th><th>Contacto</th><th>Asunto</th><th>Fecha</th><th>Meta</th>
                 </tr>
               </thead>
               <tbody id="interactions-tbody">
-                <tr>
-                  <td colspan="5" class="muted">Cargando...</td>
-                </tr>
+                <tr><td colspan="5" class="muted">Sin comunicaciones</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-
-      <!-- Editor (nuevo módulo) -->
       <div id="view-editor" class="view-panel hidden">
         <div class="panel">
           <h3><i class="fas fa-edit"></i> Editor</h3>
-          <!-- Aquí se carga el contenido dinámico del editor. El archivo js/editor.js se encarga. -->
           <div id="editor-panel"></div>
         </div>
       </div>
-
-      <!-- Dashboard -->
       <div id="view-dashboard" class="view-panel hidden">
         <div class="panel">
           <h3>Dashboard</h3>
@@ -178,26 +145,19 @@
           <canvas id="dashboard-chart" height="120"></canvas>
         </div>
       </div>
-
-      <!-- Analítica (nuevo módulo) -->
       <div id="view-analytics" class="view-panel hidden">
         <div class="panel">
           <h3><i class="fas fa-chart-bar"></i> Analítica avanzada</h3>
-          <!-- Panel o dashboard analítico gestionado por js/analytics-full.js -->
           <div id="analytics-panel"></div>
           <canvas id="analytics-chart" height="180"></canvas>
         </div>
       </div>
-
-      <!-- Settings -->
       <div id="view-settings" class="view-panel hidden">
         <div class="panel">
           <h3>Configuración y ajustes</h3>
           <p>Puedes gestionar algunas preferencias del sistema aquí.</p>
         </div>
       </div>
-
-      <!-- Placeholder para otras vistas -->
       <div id="view-placeholder" class="view-panel hidden">
         <div class="panel">
           <h3>Próximamente</h3>
@@ -205,13 +165,10 @@
         </div>
       </div>
     </section>
-
     <footer class="footer">
       DataConecta — Demo local. Los datos se guardan en localStorage.
     </footer>
   </main>
-
-  <!-- Modal para crear/editar contacto -->
   <div id="modal-root" class="modal-root hidden" role="dialog" aria-modal="true">
     <div class="modal">
       <h3 id="modal-title">Nuevo contacto</h3>
@@ -237,4 +194,4 @@
   </div>
   <input id="file-import" type="file" accept="application/json" class="hidden"/>
 </body>
-</html> 
+</html>
