@@ -5,7 +5,6 @@
    - gestión de páginas/artboards (presets dispositivos)
    - quitar fondo on-device (flood-fill heurístico) con control de tolerancia
    - undo/redo, capas, props, export PNG/SVG
-   Copia este archivo a js/editor.js en tu proyecto.
 */
 (function () {
   // --- Utilities: dynamic script loader & color normalization ---
@@ -571,16 +570,18 @@
         alert('Lienzo guardado en localStorage');
       }
     });
-     // Bind simple para el botón Quitar fondo (usa editorAPI si está disponible)
-document.getElementById('btn-remove-bg')?.addEventListener('click', async () => {
-  const tolInput = document.getElementById('bg-tolerance');
-  const tol = tolInput ? parseInt(tolInput.value, 10) || 32 : 32;
-  if (window.editorAPI && typeof window.editorAPI.removeBackgroundActiveImage === 'function') {
-    await window.editorAPI.removeBackgroundActiveImage(tol);
-  } else {
-    alert('Función de quitar fondo no disponible. Asegúrate de usar el js/editor.js completo que expone editorAPI.removeBackgroundActiveImage.');
-  }
-});
+
+    // Bind simple para el botón Quitar fondo (usa editorAPI si está disponible)
+    document.getElementById('btn-remove-bg')?.addEventListener('click', async () => {
+      const tolInput = document.getElementById('bg-tolerance');
+      const tol = tolInput ? parseInt(tolInput.value, 10) || 32 : 32;
+      if (window.editorAPI && typeof window.editorAPI.removeBackgroundActiveImage === 'function') {
+        await window.editorAPI.removeBackgroundActiveImage(tol);
+      } else {
+        alert('Función de quitar fondo no disponible. Asegúrate de usar el js/editor.js completo que expone editorAPI.removeBackgroundActiveImage.');
+      }
+    });
+
     bind('btn-load-json', () => { const f = document.getElementById('editor-file-json'); if (f) f.click(); });
     const fileJson = document.getElementById('editor-file-json');
     if (fileJson) fileJson.addEventListener('change', (e) => {
@@ -615,9 +616,10 @@ document.getElementById('btn-remove-bg')?.addEventListener('click', async () => 
     });
     document.addEventListener('pointerup', () => { isPanning = false; lastPos = null; });
 
-    // initial pages load (migrate single-canvas storage if present)
     loadPages();
-    if (!pages.length) pages.push({ name: 'Página 1', width: 1024, height: 768, json: null });
+    if (!pages.length) {
+      pages.push({ name: 'Página 1', width: 1024, height: 768, json: null });
+    }
     try {
       const old = localStorage.getItem('editor:canvas');
       if (old && !pages[0].json) {
@@ -627,7 +629,7 @@ document.getElementById('btn-remove-bg')?.addEventListener('click', async () => 
     } catch (e) {}
     renderPagesList();
 
-    // device select population
+    // populate device presets select
     const presetSelect = document.getElementById('device-select');
     if (presetSelect) {
       presetSelect.innerHTML = '';
@@ -662,7 +664,6 @@ document.getElementById('btn-remove-bg')?.addEventListener('click', async () => 
     });
 
     // ----------------- Background removal functions -----------------
-    // Convert an Image/Canvas/Bitmap to ImageData with optional scaling
     async function imageToImageData(imgSource, maxDim = 2048) {
       const w = imgSource.width || imgSource.naturalWidth;
       const h = imgSource.height || imgSource.naturalHeight;
@@ -679,7 +680,6 @@ document.getElementById('btn-remove-bg')?.addEventListener('click', async () => 
       return ctx.getImageData(0, 0, c.width, c.height);
     }
 
-    // Flood-fill from edges to detect and remove bg of uniform-ish backgrounds
     function removeBackgroundFromImageData(imageData, tolerance = 32) {
       const w = imageData.width, h = imageData.height;
       const data = imageData.data;
@@ -807,9 +807,12 @@ document.getElementById('btn-remove-bg')?.addEventListener('click', async () => 
       await removeBackgroundActiveImage(tol);
     });
 
-    // expose removeBackground via API
-    if (window.editorAPI) window.editorAPI.removeBackgroundActiveImage = removeBackgroundActiveImage;
-    else window.editorAPI = { removeBackgroundActiveImage };
+    // expose removeBackground via API (augment existing api safely)
+    if (window.editorAPI && typeof window.editorAPI === 'object') {
+      window.editorAPI.removeBackgroundActiveImage = removeBackgroundActiveImage;
+    } else {
+      window.editorAPI = Object.assign({}, window.editorAPI, { removeBackgroundActiveImage });
+    }
 
     console.info('Editor inicializado con soporte de páginas, subida de imágenes y quitar fondo.');
   } // end start
