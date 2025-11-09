@@ -1,0 +1,44 @@
+<!-- modules/analytics.html -->
+<div class="module-analytics">
+  <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h2>Analítica avanzada</h2>
+    <div>
+      <button id="an-refresh" class="btn">Refrescar</button>
+      <button id="an-export" class="btn">Exportar eventos</button>
+    </div>
+  </header>
+
+  <section style="display:flex;gap:12px">
+    <aside style="width:280px;background:#fff;border-radius:8px;padding:12px;color:#111">
+      <h4>Recolectar evento</h4>
+      <label>Evento <input id="an-event-name" /></label><br/>
+      <label>Parámetros (JSON) <input id="an-event-params" placeholder='{"source":"ads"}' /></label><br/>
+      <label>Usuario <input id="an-event-user" /></label><br/>
+      <button id="an-track" class="btn">Track</button>
+      <hr/>
+      <h4>Privacidad</h4>
+      <label><input id="an-cookieless" type="checkbox" /> Cookieless</label><br/>
+      <label>Retención (días) <input id="an-retention" type="number" min="0" value="365" /></label>
+    </aside>
+
+    <main style="flex:1;background:#fff;border-radius:8px;padding:12px;color:#111">
+      <div id="an-metrics">
+        <div style="display:flex;gap:12px">
+          <div style="flex:1"><strong>Ingresos:</strong> <span id="an-kpi-income">€0</span></div>
+          <div style="flex:1"><strong>Leads:</strong> <span id="an-kpi-leads">0</span></div>
+          <div style="flex:1"><strong>Conversion:</strong> <span id="an-kpi-conv">0%</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <h4>Top eventos</h4>
+        <div id="an-top-events"></div>
+      </div>
+
+      <div style="margin-top:12px">
+        <h4>Detección de tendencias (z-score)</h4>
+        <pre id="an-trends" style="background:#f7f7fb;padding:8px;border-radius:6px;color:#111;max-height:160px;overflow:auto"></pre>
+      </div>
+    </main>
+  </section>
+</div>
