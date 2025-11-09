@@ -12,16 +12,32 @@
     <aside style="width:260px;background:#fff;padding:12px;border-radius:8px;color:#111">
       <h4>Herramientas</h4>
       <div>
-        <button id="ed-btn-rect" class="btn">Rect</button>
-        <button id="ed-btn-text" class="btn">Texto</button>
+        <!-- The advanced editor script looks for IDs like btn-add-rect/btn-add-text.
+             Keep both sets so advanced and lightweight scripts work. -->
+        <button id="btn-add-rect" class="btn small">Rect</button>
+        <button id="btn-add-text" class="btn small">Texto</button>
+        <button id="ed-btn-rect" class="btn small" style="display:none">Rect (legacy)</button>
+        <button id="ed-btn-text" class="btn small" style="display:none">Texto (legacy)</button>
+
         <input id="editor-image-input" type="file" accept="image/*" style="display:none" />
-        <button id="ed-btn-image" class="btn">Imagen</button>
+        <button id="btn-upload-image" class="btn small">Imagen</button>
+        <button id="ed-btn-image" class="btn small" style="display:none">Imagen (legacy)</button>
+
+        <hr/>
+        <label>Tolerancia BG <input id="bg-tolerance" type="range" min="5" max="120" value="32" /></label>
+        <button id="btn-remove-bg" class="btn small">Quitar fondo</button>
       </div>
     </aside>
 
     <main style="flex:1;background:#fff;padding:12px;border-radius:8px;color:#111">
-      <div id="editor-canvas-wrap" style="height:520px;border:1px solid #e6e6e6;border-radius:6px;display:flex;align-items:center;justify-content:center">
-        <canvas id="editor-canvas" width="900" height="520" style="background:#ffffff"></canvas>
+      <!-- Provide both id names: 'canvas' and 'editor-canvas' are accepted by editor.js -->
+      <div id="canvas-wrap" style="height:520px;border:1px solid #e6e6e6;border-radius:6px;display:flex;align-items:center;justify-content:center">
+        <canvas id="canvas" width="900" height="520" style="background:#ffffff"></canvas>
+      </div>
+      <div style="margin-top:8px">
+        <button id="btn-save-json" class="btn small">Guardar JSON</button>
+        <button id="btn-load-json" class="btn small">Cargar JSON</button>
+        <input id="editor-file-json" type="file" accept="application/json" style="display:none" />
       </div>
     </main>
   </div>
