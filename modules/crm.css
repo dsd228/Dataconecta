@@ -1,0 +1,8 @@
+/* modules/crm.css - styles scoped for CRM module */
+.module-crm { font-family: Inter, system-ui, Arial, sans-serif; color:#0b1220; }
+.module-crm .btn { background:#4f46e5; color:#fff; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
+#crm-contacts-list .contact-item { padding:8px; border-bottom:1px solid #eee; cursor:pointer; }
+#crm-contacts-list .contact-item:hover { background:#f7f7fb; }
+#crm-detail h3 { margin-top:0; }
+#crm-form label { display:block; margin-bottom:8px; }
+#crm-form input { width:100%; padding:8px; box-sizing:border-box; margin-top:4px; }
