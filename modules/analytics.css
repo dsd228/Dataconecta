@@ -1,0 +1,5 @@
+/* modules/analytics.css */
+.module-analytics { font-family: Inter, system-ui, Arial, sans-serif; }
+.module-analytics .btn { background:#4f46e5;color:#fff;border:none;padding:8px;border-radius:6px;cursor:pointer;margin-top:6px; }
+.module-analytics input { width:100%; padding:8px; margin-top:6px; box-sizing:border-box; }
+#an-top-events div { padding:6px; border-bottom:1px solid #eee; }
