@@ -10,7 +10,6 @@ window.editorAPI = {
   currentTool: 'select',
 
   async init() {
-    // Espera que Fabric se cargue
     await new Promise(r => {
       const check = () => window.fabric ? r() : setTimeout(check, 100);
       check();
@@ -22,7 +21,7 @@ window.editorAPI = {
       selection: true
     });
 
-    // Herramientas
+    // Selección de herramienta
     document.querySelectorAll('.tool').forEach(btn => {
       btn.addEventListener('click', () => {
         this.currentTool = btn.dataset.tool;
@@ -41,11 +40,11 @@ window.editorAPI = {
       URL.revokeObjectURL(url);
     });
 
-    // Click sobre el lienzo
+    // Click en el lienzo
     this.canvas.on('mouse:down', (opt) => {
       const pointer = this.canvas.getPointer(opt.e);
       switch (this.currentTool) {
-        case 'rect':
+        case 'rect': {
           const rect = new fabric.Rect({
             left: pointer.x, top: pointer.y,
             width: 100, height: 60,
@@ -53,24 +52,24 @@ window.editorAPI = {
           });
           this.canvas.add(rect);
           break;
-
-        case 'circle':
+        }
+        case 'circle': {
           const circ = new fabric.Circle({
             left: pointer.x, top: pointer.y,
             radius: 40, fill: '#10b981', opacity: 0.8
           });
           this.canvas.add(circ);
           break;
-
-        case 'text':
+        }
+        case 'text': {
           const text = new fabric.IText('Texto', {
             left: pointer.x, top: pointer.y,
             fontFamily: 'Inter', fill: '#111'
           });
           this.canvas.add(text);
           break;
-
-        case 'image':
+        }
+        case 'image': {
           const input = document.createElement('input');
           input.type = 'file';
           input.accept = 'image/*';
@@ -87,6 +86,7 @@ window.editorAPI = {
           };
           input.click();
           break;
+        }
       }
     });
 
@@ -97,7 +97,7 @@ window.editorAPI = {
       document.getElementById('properties-panel').innerHTML = 'Selecciona un elemento';
     });
 
-    console.log('Editor UX/UI Pro inicializado');
+    console.log('✅ Editor UX/UI Pro inicializado');
   },
 
   showProperties(obj) {
@@ -105,7 +105,7 @@ window.editorAPI = {
     panel.innerHTML = `
       <p><strong>Tipo:</strong> ${obj.type}</p>
       <p><strong>Color:</strong> <input type="color" id="prop-color" value="${obj.fill || '#ffffff'}"></p>
-      <p><strong>Opacidad:</strong> <input type="range" id="prop-opacity" min="0" max="1" step="0.1" value="${obj.opacity}"></p>
+      <p><strong>Opacidad:</strong> <input type="range" id="prop-opacity" min="0" max="1" step="0.1" value="${obj.opacity || 1}"></p>
     `;
 
     panel.querySelector('#prop-color').addEventListener('input', e => {
