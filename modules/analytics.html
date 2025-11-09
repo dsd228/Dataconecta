@@ -1,44 +1,117 @@
 <!-- modules/analytics.html -->
-<div class="module-analytics">
-  <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <h2>Analítica avanzada</h2>
-    <div>
+<div class="analytics-module">
+  <header class="analytics-header">
+    <h2>Analítica — Recolección & Reporting</h2>
+    <div class="analytics-actions">
       <button id="an-refresh" class="btn">Refrescar</button>
-      <button id="an-export" class="btn">Exportar eventos</button>
+      <button id="an-export-events" class="btn">Export Events CSV</button>
+      <button id="an-clear-events" class="btn">Purge Old</button>
     </div>
   </header>
 
-  <section style="display:flex;gap:12px">
-    <aside style="width:280px;background:#fff;border-radius:8px;padding:12px;color:#111">
+  <section class="analytics-body">
+    <aside class="analytics-left panel">
       <h4>Recolectar evento</h4>
-      <label>Evento <input id="an-event-name" /></label><br/>
-      <label>Parámetros (JSON) <input id="an-event-params" placeholder='{"source":"ads"}' /></label><br/>
-      <label>Usuario <input id="an-event-user" /></label><br/>
-      <button id="an-track" class="btn">Track</button>
+      <label>Evento <input id="an-event-name" placeholder="e.g. page_view" /></label>
+      <label>Params (JSON) <input id="an-event-params" placeholder='{"source":"ads","amount":100}' /></label>
+      <label>Usuario ID <input id="an-event-user" placeholder="user_123" /></label>
+      <div style="margin-top:8px">
+        <button id="an-track" class="btn small">Track</button>
+        <button id="an-identify" class="btn small">Identify</button>
+        <button id="an-alias" class="btn small">Alias</button>
+      </div>
+
       <hr/>
       <h4>Privacidad</h4>
-      <label><input id="an-cookieless" type="checkbox" /> Cookieless</label><br/>
-      <label>Retención (días) <input id="an-retention" type="number" min="0" value="365" /></label>
+      <label><input id="an-cookieless" type="checkbox" /> Cookieless mode</label>
+      <label>Anonymize PII <input id="an-anonymize" type="checkbox" /></label>
+      <label>Retention (days) <input id="an-retention" type="number" min="0" value="365" /></label>
+      <div style="margin-top:8px">
+        <button id="an-save-privacy" class="btn small">Save</button>
+      </div>
+
+      <hr/>
+      <h4>Integraciones (stubs)</h4>
+      <label><input id="int-google-ads" type="checkbox" /> Google Ads (stub)</label>
+      <label><input id="int-bigquery" type="checkbox" /> BigQuery (stub)</label>
+      <label><input id="int-looker" type="checkbox" /> Looker Studio (CSV)</label>
+      <div style="margin-top:8px">
+        <button id="int-run-sync" class="btn small">Run sync (stub)</button>
+      </div>
     </aside>
 
-    <main style="flex:1;background:#fff;border-radius:8px;padding:12px;color:#111">
-      <div id="an-metrics">
-        <div style="display:flex;gap:12px">
-          <div style="flex:1"><strong>Ingresos:</strong> <span id="an-kpi-income">€0</span></div>
-          <div style="flex:1"><strong>Leads:</strong> <span id="an-kpi-leads">0</span></div>
-          <div style="flex:1"><strong>Conversion:</strong> <span id="an-kpi-conv">0%</span></div>
+    <main class="analytics-center panel">
+      <div class="kpis" style="display:flex;gap:12px;">
+        <div class="kpi"><div class="label">Ingresos</div><div id="kpi-income" class="value">€0</div></div>
+        <div class="kpi"><div class="label">Leads</div><div id="kpi-leads" class="value">0</div></div>
+        <div class="kpi"><div class="label">Conversión</div><div id="kpi-conv" class="value">0%</div></div>
+        <div class="kpi"><div class="label">Alertas</div><div id="kpi-alerts" class="value">0</div></div>
+      </div>
+
+      <div class="charts" style="display:grid;grid-template-columns:1fr 420px;gap:12px;margin-top:12px;">
+        <div class="chart-card panel">
+          <h4>Serie temporal (ingresos / events)</h4>
+          <canvas id="an-timeseries" height="200"></canvas>
+          <div style="margin-top:8px">
+            <button id="an-ts-refresh" class="btn small">Refresh</button>
+            <button id="an-ts-export" class="btn small">Export PNG</button>
+          </div>
         </div>
+
+        <div class="panel">
+          <h4>Top Fuentes</h4>
+          <div id="an-top-list"></div>
+
+          <hr/>
+          <h4>Embudo configurable</h4>
+          <label>Pasos (CSV) <input id="an-funnel-steps" placeholder="visit,lead,opportunity,won" /></label>
+          <button id="an-funnel-run" class="btn small">Run funnel</button>
+          <div id="an-funnel-output" style="margin-top:8px"></div>
+        </div>
+
+        <div class="panel" style="grid-column:1 / span 2;">
+          <h4>Actividad / Últimas conversiones</h4>
+          <div style="overflow:auto;max-height:240px">
+            <table id="an-activity-table"><thead><tr><th>Fecha</th><th>User</th><th>Event</th><th>Params</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div style="margin-top:8px;display:flex;justify-content:flex-end;gap:8px;">
+            <button id="an-activity-export" class="btn small">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Predicciones & Detección de tendencias</h4>
+          <div id="an-trends-output" style="max-height:200px;overflow:auto"></div>
+        </div>
+
+        <div class="panel">
+          <h4>A/B Experiments</h4>
+          <label>Experiment name <input id="ab-name" /></label>
+          <label>Variant A (%) <input id="ab-a" type="number" value="50" /></label>
+          <label>Variant B (%) <input id="ab-b" type="number" value="50" /></label>
+          <button id="ab-create" class="btn small">Create experiment</button>
+          <div id="ab-list" style="margin-top:8px"></div>
+        </div>
+
       </div>
 
-      <div style="margin-top:12px">
-        <h4>Top eventos</h4>
-        <div id="an-top-events"></div>
-      </div>
-
-      <div style="margin-top:12px">
-        <h4>Detección de tendencias (z-score)</h4>
-        <pre id="an-trends" style="background:#f7f7fb;padding:8px;border-radius:6px;color:#111;max-height:160px;overflow:auto"></pre>
-      </div>
     </main>
+
+    <aside class="analytics-right panel">
+      <h4>Heatmaps & Session Recordings</h4>
+      <div style="margin-bottom:8px">
+        <button id="rec-start" class="btn small">Start recording</button>
+        <button id="rec-stop" class="btn small">Stop</button>
+      </div>
+      <div id="recordings-list"></div>
+
+      <hr/>
+      <h4>Scrollmaps</h4>
+      <button id="scroll-gen" class="btn small">Generate scroll map (demo)</button>
+
+      <hr/>
+      <h4>Privacy & Controls</h4>
+      <div class="muted">Cookieless & anonymize modes supported.</div>
+    </aside>
   </section>
 </div>
