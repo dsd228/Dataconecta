@@ -1,6 +1,6 @@
 /* js/editor.js
-   Versión robusta: espera a Fabric y usa fallback dinámico si hace falta.
-   Reemplaza tu editor.js con este archivo.
+   Editor robusto: normaliza colores antes de asignar a inputs tipo color y evita warnings.
+   Reemplaza tu js/editor.js por este archivo.
 */
 (function () {
   function onReady(fn) {
@@ -8,46 +8,89 @@
     document.addEventListener('DOMContentLoaded', fn);
   }
 
-  // Espera a que window.fabric exista; si no, intenta cargar un fallback y espera.
-  function ensureFabric(maxWait = 8000, pollInterval = 100) {
-    return new Promise((resolve, reject) => {
-      if (window.fabric) return resolve(window.fabric);
-      const start = Date.now();
+  // Convierte diferentes formatos CSS a "#rrggbb" válido para input[type=color]
+  function normalizeColor(value) {
+    try {
+      if (!value) return '#000000';
+      if (typeof value !== 'string') return '#000000';
+      value = value.trim();
 
-      // Si fabric no aparece en un tiempo, inyectar fallback CDN una sola vez
-      let fallbackInjected = false;
-      function tryInjectFallback() {
-        if (fallbackInjected) return;
-        fallbackInjected = true;
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js';
-        s.onload = () => console.info('Fabric fallback cargado (jsDelivr).');
-        s.onerror = () => console.error('Fallo carga fallback Fabric (jsDelivr).');
-        document.head.appendChild(s);
+      // Si ya está en formato #rrggbb o #rrggbbaa, recortar a rrggbb
+      if (value[0] === '#') {
+        // #rgb -> expandir a #rrggbb
+        if (value.length === 4) {
+          const r = value[1], g = value[2], b = value[3];
+          return ('#' + r + r + g + g + b + b).toLowerCase();
+        }
+        // #rrggbb -> asegurar minúsculas y 7 chars
+        if (value.length >= 7) {
+          return value.slice(0, 7).toLowerCase();
+        }
       }
 
-      (function poll() {
-        if (window.fabric) return resolve(window.fabric);
-        if (Date.now() - start > maxWait) {
-          // último intento: inyectar fallback y esperar un poco más
-          tryInjectFallback();
-          // esperar un último lapso corto
-          setTimeout(() => {
-            if (window.fabric) return resolve(window.fabric);
-            return reject(new Error('Fabric no disponible después de esperar'));
-          }, 1500);
-          return;
+      // rgb()/rgba() -> parsear y convertir
+      const rgbMatch = value.match(/rgba?\s*\(\s*([0-9.]+)[^\d]*([0-9.]+)[^\d]*([0-9.]+)/i);
+      if (rgbMatch) {
+        const r = Math.max(0, Math.min(255, parseInt(rgbMatch[1], 10) || 0));
+        const g = Math.max(0, Math.min(255, parseInt(rgbMatch[2], 10) || 0));
+        const b = Math.max(0, Math.min(255, parseInt(rgbMatch[3], 10) || 0));
+        const toHex = (n) => ('0' + n.toString(16)).slice(-2);
+        return ('#' + toHex(r) + toHex(g) + toHex(b)).toLowerCase();
+      }
+
+      // Fallback: usar canvas para intentar resolver nombres CSS o formatos no directos
+      try {
+        const cvs = document.createElement('canvas');
+        cvs.width = cvs.height = 1;
+        const ctx = cvs.getContext('2d');
+        ctx.fillStyle = '#000'; // default
+        ctx.fillStyle = value;
+        const computed = ctx.fillStyle; // Chrome normalmente devuelve "#rrggbb"
+        if (typeof computed === 'string') {
+          if (computed[0] === '#') {
+            if (computed.length === 7) return computed.toLowerCase();
+            if (computed.length === 4) {
+              // expandir #rgb -> #rrggbb
+              const r = computed[1], g = computed[2], b = computed[3];
+              return ('#' + r + r + g + g + b + b).toLowerCase();
+            }
+          }
+          // si devuelve rgb(...), convertir recursivamente
+          const rgbMatch2 = computed.match(/rgba?\s*\(\s*([0-9.]+)[^\d]*([0-9.]+)[^\d]*([0-9.]+)/i);
+          if (rgbMatch2) {
+            const r = Math.max(0, Math.min(255, parseInt(rgbMatch2[1], 10) || 0));
+            const g = Math.max(0, Math.min(255, parseInt(rgbMatch2[2], 10) || 0));
+            const b = Math.max(0, Math.min(255, parseInt(rgbMatch2[3], 10) || 0));
+            const toHex = (n) => ('0' + n.toString(16)).slice(-2);
+            return ('#' + toHex(r) + toHex(g) + toHex(b)).toLowerCase();
+          }
         }
-        // si estamos pasando la mitad del tiempo sin fabric, inyectar fallback temprano
-        if (!fallbackInjected && Date.now() - start > maxWait / 2) tryInjectFallback();
-        setTimeout(poll, pollInterval);
+      } catch (e) {
+        // ignore
+      }
+    } catch (e) {
+      // ignore
+    }
+    // Valor por defecto si no se puede convertir
+    return '#000000';
+  }
+
+  // Asegura que el browser tenga fabric; el loader/fallback en index.html debería encargarse,
+  // aquí solo esperamos a que window.fabric exista.
+  function waitFabric(maxWait = 8000, poll = 60) {
+    return new Promise((resolve, reject) => {
+      const start = Date.now();
+      (function check() {
+        if (window.fabric) return resolve(window.fabric);
+        if (Date.now() - start > maxWait) return reject(new Error('Fabric no disponible'));
+        setTimeout(check, poll);
       })();
     });
   }
 
   onReady(function () {
-    ensureFabric().then((fabric) => {
-      // Aquí dentro fabric está disponible — inicializar editor
+    waitFabric().then(() => {
+      // Compruebas elementos DOM requeridos
       const canvasEl = document.getElementById('canvas');
       const canvasWrap = document.getElementById('canvas-wrap');
       if (!canvasEl || !canvasWrap) {
@@ -55,14 +98,12 @@
         return;
       }
 
-      // Mínima comprobación de dependencias previas (evita doble inicialización)
       if (window.__editorInitialized) {
         console.warn('Editor: ya inicializado. Omite nueva inicialización.');
         return;
       }
       window.__editorInitialized = true;
 
-      // Inicializar Fabric Canvas
       const fabricCanvas = new fabric.Canvas('canvas', {
         backgroundColor: '#ffffff',
         selection: true,
@@ -82,9 +123,7 @@
           fabricCanvas.setHeight(h);
           fabricCanvas.calcOffset();
           fabricCanvas.requestRenderAll();
-        } catch (e) {
-          console.warn('resizeCanvas error', e);
-        }
+        } catch (e) { console.warn('resizeCanvas error', e); }
       }
       window.addEventListener('resize', resizeCanvas);
       resizeCanvas();
@@ -101,7 +140,7 @@
         fabricCanvas.requestRenderAll();
       }
 
-      // Undo/redo (snapshots JSON)
+      // Historial
       const undoStack = [];
       const redoStack = [];
       function pushState() {
@@ -146,10 +185,10 @@
         fabricCanvas.requestRenderAll();
       }
 
-      // Creación básica
+      // Creación básica (evitar short-hex)
       function addRect() { pushState(); const rect = new fabric.Rect({ left:40, top:40, fill:'#4f46e5', width:160, height:100, rx:6, ry:6 }); fabricCanvas.add(rect).setActiveObject(rect); refreshLayersList(); }
       function addCircle() { pushState(); const c = new fabric.Circle({ left:120, top:120, radius:50, fill:'#ef4444' }); fabricCanvas.add(c).setActiveObject(c); refreshLayersList(); }
-      function addLine() { pushState(); const l = new fabric.Line([50,50,200,50], { left:50, top:50, stroke:'#111', strokeWidth:2 }); fabricCanvas.add(l).setActiveObject(l); refreshLayersList(); }
+      function addLine() { pushState(); const l = new fabric.Line([50,50,200,50], { left:50, top:50, stroke:'#111111', strokeWidth:2 }); fabricCanvas.add(l).setActiveObject(l); refreshLayersList(); }
       function addText() { pushState(); const t = new fabric.Textbox('Nuevo texto', { left:80, top:200, width:240, fontSize:18, fill:'#111827' }); fabricCanvas.add(t).setActiveObject(t); refreshLayersList(); }
 
       function addImageFromFile(file) {
@@ -166,7 +205,7 @@
         reader.readAsDataURL(file);
       }
 
-      // Duplicar, eliminar, agrupar, etc.
+      // Edit actions
       function duplicateSelection() {
         const active = fabricCanvas.getActiveObject();
         if (!active) return;
@@ -231,37 +270,54 @@
       const propAngle = document.getElementById('prop-angle');
       const propOpacity = document.getElementById('prop-opacity');
 
+      function safeGetColor(value) {
+        try {
+          return normalizeColor(value);
+        } catch (e) {
+          return '#000000';
+        }
+      }
+
       function updateSelectedInfo() {
         const obj = fabricCanvas.getActiveObject();
         if (!obj) {
           if (selSummary) selSummary.textContent = 'Ninguno';
           if (propText) propText.value = '';
           if (propFill) propFill.value = '#000000';
+          if (propStroke) propStroke.value = '#000000';
           return;
         }
         if (selSummary) selSummary.textContent = obj.type + (obj.text ? ' — "' + (obj.text).slice(0,30) + '"' : '');
         if (propText && ('text' in obj)) propText.value = obj.text || '';
-        if (propFill) try { propFill.value = obj.fill || '#000000'; } catch(e){}
-        if (propStroke) propStroke.value = obj.stroke || '#000000';
-        if (propFontsize && obj.fontSize) propFontsize.value = obj.fontSize;
-        if (propWidth) propWidth.value = Math.round(obj.getScaledWidth());
-        if (propHeight) propHeight.value = Math.round(obj.getScaledHeight());
-        if (propAngle) propAngle.value = Math.round(obj.angle || 0);
-        if (propOpacity) propOpacity.value = (obj.opacity != null ? obj.opacity : 1);
+        // fill puede ser un objeto (Gradient/Pattern), manejar con try/catch
+        try {
+          if (propFill) {
+            const fillVal = (obj.fill && typeof obj.fill === 'string') ? obj.fill : (obj.fill && obj.fill.colorStops ? obj.fill.colorStops && obj.fill.colorStops[0] && obj.fill.colorStops[0].color : null);
+            propFill.value = safeGetColor(fillVal);
+          }
+        } catch (e) {
+          try { propFill.value = '#000000'; } catch (_) {}
+        }
+        try { if (propStroke) propStroke.value = safeGetColor(obj.stroke || '#000000'); } catch (e) { if (propStroke) propStroke.value = '#000000'; }
+        try { if (propFontsize && obj.fontSize) propFontsize.value = obj.fontSize; } catch (e) {}
+        try { if (propWidth) propWidth.value = Math.round(obj.getScaledWidth()); } catch (e) {}
+        try { if (propHeight) propHeight.value = Math.round(obj.getScaledHeight()); } catch (e) {}
+        try { if (propAngle) propAngle.value = Math.round(obj.angle || 0); } catch (e) {}
+        try { if (propOpacity) propOpacity.value = (obj.opacity != null ? obj.opacity : 1); } catch (e) {}
         refreshLayersList();
       }
 
-      // Prop -> obj bindings
+      // Prop -> obj bindings (defensivo)
       if (propText) propText.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); if ('text' in o) { o.text = propText.value; o.set('text', propText.value); } fabricCanvas.requestRenderAll(); });
-      if (propFill) propFill.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.set('fill', propFill.value); fabricCanvas.requestRenderAll(); });
-      if (propStroke) propStroke.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.set('stroke', propStroke.value); fabricCanvas.requestRenderAll(); });
+      if (propFill) propFill.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); try { o.set('fill', normalizeColor(propFill.value)); } catch (e) { o.set('fill', propFill.value); } fabricCanvas.requestRenderAll(); });
+      if (propStroke) propStroke.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); try { o.set('stroke', normalizeColor(propStroke.value)); } catch (e) { o.set('stroke', propStroke.value); } fabricCanvas.requestRenderAll(); });
       if (propFontsize) propFontsize.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o || !('fontSize' in o)) return; pushState(); o.set('fontSize', parseInt(propFontsize.value,10) || 12); fabricCanvas.requestRenderAll(); });
       if (propWidth) propWidth.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const w = parseFloat(propWidth.value) || o.width || 1; o.scaleX = w / (o.width || 1); o.setCoords(); fabricCanvas.requestRenderAll(); });
       if (propHeight) propHeight.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const h = parseFloat(propHeight.value) || o.height || 1; o.scaleY = h / (o.height || 1); o.setCoords(); fabricCanvas.requestRenderAll(); });
       if (propAngle) propAngle.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.angle = parseFloat(propAngle.value) || 0; o.setCoords(); fabricCanvas.requestRenderAll(); });
       if (propOpacity) propOpacity.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.opacity = parseFloat(propOpacity.value); fabricCanvas.requestRenderAll(); });
 
-      // Canvas events
+      // Eventos canvas
       fabricCanvas.on('selection:created', updateSelectedInfo);
       fabricCanvas.on('selection:updated', updateSelectedInfo);
       fabricCanvas.on('selection:cleared', updateSelectedInfo);
@@ -280,7 +336,7 @@
         if (mod && ev.shiftKey && ev.key.toLowerCase() === 'g') { ev.preventDefault(); ungroupSelection(); return; }
       });
 
-      // Wire buttons (defensivo)
+      // Wire buttons
       function bind(id, fn) { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); }
       bind('btn-add-rect', addRect);
       bind('btn-add-circle', addCircle);
@@ -329,20 +385,18 @@
       document.addEventListener('pointermove', (ev) => { if (!isPanning) return; const dx = ev.clientX - lastPos.x; const dy = ev.clientY - lastPos.y; const v = fabricCanvas.viewportTransform; v[4] += dx; v[5] += dy; lastPos={x:ev.clientX,y:ev.clientY}; fabricCanvas.requestRenderAll(); });
       document.addEventListener('pointerup', () => { isPanning=false; lastPos=null; });
 
-      // Cargar estado guardado y push inicial
+      // Inicializar
       refreshLayersList();
       loadFromLocalStorage();
       try { pushState(); } catch(e){}
 
-      // Exponer utilidades
+      // API pública
       window.getEditorState = function () { try { return JSON.stringify(fabricCanvas.toJSON()); } catch(e) { return null; } };
       window.openEditorForProject = function (projectId) { const btn = document.getElementById('btn-open-editor'); if (btn) btn.click(); console.log('Editor abierto para proyecto:', projectId); };
 
-      console.info('Editor inicializado.');
+      console.info('Editor inicializado (colores normalizados).');
     }).catch((err) => {
-      // Si no se pudo cargar Fabric, mostrar mensaje útil al desarrollador/usuario
       console.error('No se pudo inicializar el editor porque Fabric.js no está disponible:', err);
-      // Opcional: mostrar una notificación en la UI (si quieres)
       const viewEditor = document.getElementById('view-editor');
       if (viewEditor) {
         const p = document.createElement('p');
