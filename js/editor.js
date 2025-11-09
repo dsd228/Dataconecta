@@ -1,13 +1,14 @@
 /* js/editor.js
-   Editor robusto con:
-   - carga dinámica de Fabric.js si hace falta,
-   - subida de imágenes robusta,
-   - gestión de páginas/artboards (presets dispositivos),
-   - undo/redo, capas, props, export.
-   Reemplaza el archivo js/editor.js existente por este.
+   Versión completa y robusta del editor:
+   - carga dinámica de Fabric.js si hace falta
+   - subida de imágenes robusta (createImageBitmap / objectURL)
+   - gestión de páginas/artboards (presets dispositivos)
+   - quitar fondo on-device (flood-fill heurístico) con control de tolerancia
+   - undo/redo, capas, props, export PNG/SVG
+   Copia este archivo a js/editor.js en tu proyecto.
 */
 (function () {
-  // ---------- Helpers for script loading & color normalization ----------
+  // --- Utilities: dynamic script loader & color normalization ---
   function loadScript(src, timeout = 8000) {
     return new Promise((resolve, reject) => {
       const s = document.createElement('script');
@@ -41,12 +42,10 @@
         const toHex = (n) => ('0' + n.toString(16)).slice(-2);
         return ('#' + toHex(r) + toHex(g) + toHex(b)).toLowerCase();
       }
-      // fallback: draw to canvas
       try {
         const cvs = document.createElement('canvas'); cvs.width = cvs.height = 1;
         const ctx = cvs.getContext('2d');
-        ctx.fillStyle = '#000';
-        ctx.fillStyle = value;
+        ctx.fillStyle = '#000'; ctx.fillStyle = value;
         const computed = ctx.fillStyle;
         if (typeof computed === 'string') {
           if (computed[0] === '#') {
@@ -70,51 +69,48 @@
     return '#000000';
   }
 
-  // ---------- Ensure Fabric is available (load CDNs if needed) ----------
-  function ensureFabricAvailable() {
-    return new Promise(async (resolve, reject) => {
-      if (window.fabric) return resolve(window.fabric);
-      // wait briefly for any existing deferred script
-      const waitShort = (ms) => new Promise(r => {
-        const start = Date.now();
-        (function poll() {
-          if (window.fabric) return r(true);
-          if (Date.now() - start > ms) return r(false);
-          setTimeout(poll, 80);
-        })();
-      });
-      const found = await waitShort(1200);
-      if (found) return resolve(window.fabric);
-
-      const cdns = [
-        'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js',
-        'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js'
-      ];
-      let lastErr = null;
-      for (let src of cdns) {
-        try {
-          await loadScript(src, 8000);
-          // wait small time for global
-          const start = Date.now();
-          while (!window.fabric && Date.now() - start < 2000) {
-            await new Promise(r => setTimeout(r, 80));
-          }
-          if (window.fabric) {
-            console.info('Fabric cargado desde', src);
-            return resolve(window.fabric);
-          } else {
-            lastErr = new Error('Script cargado pero window.fabric no inicializó: ' + src);
-          }
-        } catch (err) {
-          lastErr = err;
-          console.warn('No se pudo cargar Fabric desde', src, err);
-        }
-      }
-      reject(lastErr || new Error('No se pudo cargar Fabric.js'));
+  // --- Ensure Fabric is available (tries global, then CDNs) ---
+  async function ensureFabricAvailable() {
+    if (window.fabric) return window.fabric;
+    // wait briefly for preloaded deferred script
+    const waitShort = (ms) => new Promise(r => {
+      const start = Date.now();
+      (function poll() {
+        if (window.fabric) return r(true);
+        if (Date.now() - start > ms) return r(false);
+        setTimeout(poll, 80);
+      })();
     });
+    const found = await waitShort(1200);
+    if (found) return window.fabric;
+
+    const cdns = [
+      'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js',
+      'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js'
+    ];
+    let lastErr = null;
+    for (let src of cdns) {
+      try {
+        await loadScript(src, 8000);
+        const start = Date.now();
+        while (!window.fabric && Date.now() - start < 2000) {
+          await new Promise(r => setTimeout(r, 80));
+        }
+        if (window.fabric) {
+          console.info('Fabric cargado desde', src);
+          return window.fabric;
+        } else {
+          lastErr = new Error('Script cargado pero window.fabric no inicializó: ' + src);
+        }
+      } catch (err) {
+        lastErr = err;
+        console.warn('No se pudo cargar Fabric desde', src, err);
+      }
+    }
+    throw lastErr || new Error('No se pudo cargar Fabric.js');
   }
 
-  // ---------- Editor implementation ----------
+  // --- Main editor initialization ---
   async function start() {
     try {
       await ensureFabricAvailable();
@@ -130,17 +126,13 @@
       return;
     }
 
-    // Avoid double init
     if (window.__editorInitialized) return;
     window.__editorInitialized = true;
 
     // DOM refs
     const canvasEl = document.getElementById('canvas');
     const canvasWrap = document.getElementById('canvas-wrap');
-    if (!canvasEl || !canvasWrap) {
-      console.error('Faltan elementos #canvas o #canvas-wrap');
-      return;
-    }
+    if (!canvasEl || !canvasWrap) { console.error('Faltan #canvas o #canvas-wrap'); return; }
 
     const fabricCanvas = new fabric.Canvas('canvas', {
       backgroundColor: '#ffffff',
@@ -149,7 +141,7 @@
     });
     window.fabricCanvas = fabricCanvas;
 
-    // Presets de dispositivos / artboards
+    // device presets
     const devicePresets = [
       { id: 'desktop', name: 'Desktop (1440x900)', w: 1440, h: 900 },
       { id: 'laptop', name: 'Laptop (1366x768)', w: 1366, h: 768 },
@@ -157,27 +149,13 @@
       { id: 'mobile', name: 'Mobile (375x812)', w: 375, h: 812 }
     ];
 
-    // Páginas/artboards state
-    let pages = []; // each page: { name, width, height, json } (json null => blank)
+    // pages
+    let pages = [];
     let currentPage = -1;
+    function savePages() { try { localStorage.setItem('editor:pages', JSON.stringify(pages)); } catch (e) { console.warn(e); } }
+    function loadPages() { try { const j = localStorage.getItem('editor:pages'); if (!j) return; pages = JSON.parse(j) || []; } catch (e) { console.warn('Error loadPages', e); } }
 
-    // Utility: persist pages
-    function savePages() {
-      try {
-        localStorage.setItem('editor:pages', JSON.stringify(pages));
-      } catch (e) { console.warn('No se pudo guardar pages', e); }
-    }
-    function loadPages() {
-      try {
-        const j = localStorage.getItem('editor:pages');
-        if (!j) return;
-        pages = JSON.parse(j) || [];
-      } catch (e) {
-        console.warn('Error loadPages', e);
-      }
-    }
-
-    // Canvas resizing to wrapper
+    // resize canvas
     function resizeCanvas() {
       try {
         const rect = canvasWrap.getBoundingClientRect();
@@ -192,41 +170,29 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Zoom & history
+    // zoom & history
     let currentZoom = 1;
     const zoomLevelEl = document.getElementById('zoom-level');
     function setZoom(z) { currentZoom = Math.max(0.1, Math.min(4, z)); fabricCanvas.setZoom(currentZoom); if (zoomLevelEl) zoomLevelEl.textContent = Math.round(currentZoom * 100) + '%'; fabricCanvas.requestRenderAll(); }
 
-    const undoStack = [], redoStack = [];
-    const HISTORY_LIMIT = 80;
-    function pushState() {
-      try {
-        undoStack.push(fabricCanvas.toJSON(['selectable']));
-        if (undoStack.length > HISTORY_LIMIT) undoStack.shift();
-        redoStack.length = 0;
-      } catch (e) { console.warn('pushState', e); }
-    }
-    function restoreState(json) {
-      if (!json) return;
-      try {
-        fabricCanvas.loadFromJSON(json, () => { fabricCanvas.renderAll(); refreshLayersList(); updateSelectedInfo(); });
-      } catch (e) { console.warn('restoreState', e); }
-    }
+    const undoStack = [], redoStack = [], HISTORY_LIMIT = 80;
+    function pushState() { try { undoStack.push(fabricCanvas.toJSON(['selectable'])); if (undoStack.length > HISTORY_LIMIT) undoStack.shift(); redoStack.length = 0; } catch (e) { console.warn(e); } }
+    function restoreState(json) { if (!json) return; try { fabricCanvas.loadFromJSON(json, () => { fabricCanvas.renderAll(); refreshLayersList(); updateSelectedInfo(); }); } catch (e) { console.warn(e); } }
     function undo() { if (!undoStack.length) return; redoStack.push(fabricCanvas.toJSON()); const last = undoStack.pop(); restoreState(last); }
     function redo() { if (!redoStack.length) return; undoStack.push(fabricCanvas.toJSON()); const next = redoStack.pop(); restoreState(next); }
 
-    // Grid / snapping
+    // grid
     let gridShown = false, gridLines = [];
     function toggleGrid() {
       gridShown = !gridShown; gridLines.forEach(l => fabricCanvas.remove(l)); gridLines = [];
       if (gridShown) {
         const step = 20;
         for (let i = 0; i < fabricCanvas.width; i += step) {
-          const line = new fabric.Line([i,0,i,fabricCanvas.height], { stroke: '#eee', selectable: false, evented: false, excludeFromExport: true });
+          const line = new fabric.Line([i,0,i,fabricCanvas.height], { stroke: '#eee', selectable:false, evented:false, excludeFromExport:true });
           fabricCanvas.add(line); gridLines.push(line);
         }
         for (let j = 0; j < fabricCanvas.height; j += step) {
-          const line = new fabric.Line([0,j,fabricCanvas.width,j], { stroke: '#eee', selectable: false, evented: false, excludeFromExport: true });
+          const line = new fabric.Line([0,j,fabricCanvas.width,j], { stroke: '#eee', selectable:false, evented:false, excludeFromExport:true });
           fabricCanvas.add(line); gridLines.push(line);
         }
         gridLines.forEach(l => l.sendToBack());
@@ -234,7 +200,7 @@
       fabricCanvas.requestRenderAll();
     }
 
-    // Layers UI
+    // layers UI
     const layersListEl = document.getElementById('layers-list');
     function refreshLayersList() {
       if (!layersListEl) return;
@@ -254,7 +220,7 @@
       });
     }
 
-    // Props panel
+    // props panel
     const propText = document.getElementById('prop-text');
     const propFill = document.getElementById('prop-fill');
     const propStroke = document.getElementById('prop-stroke');
@@ -292,7 +258,7 @@
       refreshLayersList();
     }
 
-    // Prop bindings
+    // props -> object bindings
     if (propText) propText.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); if ('text' in o) { o.text = propText.value; o.set('text', propText.value); } fabricCanvas.requestRenderAll(); });
     if (propFill) propFill.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); try { o.set('fill', normalizeColor(propFill.value)); } catch (e) { o.set('fill', propFill.value); } fabricCanvas.requestRenderAll(); });
     if (propStroke) propStroke.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); try { o.set('stroke', normalizeColor(propStroke.value)); } catch (e) { o.set('stroke', propStroke.value); } fabricCanvas.requestRenderAll(); });
@@ -302,7 +268,6 @@
     if (propAngle) propAngle.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.angle = parseFloat(propAngle.value) || 0; o.setCoords(); fabricCanvas.requestRenderAll(); });
     if (propOpacity) propOpacity.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.opacity = parseFloat(propOpacity.value); fabricCanvas.requestRenderAll(); });
 
-    // Canvas event sync
     fabricCanvas.on('selection:created', updateSelectedInfo);
     fabricCanvas.on('selection:updated', updateSelectedInfo);
     fabricCanvas.on('selection:cleared', updateSelectedInfo);
@@ -310,7 +275,6 @@
     fabricCanvas.on('object:added', function (e) { if (e.target && e.target.excludeFromExport) return; pushState(); refreshLayersList(); });
     fabricCanvas.on('object:removed', function () { pushState(); refreshLayersList(); });
 
-    // Keyboard shortcuts
     document.addEventListener('keydown', (ev) => {
       const mod = ev.ctrlKey || ev.metaKey;
       if (mod && ev.key.toLowerCase() === 'z') { ev.preventDefault(); undo(); return; }
@@ -321,28 +285,25 @@
       if (mod && ev.shiftKey && ev.key.toLowerCase() === 'g') { ev.preventDefault(); ungroupSelection(); return; }
     });
 
-    // Basic create functions
+    // create helpers
     function addRect() { pushState(); const rect = new fabric.Rect({ left: 40, top: 40, fill: '#4f46e5', width: 160, height: 100, rx: 6, ry: 6 }); fabricCanvas.add(rect).setActiveObject(rect); refreshLayersList(); }
     function addCircle() { pushState(); const c = new fabric.Circle({ left: 120, top: 120, radius: 50, fill: '#ef4444' }); fabricCanvas.add(c).setActiveObject(c); refreshLayersList(); }
     function addLine() { pushState(); const l = new fabric.Line([50, 50, 200, 50], { left: 50, top: 50, stroke: '#111111', strokeWidth: 2 }); fabricCanvas.add(l).setActiveObject(l); refreshLayersList(); }
     function addText() { pushState(); const t = new fabric.Textbox('Nuevo texto', { left: 80, top: 200, width: 240, fontSize: 18, fill: '#111827' }); fabricCanvas.add(t).setActiveObject(t); refreshLayersList(); }
 
-    // ---------- Image upload: robust implementation ----------
+    // --- Robust image upload ---
     async function addImageFromFile(file) {
       if (!file) return;
       pushState();
       try {
-        // Prefer createImageBitmap for performance (and browser support)
         if (window.createImageBitmap) {
           try {
             const bitmap = await createImageBitmap(file);
-            // create a Blob URL to hand to fabric
             const canvasForBlob = document.createElement('canvas');
             canvasForBlob.width = bitmap.width;
             canvasForBlob.height = bitmap.height;
             const ctx = canvasForBlob.getContext('2d');
             ctx.drawImage(bitmap, 0, 0);
-            // scale down if too big
             const MAX_DIM = 2048;
             let targetW = bitmap.width, targetH = bitmap.height;
             if (Math.max(targetW, targetH) > MAX_DIM) {
@@ -350,7 +311,6 @@
               targetW = Math.round(targetW * ratio);
               targetH = Math.round(targetH * ratio);
             }
-            // draw into scaled canvas if needed
             if (targetW !== canvasForBlob.width || targetH !== canvasForBlob.height) {
               const scaled = document.createElement('canvas');
               scaled.width = targetW; scaled.height = targetH;
@@ -373,15 +333,11 @@
               return;
             }
           } catch (e) {
-            // fallback to objectURL
             console.warn('createImageBitmap falló, usando objectURL', e);
           }
         }
-
-        // Fallback: use object URL (fast) then revoke
         const url = URL.createObjectURL(file);
         fabric.Image.fromURL(url, function (img) {
-          // scale down large images to prevent OOM
           const MAX_DIM = 2048;
           let scale = 1;
           if (Math.max(img.width, img.height) > MAX_DIM) {
@@ -391,7 +347,6 @@
           img.set({ left: 100, top: 100 });
           fabricCanvas.add(img).setActiveObject(img);
           refreshLayersList();
-          // revoke after a tick
           setTimeout(() => URL.revokeObjectURL(url), 2000);
         }, { crossOrigin: 'anonymous' });
       } catch (err) {
@@ -400,8 +355,7 @@
       }
     }
 
-    // ---------- Page / Artboard management ----------
-    // create an artboard rectangle background (non-exported helper?) we'll export full canvas so artboard is normal object
+    // --- Page / Artboard management ---
     function createArtboardRect(w, h, name) {
       const rect = new fabric.Rect({
         left: (fabricCanvas.getWidth() - w) / 2,
@@ -424,7 +378,7 @@
       let preset = devicePresets.find(p => p.id === presetIdOrObject);
       if (!preset && typeof presetIdOrObject === 'object') preset = presetIdOrObject;
       if (!preset) preset = { name: 'Página', w: 1024, h: 768 };
-      const page = { name: preset.name || 'Página', width: preset.w || preset.w, height: preset.h || preset.h, json: null };
+      const page = { name: preset.name || 'Página', width: preset.w || 1024, height: preset.h || 768, json: null };
       pages.push(page);
       savePages();
       switchPage(pages.length - 1);
@@ -453,26 +407,17 @@
 
     function switchPage(index) {
       if (index < 0 || index >= pages.length) return;
-      // Guardar estado actual en pages[currentPage].json
       if (currentPage >= 0 && pages[currentPage]) {
-        try {
-          pages[currentPage].json = fabricCanvas.toJSON();
-        } catch (e) { console.warn('save current page json', e); }
+        try { pages[currentPage].json = fabricCanvas.toJSON(); } catch (e) { console.warn(e); }
       }
       currentPage = index;
-      // Limpiar canvas
       fabricCanvas.clear();
-      // Cargar artboard size
       const page = pages[index];
-      // Ajustar "artboard" visual: lo implementamos como un rect en el centro
       const artboard = createArtboardRect(page.width, page.height, page.name);
       fabricCanvas.add(artboard);
-      // Si tenía json cargado, cargarlo (excepto artboard que se re-crea)
       if (page.json) {
         try {
           fabricCanvas.loadFromJSON(page.json, () => {
-            // Render and ensure artboard at bottom
-            // remove any existing customArtboard if duplicate and re-add
             const ab = fabricCanvas.getObjects().filter(o => o.customArtboard);
             ab.forEach(o => fabricCanvas.remove(o));
             const art = createArtboardRect(page.width, page.height, page.name);
@@ -486,8 +431,6 @@
           fabricCanvas.renderAll();
         }
       } else {
-        // no JSON: just have artboard
-        // set zoom to fit maybe
         fabricCanvas.renderAll();
       }
       renderPagesList();
@@ -510,46 +453,34 @@
         wrap.appendChild(b); wrap.appendChild(del);
         container.appendChild(wrap);
       });
-      // add "new page" quick button
       const add = document.getElementById('btn-new-page');
-      if (add) {
-        add.onclick = () => newPage('desktop');
-      }
+      if (add) add.onclick = () => newPage('desktop');
     }
 
     function exportCurrentPagePNG() {
-      // If there's an artboard, crop to its bounds
       const art = fabricCanvas.getObjects().find(o => o.customArtboard);
       if (!art) {
-        // full canvas
         const dataURL = fabricCanvas.toDataURL({ format: 'png', multiplier: 2 });
         downloadDataURL(dataURL, 'page.png');
         return;
       }
-      // Create clone to export only the artboard area (works by viewport transform)
       const rect = art;
-      const origZoom = fabricCanvas.getZoom();
-      // Temporarily set viewport so artboard is top-left
-      const left = rect.left || 0, top = rect.top || 0;
-      // Use toDataURL with cropping via multiplier and left/top/width/height options if supported
       try {
         const dataURL = fabricCanvas.toDataURL({
           format: 'png',
           multiplier: 2,
-          left: left,
-          top: top,
+          left: rect.left,
+          top: rect.top,
           width: rect.width * (rect.scaleX || 1),
           height: rect.height * (rect.scaleY || 1)
         });
         downloadDataURL(dataURL, (pages[currentPage]?.name || 'page') + '.png');
       } catch (e) {
-        // fallback: export full canvas
         const dataURL = fabricCanvas.toDataURL({ format: 'png', multiplier: 2 });
         downloadDataURL(dataURL, 'page.png');
-      } finally {
-        setZoom(origZoom);
       }
     }
+
     function exportCurrentPageSVG() {
       try {
         const svg = fabricCanvas.toSVG();
@@ -562,10 +493,9 @@
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-      } catch (e) {
-        console.error('export svg', e);
-      }
+      } catch (e) { console.error('export svg', e); }
     }
+
     function downloadDataURL(dataURL, filename) {
       const a = document.createElement('a');
       a.href = dataURL;
@@ -575,7 +505,7 @@
       a.remove();
     }
 
-    // ---------- Basic editing actions (duplicate, group, lock, etc.) ----------
+    // edit helpers
     function duplicateSelection() {
       const a = fabricCanvas.getActiveObject();
       if (!a) return;
@@ -601,13 +531,14 @@
     function lockToggle() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const locked = !!o.lockMovementX; o.set({ lockMovementX: !locked, lockMovementY: !locked, lockScalingX: !locked, lockScalingY: !locked, lockRotation: !locked, selectable: locked }); refreshLayersList(); }
     function centerSelected() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.center(); o.setCoords(); fabricCanvas.requestRenderAll(); }
 
-    // ---------- Wire UI buttons (defensive) ----------
+    // Wire UI
     function bind(id, fn) { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); }
     bind('btn-add-rect', addRect);
     bind('btn-add-circle', addCircle);
     bind('btn-add-line', addLine);
     bind('btn-add-text', addText);
     const imgIn = document.getElementById('editor-image-input');
+    document.getElementById('btn-upload-image')?.addEventListener('click', () => imgIn?.click());
     if (imgIn) imgIn.addEventListener('change', (e) => {
       const f = e.target.files && e.target.files[0];
       if (f) addImageFromFile(f);
@@ -661,7 +592,7 @@
     });
     bind('btn-reset', () => { setZoom(1); fabricCanvas.absolutePan({ x: 0, y: 0 }); fabricCanvas.renderAll(); });
 
-    // Panning con Shift + drag
+    // panning with shift+drag
     let isPanning = false, lastPos = null;
     canvasWrap.addEventListener('pointerdown', (ev) => { if (ev.shiftKey) { isPanning = true; lastPos = { x: ev.clientX, y: ev.clientY }; ev.preventDefault(); } });
     document.addEventListener('pointermove', (ev) => {
@@ -674,14 +605,9 @@
     });
     document.addEventListener('pointerup', () => { isPanning = false; lastPos = null; });
 
-    // ---------- Initial pages load (if none, create a default) ----------
+    // initial pages load (migrate single-canvas storage if present)
     loadPages();
-    if (!pages.length) {
-      // create a default desktop page
-      pages.push({ name: 'Página 1', width: 1024, height: 768, json: null });
-    }
-    renderPagesList();
-    // if there was saved 'editor:canvas' (old single-canvas storage), migrate to first page
+    if (!pages.length) pages.push({ name: 'Página 1', width: 1024, height: 768, json: null });
     try {
       const old = localStorage.getItem('editor:canvas');
       if (old && !pages[0].json) {
@@ -689,39 +615,194 @@
         savePages();
       }
     } catch (e) {}
+    renderPagesList();
+
+    // device select population
+    const presetSelect = document.getElementById('device-select');
+    if (presetSelect) {
+      presetSelect.innerHTML = '';
+      devicePresets.forEach(p => {
+        const o = document.createElement('option');
+        o.value = p.id; o.textContent = p.name;
+        presetSelect.appendChild(o);
+      });
+    }
+    document.getElementById('btn-add-artboard-from-preset')?.addEventListener('click', () => {
+      const presetId = document.getElementById('device-select')?.value;
+      newPage(presetId);
+    });
+    document.getElementById('btn-new-page')?.addEventListener('click', () => newPage('desktop'));
+
     switchPage(0);
     pushState();
 
-    // Expose API
+    // public API
     window.editorAPI = {
       newPage, duplicatePage, deletePage, switchPage, exportCurrentPagePNG, exportCurrentPageSVG,
       addImageFromFile, addRect, addCircle, addLine, addText, getState: () => fabricCanvas.toJSON()
     };
 
-    // Keep pages UI up-to-date in case DOM buttons exist
-    function ensurePagesUIButtons() {
-      const createBtn = document.getElementById('btn-new-page');
-      if (createBtn) createBtn.addEventListener('click', () => newPage('desktop'));
-      const presetSelect = document.getElementById('device-select');
-      if (presetSelect) {
-        presetSelect.innerHTML = '';
-        devicePresets.forEach(p => {
-          const o = document.createElement('option');
-          o.value = p.id; o.textContent = p.name;
-          presetSelect.appendChild(o);
-        });
-        const addFromPreset = document.getElementById('btn-add-artboard-from-preset');
-        if (addFromPreset) addFromPreset.addEventListener('click', () => {
-          const presetId = presetSelect.value;
-          newPage(presetId);
-        });
+    // wire topbar editor open button
+    document.getElementById('btn-open-editor')?.addEventListener('click', () => {
+      document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
+      document.getElementById('view-editor')?.classList.remove('hidden');
+      const pageTitle = document.getElementById('page-title');
+      if (pageTitle) pageTitle.textContent = 'Editor';
+      setTimeout(() => canvasEl.focus(), 120);
+    });
+
+    // ----------------- Background removal functions -----------------
+    // Convert an Image/Canvas/Bitmap to ImageData with optional scaling
+    async function imageToImageData(imgSource, maxDim = 2048) {
+      const w = imgSource.width || imgSource.naturalWidth;
+      const h = imgSource.height || imgSource.naturalHeight;
+      let targetW = w, targetH = h;
+      if (Math.max(w, h) > maxDim) {
+        const ratio = maxDim / Math.max(w, h);
+        targetW = Math.round(w * ratio);
+        targetH = Math.round(h * ratio);
+      }
+      const c = document.createElement('canvas');
+      c.width = targetW; c.height = targetH;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(imgSource, 0, 0, targetW, targetH);
+      return ctx.getImageData(0, 0, c.width, c.height);
+    }
+
+    // Flood-fill from edges to detect and remove bg of uniform-ish backgrounds
+    function removeBackgroundFromImageData(imageData, tolerance = 32) {
+      const w = imageData.width, h = imageData.height;
+      const data = imageData.data;
+      function similarColor(r1,g1,b1,r2,g2,b2, tol) {
+        return Math.abs(r1-r2) <= tol && Math.abs(g1-g2) <= tol && Math.abs(b1-b2) <= tol;
+      }
+      const visited = new Uint8Array(w * h);
+      const queue = [];
+      function pushIf(idx) { if (!visited[idx]) { visited[idx] = 1; queue.push(idx); } }
+      for (let x = 0; x < w; x++) { pushIf(x); pushIf((h-1)*w + x); }
+      for (let y = 0; y < h; y++) { pushIf(y * w + 0); pushIf(y * w + (w-1)); }
+      const sampleIdx = 0;
+      const baseR = data[sampleIdx*4 + 0];
+      const baseG = data[sampleIdx*4 + 1];
+      const baseB = data[sampleIdx*4 + 2];
+      function pushNeighbor(nx, ny) {
+        const nindex = ny * w + nx;
+        if (!visited[nindex]) { visited[nindex] = 1; queue.push(nindex); }
+      }
+      while (queue.length) {
+        const idx = queue.shift();
+        const px = idx % w;
+        const py = Math.floor(idx / w);
+        const offset = idx * 4;
+        const r = data[offset + 0], g = data[offset + 1], b = data[offset + 2];
+        if (similarColor(r,g,b, baseR, baseG, baseB, tolerance)) {
+          data[offset + 3] = 0;
+          if (px > 0) pushNeighbor(px-1, py);
+          if (px < w-1) pushNeighbor(px+1, py);
+          if (py > 0) pushNeighbor(px, py-1);
+          if (py < h-1) pushNeighbor(px, py+1);
+        }
+      }
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = w; outCanvas.height = h;
+      const outCtx = outCanvas.getContext('2d');
+      outCtx.putImageData(imageData, 0, 0);
+      return outCanvas.toDataURL('image/png');
+    }
+
+    async function removeBackgroundFromFileOrImage(source, tolerance = 32, maxDim = 2048) {
+      try {
+        let imgEl = null;
+        if (source instanceof File) {
+          if (window.createImageBitmap) {
+            try {
+              const bitmap = await createImageBitmap(source);
+              const tempCanvas = document.createElement('canvas');
+              tempCanvas.width = bitmap.width; tempCanvas.height = bitmap.height;
+              const tctx = tempCanvas.getContext('2d');
+              tctx.drawImage(bitmap, 0, 0);
+              const imageData = await imageToImageData(tempCanvas, maxDim);
+              return removeBackgroundFromImageData(imageData, tolerance);
+            } catch (e) {
+              console.warn('createImageBitmap failed, using objectURL', e);
+            }
+          }
+          const url = URL.createObjectURL(source);
+          imgEl = await new Promise((res, rej) => {
+            const im = new Image(); im.crossOrigin = 'anonymous';
+            im.onload = () => res(im); im.onerror = (err) => { URL.revokeObjectURL(url); rej(err); };
+            im.src = url;
+          });
+          const imageData = await imageToImageData(imgEl, maxDim);
+          if (imgEl.src && imgEl.src.startsWith('blob:')) URL.revokeObjectURL(imgEl.src);
+          return removeBackgroundFromImageData(imageData, tolerance);
+        } else if (source instanceof HTMLImageElement || source instanceof ImageBitmap || source instanceof HTMLCanvasElement) {
+          const imageData = await imageToImageData(source, maxDim);
+          return removeBackgroundFromImageData(imageData, tolerance);
+        } else {
+          throw new Error('Tipo de fuente no soportado');
+        }
+      } catch (err) { console.error('removeBackgroundFromFileOrImage error', err); throw err; }
+    }
+
+    async function removeBackgroundActiveImage(tolerance = 32) {
+      if (!window.fabricCanvas) throw new Error('fabricCanvas no definido');
+      const active = fabricCanvas.getActiveObject();
+      if (!active || active.type !== 'image') {
+        alert('Selecciona primero una imagen en el lienzo.');
+        return;
+      }
+      try {
+        let imgEl = active._element || null;
+        if (!imgEl) {
+          const url = active.toDataURL({ format: 'png' });
+          imgEl = await new Promise((res, rej) => {
+            const im = new Image(); im.crossOrigin = 'anonymous';
+            im.onload = () => res(im); im.onerror = (e) => rej(e);
+            im.src = url;
+          });
+        }
+        const prevCursor = document.body.style.cursor; document.body.style.cursor = 'wait';
+        const dataUrl = await removeBackgroundFromFileOrImage(imgEl, tolerance, 2048);
+        fabric.Image.fromURL(dataUrl, function (newImg) {
+          newImg.set({
+            left: active.left,
+            top: active.top,
+            angle: active.angle,
+            scaleX: active.scaleX,
+            scaleY: active.scaleY,
+            originX: active.originX || 'left',
+            originY: active.originY || 'top'
+          });
+          try { pushState(); } catch (_) {}
+          fabricCanvas.remove(active);
+          fabricCanvas.add(newImg);
+          fabricCanvas.setActiveObject(newImg);
+          fabricCanvas.requestRenderAll();
+          refreshLayersList();
+          document.body.style.cursor = prevCursor;
+          alert('Fondo eliminado (resultado aproximado).');
+        }, { crossOrigin: 'anonymous' });
+      } catch (err) {
+        console.error('Error quitando fondo:', err);
+        document.body.style.cursor = 'default';
+        alert('No fue posible quitar el fondo de esta imagen (prueba otra o aumenta la tolerancia).');
       }
     }
-    ensurePagesUIButtons();
 
-    console.info('Editor inicializado con soporte de páginas y subida de imágenes robusta.');
+    // Wire remove background UI
+    document.getElementById('btn-remove-bg')?.addEventListener('click', async () => {
+      const tolInput = document.getElementById('bg-tolerance');
+      const tol = tolInput ? parseInt(tolInput.value, 10) : 32;
+      await removeBackgroundActiveImage(tol);
+    });
+
+    // expose removeBackground via API
+    if (window.editorAPI) window.editorAPI.removeBackgroundActiveImage = removeBackgroundActiveImage;
+    else window.editorAPI = { removeBackgroundActiveImage };
+
+    console.info('Editor inicializado con soporte de páginas, subida de imágenes y quitar fondo.');
   } // end start
 
-  // Boot
   if (document.readyState !== 'loading') start(); else document.addEventListener('DOMContentLoaded', start);
 })();
