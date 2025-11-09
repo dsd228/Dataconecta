@@ -1,154 +1,468 @@
-// analytics-full.js — toma datos reales desde DC_Storage (contacts, deals, interactions)
-// Dibuja KPIs y charts (Chart.js)
+/* js/analytics.js
+   Dashboard Analítica ampliado — incluye:
+   - Recolección de eventos y API trackEvent / identify / setUser
+   - Informes: adquisición, retención, comportamiento
+   - Predicciones simples y detección de tendencias (IA ligera on-device)
+   - Conversiones y embudos configurables
+   - Integraciones: stubs para Google Ads, BigQuery, Looker Studio
+   - Privacidad: modo cookieless, anonimización PII, políticas de retención y purge
+   - Mantiene mock API/localStorage y posibilidad de backend real
+*/
 (function () {
-  function safeParse(it){ try { return JSON.parse(it); } catch(e) { return null; } }
-  function formatISO(d){ return d.toISOString().slice(0,10); }
-  function parseDateFlexible(val){
-    if (!val && val !== 0) return null;
-    if (typeof val === 'number') { if (val < 1e12) val = val * 1000; return new Date(val); }
-    if (typeof val === 'string') { const maybe = new Date(val); if (!isNaN(maybe)) return maybe; const n = Number(val); if (!isNaN(n)) return new Date(n < 1e12 ? n*1000 : n); }
-    return null;
-  }
-
-  function safeParseItemDate(item, fields=['createdAt','created','timestamp','date']){
-    for (const f of fields) if (item[f]) { const d = parseDateFlexible(item[f]); if (d) return d; }
-    for (const k of Object.keys(item)) if (k.toLowerCase().includes('date')||k.toLowerCase().includes('at')||k.toLowerCase().includes('time')) {
-      const d = parseDateFlexible(item[k]); if (d) return d;
+  // CONFIG
+  const config = {
+    realBackend: false,
+    baseUrl: '',
+    sampleSizeDays: 90,
+    integrations: {
+      googleAds: { enabled: false, config: {} },
+      bigQuery: { enabled: false, config: {} },
+      lookerStudio: { enabled: false, config: {} }
+    },
+    privacy: {
+      cookieless: true,
+      retentionDays: 365,
+      anonymizePII: true
     }
-    return null;
+  };
+
+  // Helpers
+  const qs = (s) => document.querySelector(s);
+  const genId = (p = 'id') => p + '_' + Math.random().toString(36).slice(2, 9);
+  const nowIso = () => new Date().toISOString();
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const toDateKey = (iso) => iso.slice(0, 10);
+
+  // STORAGE KEYS
+  const EVENTS_KEY = 'analytics:events_v2';
+  const USERS_KEY = 'analytics:users_v2';
+  const SETTINGS_KEY = 'analytics:settings_v2';
+
+  // Load/Save
+  function save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.warn('save failed', e); } }
+  function load(key, fallback = []) { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : fallback; } catch (e) { return fallback; } }
+
+  // MAIN DATA
+  let events = load(EVENTS_KEY, []); // each event: { id, name, timestamp, userId, params }
+  let users = load(USERS_KEY, {});    // map userId -> profile
+  let settings = load(SETTINGS_KEY, config.privacy);
+
+  // Persist privacy settings
+  function persistSettings() { save(SETTINGS_KEY, settings); }
+
+  // PRIVACY API
+  function setCookieless(enabled) {
+    settings.cookieless = !!enabled;
+    persistSettings();
+  }
+  function setRetentionDays(days) {
+    settings.retentionDays = Math.max(0, parseInt(days || 0, 10));
+    persistSettings();
+    purgeOldEvents();
+  }
+  function setAnonymizePII(enabled) {
+    settings.anonymizePII = !!enabled;
+    persistSettings();
+  }
+  function anonymizeEvent(e) {
+    if (!settings.anonymizePII) return e;
+    const copy = Object.assign({}, e);
+    // remove or redact common PII fields in params
+    if (copy.params) {
+      const p = Object.assign({}, copy.params);
+      if (p.email) p.email = 'redacted@example.com';
+      if (p.phone) p.phone = 'redacted';
+      if (p.name) p.name = 'redacted';
+      copy.params = p;
+    }
+    if (copy.userId && copy.userId.startsWith('anon_')) {
+      // already anonymous
+    } else {
+      copy.userId = 'anon_' + (copy.userId ? copy.userId.slice(0,6) : genId('u').slice(0,6));
+    }
+    return copy;
+  }
+  function purgeOldEvents() {
+    if (!settings.retentionDays || settings.retentionDays <= 0) return;
+    const cutoff = Date.now() - (settings.retentionDays * 24 * 3600 * 1000);
+    events = events.filter(ev => new Date(ev.timestamp).getTime() >= cutoff);
+    save(EVENTS_KEY, events);
   }
 
-  function listAndLoad(key){ return DC_Storage.get(key, []) || []; }
+  // EVENT COLLECTION API
+  function trackEvent(name, params = {}, userId = null) {
+    const ev = {
+      id: genId('ev'),
+      name: String(name),
+      timestamp: nowIso(),
+      userId: userId || null,
+      params: params || {}
+    };
+    const stored = settings.anonymizePII ? anonymizeEvent(ev) : ev;
+    events.push(stored);
+    save(EVENTS_KEY, events);
+    // optional integration forwarders
+    if (config.integrations.googleAds.enabled) forwardToGoogleAds(stored);
+    if (config.integrations.bigQuery.enabled) forwardToBigQuery([stored]);
+    // emit to UI modules if present
+    if (window.analyticsInternal && typeof window.analyticsInternal.onEvent === 'function') {
+      window.analyticsInternal.onEvent(stored);
+    }
+    return stored;
+  }
 
-  function buildDaySeries(items, dateFields, fromISO, toISO){
-    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
-    const end = to || new Date(); const start = from || new Date(Date.now() - 29*86400000);
-    const map = {}; const labels = [];
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){ const k=formatISO(new Date(d)); map[k]=0; labels.push(k); }
-    items.forEach(it => {
-      const d = safeParseItemDate(it, dateFields); if (!d) return; const k = formatISO(d); if (k in map) map[k] += 1;
+  function identify(userId, profile = {}) {
+    if (!userId) userId = genId('u');
+    users[userId] = Object.assign(users[userId] || {}, profile, { updatedAt: nowIso() });
+    save(USERS_KEY, users);
+    return users[userId];
+  }
+  function alias(prevId, newId) {
+    // unify user ids
+    if (!prevId || !newId) return false;
+    users[newId] = Object.assign({}, users[prevId] || {}, users[newId] || {}, { mergedFrom: prevId, updatedAt: nowIso() });
+    delete users[prevId];
+    // update events
+    events.forEach(ev => { if (ev.userId === prevId) ev.userId = newId; });
+    save(EVENTS_KEY, events);
+    save(USERS_KEY, users);
+    return true;
+  }
+
+  // Simple in-memory query + mock api for compatibility with previous module
+  async function apiGet(path, params = {}) {
+    // path routing for analytics module (local)
+    const from = params.from ? new Date(params.from) : new Date(Date.now() - 30*24*3600*1000);
+    const to = params.to ? new Date(params.to) : new Date();
+    const source = params.source || '';
+    const segment = params.segment || '';
+
+    // helper to filter events by time and optional filters
+    function filterEvents(evList) {
+      return evList.filter(ev => {
+        const t = new Date(ev.timestamp);
+        if (t < from || t > to) return false;
+        if (source && ev.params && ev.params.source !== source) return false;
+        if (segment && ev.params && ev.params.segment !== segment) return false;
+        return true;
+      });
+    }
+
+    // endpoints
+    if (path === '/api/analytics/overview') {
+      const filtered = filterEvents(events);
+      const income = filtered.reduce((s, e) => s + (e.params && e.params.amount ? Number(e.params.amount) : 0), 0);
+      const leads = filtered.filter(e => e.name === 'lead' || (e.params && e.params.stage === 'lead')).length;
+      const visits = filtered.filter(e => e.name === 'page_view' || e.name === 'visit').length;
+      const conv = visits ? (leads / visits) : 0;
+      // M/M mock: compute last 30 days vs previous 30 days
+      const last30From = new Date(to.getTime() - 30*24*3600*1000);
+      const prev30From = new Date(last30From.getTime() - 30*24*3600*1000);
+      const last = events.filter(e => new Date(e.timestamp) >= last30From && new Date(e.timestamp) <= to);
+      const prev = events.filter(e => new Date(e.timestamp) >= prev30From && new Date(e.timestamp) < last30From);
+      const incomeLast = last.reduce((s, e) => s + (e.params && e.params.amount ? Number(e.params.amount) : 0), 0);
+      const incomePrev = prev.reduce((s, e) => s + (e.params && e.params.amount ? Number(e.params.amount) : 0), 0);
+      const mom = incomePrev ? ((incomeLast - incomePrev) / incomePrev * 100) : 0;
+      return { income, leads, conv, mom };
+    }
+
+    if (path === '/api/analytics/timeseries') {
+      const metric = params.metric || 'income'; // income|leads|visits|events
+      const filtered = filterEvents(events);
+      const buckets = {};
+      for (let d = new Date(from); d <= to; d.setDate(d.getDate()+1)) buckets[toDateKey(d.toISOString())] = 0;
+      filtered.forEach(ev => {
+        const k = toDateKey(ev.timestamp);
+        if (!(k in buckets)) buckets[k] = 0;
+        if (metric === 'income') buckets[k] += Number(ev.params && ev.params.amount ? ev.params.amount : 0);
+        if (metric === 'leads' && (ev.name === 'lead' || ev.params && ev.params.stage === 'lead')) buckets[k] += 1;
+        if (metric === 'visits' && (ev.name === 'page_view' || ev.name === 'visit')) buckets[k] += 1;
+        if (metric === 'events') buckets[k] += 1;
+      });
+      const labels = Object.keys(buckets).sort();
+      return { labels, values: labels.map(l => buckets[l]) };
+    }
+
+    if (path === '/api/analytics/top-sources') {
+      const filtered = filterEvents(events);
+      const map = {};
+      filtered.forEach(ev => {
+        const s = ev.params && ev.params.source ? ev.params.source : (ev.name === 'page_view' && ev.params && ev.params.referrer ? 'referral' : 'unknown');
+        map[s] = (map[s]||0) + Number(ev.params && ev.params.amount ? ev.params.amount : 0);
+      });
+      const items = Object.keys(map).map(k => ({ source: k, value: map[k] })).sort((a,b) => b.value - a.value);
+      return { items };
+    }
+
+    if (path === '/api/analytics/funnel') {
+      // params.funnel = ['visit','lead','opportunity','won'] or default
+      const funnel = params.funnel || ['visit','lead','opportunity','won'];
+      const filtered = filterEvents(events);
+      const counts = funnel.map(step => {
+        return filtered.filter(ev => ev.name === step || (ev.params && ev.params.stage === step)).length;
+      });
+      return { funnel: funnel.map((s, i) => ({ step: s, count: counts[i] })) };
+    }
+
+    if (path === '/api/analytics/activity') {
+      const filtered = filterEvents(events);
+      const sorted = filtered.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      return { items: sorted.slice(0, 200) };
+    }
+
+    if (path === '/api/analytics/cohort') {
+      // cohort by first lead date
+      const firstLeadByUser = {};
+      events.filter(e => e.name === 'lead' || (e.params && e.params.stage === 'lead')).forEach(e => {
+        if (!e.userId) return;
+        if (!firstLeadByUser[e.userId]) firstLeadByUser[e.userId] = toDateKey(e.timestamp);
+      });
+      const cohorts = {};
+      Object.values(firstLeadByUser).forEach(d => cohorts[d] = (cohorts[d] || 0) + 1);
+      return { cohorts };
+    }
+
+    // fallback
+    return { items: filterEvents(events) };
+  }
+
+  // USER ANALYTICS REPORTS
+  function acquisitionReport({ from, to, groupBy = 'source' } = {}) {
+    // returns counts by source or campaign
+    const res = {};
+    const fromD = from ? new Date(from) : new Date(Date.now() - 30*24*3600*1000);
+    const toD = to ? new Date(to) : new Date();
+    events.forEach(ev => {
+      const t = new Date(ev.timestamp);
+      if (t < fromD || t > toD) return;
+      const key = (ev.params && ev.params[groupBy]) || (groupBy === 'source' ? (ev.params && ev.params.source) || 'direct' : 'unknown');
+      res[key] = (res[key] || 0) + 1;
     });
-    return { labels, series: labels.map(l=>map[l]||0) };
+    return Object.entries(res).map(([k,v]) => ({ key: k, value: v })).sort((a,b)=>b.value-a.value);
   }
 
-  function revenueSeries(deals, fromISO, toISO) {
-    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
-    const end = to || new Date(); const start = from || new Date(Date.now() - 29*86400000);
-    const map = {}; const labels = [];
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)){ const k=formatISO(new Date(d)); map[k]=0; labels.push(k); }
-    deals.forEach(d => {
-      const closed = safeParseItemDate(d, ['closedAt','closed_at','closed']);
-      const created = safeParseItemDate(d, ['createdAt','created','timestamp']);
-      const ref = closed || created; if (!ref) return;
-      const key = formatISO(ref); if (!(key in map)) return;
-      const amount = Number(d.amount || d.value || d.total) || 0;
-      const won = d.won === true || String(d.stage||'').toLowerCase().includes('won') || String(d.stage||'').toLowerCase().includes('closed');
-      if (won) map[key] += amount;
+  function retentionReport({ windowDays = 30 } = {}) {
+    // simplistic retention: users active on day0 and returning in following weeks
+    const cutoff = Date.now() - windowDays * 24 * 3600 * 1000;
+    const recentEvents = events.filter(e => new Date(e.timestamp).getTime() >= cutoff);
+    const usersSet = {};
+    recentEvents.forEach(e => { if (e.userId) usersSet[e.userId] = usersSet[e.userId] || []; usersSet[e.userId].push(e.timestamp); });
+    // retention per day count
+    const retention = {};
+    Object.keys(usersSet).forEach(uid => {
+      const first = new Date(usersSet[uid].sort()[0]).toISOString().slice(0,10);
+      retention[first] = (retention[first] || 0) + 1;
     });
-    return { labels, series: labels.map(l => map[l] || 0) };
+    return retention;
   }
 
-  let chartSessions, chartConversions, chartRevenue, chartDevices;
-
-  function safeDestroy(ch){ if (ch && ch.destroy) ch.destroy(); }
-
-  function draw(fromISO, toISO){
-    const contacts = listAndLoad('contacts');
-    const deals = listAndLoad('deals');
-    const interactions = listAndLoad('interactions');
-
-    const sessions = buildDaySeries(contacts, ['createdAt','created','timestamp'], fromISO, toISO);
-    const dealsSeries = buildDaySeries(deals, ['createdAt','created','timestamp'], fromISO, toISO);
-    const revenue = revenueSeries(deals, fromISO, toISO);
-
-    safeDestroy(chartSessions);
-    const c1 = document.getElementById('chart-sessions').getContext('2d');
-    chartSessions = new Chart(c1, { type:'line', data:{labels:sessions.labels,datasets:[{label:'Nuevos contactos',data:sessions.series,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.08)',fill:true,tension:0.3}]}, options:{responsive:true,plugins:{legend:{display:false}}}});
-
-    safeDestroy(chartConversions);
-    const c2 = document.getElementById('chart-conversions-full').getContext('2d');
-    chartConversions = new Chart(c2, { type:'bar', data:{labels:dealsSeries.labels,datasets:[{label:'Oportunidades',data:dealsSeries.series,backgroundColor:'#10b981'}]}, options:{responsive:true,plugins:{legend:{display:false}}}});
-
-    safeDestroy(chartRevenue);
-    const c3 = document.getElementById('chart-revenue-full').getContext('2d');
-    chartRevenue = new Chart(c3, { type:'line', data:{labels:revenue.labels,datasets:[{label:'Ingresos (won)',data:revenue.series,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.07)',fill:true,tension:0.25}]}, options:{responsive:true,plugins:{legend:{display:false}}}});
-
-    safeDestroy(chartDevices);
-    const c4 = document.getElementById('chart-devices').getContext('2d');
-    const totalSessions = sessions.series.reduce((a,b)=>a+b,0) || 1;
-    const desktop = Math.max(1, Math.round(totalSessions * 0.6));
-    const mobile = Math.max(1, Math.round(totalSessions * 0.3));
-    const tablet = Math.max(1, Math.round(totalSessions * 0.1));
-    chartDevices = new Chart(c4, { type:'doughnut', data:{labels:['Desktop','Mobile','Tablet'],datasets:[{data:[desktop,mobile,tablet],backgroundColor:['#2563eb','#f59e0b','#ef4444']}]}, options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+  function behaviorReport({ topN = 20 } = {}) {
+    // most common events
+    const map = {};
+    events.forEach(e => map[e.name] = (map[e.name]||0) + 1);
+    return Object.entries(map).map(([k,v]) => ({ event: k, count: v })).sort((a,b)=>b.count-a.count).slice(0, topN);
   }
 
-  function computeKPIs(fromISO, toISO){
-    const contacts = DC_Storage.get('contacts',[]) || [];
-    const deals = DC_Storage.get('deals',[]) || [];
-    const interactions = DC_Storage.get('interactions',[]) || [];
-    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
-    const contactsIn = contacts.filter(c => { const d = safeParseItemDate(c); if (!d) return false; if (from && d < from) return false; if (to && d > to) return false; return true; });
-    const dealsIn = deals.filter(d => { const dC = safeParseItemDate(d, ['createdAt','created']); if (!dC) return false; if (from && dC < from) return false; if (to && dC > to) return false; return true; });
-    const won = deals.filter(d => { const cl = safeParseItemDate(d, ['closedAt','closed']); if (!cl) return false; if (from && cl < from) return false; if (to && cl > to) return false; const w = d.won === true || String(d.stage||'').toLowerCase().includes('won') || String(d.stage||'').toLowerCase().includes('closed'); return !!w; });
-    const revenue = won.reduce((s,d)=> s + (Number(d.amount||d.value||d.total)||0), 0);
-    const conversionRate = dealsIn.length ? Math.round((won.length / dealsIn.length) * 10000) / 100 : 0;
-    return { contactsCount: contactsIn.length, dealsCount: dealsIn.length, wonCount: won.length, revenue, conversionRate };
+  // PREDICTIONS & TRENDS (lightweight)
+  function detectTrends(metricSeries = [], lookback = 7) {
+    // metricSeries: [{label, value}, ...] chronological
+    // simple approach: compute moving average and z-score to flag spikes/trends
+    const values = metricSeries.map(x => x.value);
+    const trends = [];
+    for (let i = lookback; i < values.length; i++) {
+      const window = values.slice(i - lookback, i);
+      const avg = window.reduce((s, v) => s + v, 0) / window.length;
+      const variance = window.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / window.length;
+      const sd = Math.sqrt(variance);
+      const current = values[i];
+      const z = sd === 0 ? 0 : (current - avg) / sd;
+      trends.push({ index: i, label: metricSeries[i].label, value: current, z });
+    }
+    // return points where |z| > 2 as significant
+    return trends.filter(t => Math.abs(t.z) >= 2);
   }
 
-  function renderDetails(fromISO, toISO){
-    const tbody = document.getElementById('details-tbody');
-    if (!tbody) return;
-    const contacts = DC_Storage.get('contacts',[]) || [];
-    const deals = DC_Storage.get('deals',[]) || [];
-    const rows = [];
-    contacts.forEach(c => { const d = safeParseItemDate(c) || new Date(); rows.push({ type:'contact', name:c.name||c.email||'', date:d, amount:'' }); });
-    deals.forEach(d => { const created = safeParseItemDate(d, ['createdAt','created']) || new Date(); const closed = safeParseItemDate(d, ['closedAt','closed']); const won = d.won === true || String(d.stage||'').toLowerCase().includes('won'); rows.push({ type:'deal', name:d.title||'', date:created, amount: won ? Number(d.amount||0) : '' }); });
-    const from = fromISO ? new Date(fromISO) : null; const to = toISO ? new Date(toISO) : null;
-    const filtered = rows.filter(r => { if (!r.date) return false; if (from && r.date < from) return false; if (to && r.date > to) return false; return true; }).sort((a,b)=> b.date - a.date);
-    tbody.innerHTML = '';
-    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="4" class="small">No hay eventos para el rango seleccionado</td></tr>'; return; }
-    filtered.forEach(r => {
-      const tr = document.createElement('tr');
-      const td1 = document.createElement('td'); td1.textContent = r.type;
-      const td2 = document.createElement('td'); td2.textContent = r.name;
-      const td3 = document.createElement('td'); td3.textContent = r.date.toISOString().slice(0,10);
-      const td4 = document.createElement('td'); td4.textContent = r.amount ? ('$' + Number(r.amount).toLocaleString()) : '';
-      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
-      tbody.appendChild(tr);
+  // CONVERSION TRACKING & FLEXIBLE FUNNELS
+  function evaluateFunnel(usersEvents, funnelSteps = ['visit','lead','opportunity','won']) {
+    // usersEvents: group by userId -> [events]
+    const result = funnelSteps.map(step => ({ step, count: 0 }));
+    const userIds = Object.keys(usersEvents);
+    userIds.forEach(uid => {
+      const evNames = usersEvents[uid].map(e => e.name || (e.params && e.params.stage));
+      // determine highest funnel step this user reached
+      for (let i = funnelSteps.length - 1; i >= 0; i--) {
+        if (evNames.includes(funnelSteps[i])) {
+          result[i].count++;
+          break;
+        }
+      }
+    });
+    return result;
+  }
+
+  function buildUsersEventsMap(filteredEvents) {
+    const map = {};
+    filteredEvents.forEach(e => {
+      if (!e.userId) return;
+      map[e.userId] = map[e.userId] || [];
+      map[e.userId].push(e);
+    });
+    return map;
+  }
+
+  // INTEGRATIONS (stubs)
+  async function forwardToGoogleAds(event) {
+    if (!config.integrations.googleAds.enabled) return;
+    // stub: map event to Google Ads conversions, then call server-side endpoint or gtag if available
+    console.info('[GA-Stub] Forwarding event to Google Ads', event.name, event.params);
+    // if gtag available:
+    try {
+      if (window.gtag) {
+        window.gtag('event', event.name, Object.assign({}, event.params));
+      } else {
+        // else forward to backend for server-side upload
+        // await serverForward('/integrations/google-ads', event);
+      }
+    } catch (err) { console.warn('Google Ads forward error', err); }
+  }
+  async function forwardToBigQuery(eventsBatch) {
+    if (!config.integrations.bigQuery.enabled) return;
+    console.info('[BQ-Stub] Forwarding batch to BigQuery, size=', eventsBatch.length);
+    // Implement server-side push or use BigQuery streaming API with credentials (not in client)
+  }
+  async function exportToLookerStudio() {
+    if (!config.integrations.lookerStudio.enabled) return;
+    // Looker Studio often reads from BigQuery or Google Sheets. Provide CSV export link.
+    const csv = eventsToCSV(events);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'looker-data.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  // UTIL: convert events to CSV
+  function eventsToCSV(list) {
+    const headers = ['id','timestamp','userId','name','params'];
+    const rows = [headers.join(',')];
+    list.forEach(ev => {
+      const params = JSON.stringify(ev.params || {}).replace(/"/g, '""');
+      rows.push([ev.id, ev.timestamp, ev.userId || '', ev.name, `"${params}"`].join(','));
+    });
+    return rows.join('\n');
+  }
+
+  // EXPORTS: CSV and chart PNG handled in UI module earlier; reuse export helper
+  function exportEventsCSV(filename='events.csv') {
+    const csv = eventsToCSV(events);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  // PURGE OLD EVENT SCHEDULE (enforce retention)
+  function schedulePurgeRoutine() {
+    const dayMs = 24*3600*1000;
+    setInterval(purgeOldEvents, dayMs); // daily
+  }
+
+  // EXPOSED API
+  const analyticsAPI = {
+    // collection
+    trackEvent,
+    identify,
+    alias,
+
+    // queries
+    apiGet,
+    acquisitionReport,
+    retentionReport,
+    behaviorReport,
+    detectTrends,
+    evaluateFunnel,
+    buildUsersEventsMap,
+
+    // integrations
+    configureIntegration(name, cfg) {
+      if (!config.integrations[name]) config.integrations[name] = {};
+      config.integrations[name].enabled = !!cfg.enabled;
+      config.integrations[name].config = cfg.config || {};
+    },
+    forwardToGoogleAds,
+    forwardToBigQuery,
+    exportToLookerStudio,
+    exportEventsCSV,
+
+    // privacy controls
+    setCookieless,
+    setRetentionDays,
+    setAnonymizePII: setAnonymizePII,
+    purgeOldEvents,
+
+    // admin
+    getRawEvents: () => events.slice(),
+    resetMockData() {
+      events = [];
+      save(EVENTS_KEY, events);
+    },
+
+    // config
+    setBackend(baseUrl) { config.realBackend = true; config.baseUrl = baseUrl; },
+    useMock() { config.realBackend = false; },
+
+    // internal utilities
+    _getConfig: () => config
+  };
+
+  // Attach to window
+  window.analyticsAPI = Object.assign(window.analyticsAPI || {}, analyticsAPI);
+
+  // INTERNAL HOOK for UI to receive live events
+  window.analyticsInternal = window.analyticsInternal || {};
+  window.analyticsInternal.onEvent = function (ev) {
+    // optional UI update hooks (chart streaming, counters)
+    // Implemented by UI code if needed
+  };
+
+  // BOOT: ensure mock data and schedule purge
+  function ensureMockData() {
+    if (!events || events.length === 0) {
+      // generate a small set if empty
+      const sample = [];
+      const now = Date.now();
+      const sources = ['organic','ads','email','referral'];
+      for (let i = 0; i < 800; i++) {
+        const t = new Date(now - Math.random() * config.sampleSizeDays * 24*3600*1000).toISOString();
+        const source = sources[Math.floor(Math.random()*sources.length)];
+        const stageRoll = Math.random();
+        let name = 'page_view';
+        if (stageRoll > 0.88) name = 'won';
+        else if (stageRoll > 0.75) name = 'opportunity';
+        else if (stageRoll > 0.45) name = 'lead';
+        sample.push({ id: genId('e'), name, timestamp: t, userId: genId('u'), params: { source, amount: name==='won' ? Math.round(100 + Math.random()*900) : 0 } });
+      }
+      events = sample;
+      save(EVENTS_KEY, events);
+    }
+    if (!users || Object.keys(users).length === 0) {
+      const u = {};
+      for (let i = 0; i < 60; i++) { const id = genId('u'); u[id] = { id, createdAt: nowIso(), country: ['US','ES','FR','DE'][Math.floor(Math.random()*4)] }; }
+      users = u; save(USERS_KEY, users);
+    }
+    // apply persisted privacy settings
+    const s = load(SETTINGS_KEY, null);
+    if (s) settings = Object.assign(settings, s);
+  }
+
+  ensureMockData();
+  schedulePurgeRoutine();
+
+  // provide small UI helper: auto-forward events from CRM module if present
+  if (window.crmAPI && typeof window.crmAPI.on === 'function') {
+    // subscribe to interactions
+    window.crmAPI.on('interaction.logged', (i) => {
+      try { trackEvent(i.type || 'interaction', i.meta || {}, i.contactId || i.userId); } catch(e) {}
     });
   }
 
-  function refreshUI(){
-    const fromISO = document.getElementById('from') ? document.getElementById('from').value : '';
-    const toISO = document.getElementById('to') ? document.getElementById('to').value : '';
-    const k = computeKPIs(fromISO, toISO);
-    const elContacts = document.getElementById('kpi-contacts'); if (elContacts) elContacts.textContent = k.contactsCount;
-    const elDeals = document.getElementById('kpi-deals'); if (elDeals) elDeals.textContent = k.dealsCount;
-    const elRev = document.getElementById('kpi-revenue'); if (elRev) elRev.textContent = '$' + k.revenue.toLocaleString();
-    const elConv = document.getElementById('kpi-conv'); if (elConv) elConv.textContent = k.conversionRate + '%';
-    draw(fromISO, toISO);
-    renderDetails(fromISO, toISO);
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const btnRefresh = document.getElementById('btn-refresh');
-    if (btnRefresh) btnRefresh.addEventListener('click', refreshUI);
-    const btnExpC = document.getElementById('btn-export-contacts'); if (btnExpC) btnExpC.addEventListener('click', () => {
-      const chosen = { key:'contacts', data: DC_Storage.get('contacts',[]) || [] }; if (!chosen.data.length) return alert('No hay contactos'); const keys = Object.keys(chosen.data[0]||{}); const lines = [keys.join(',')].concat(chosen.data.map(r => keys.map(k => `"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))); const blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'dataconecta-contacts.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    });
-    const btnExpD = document.getElementById('btn-export-deals'); if (btnExpD) btnExpD.addEventListener('click', () => {
-      const chosen = { key:'deals', data: DC_Storage.get('deals',[]) || [] }; if (!chosen.data.length) return alert('No hay deals'); const keys = Object.keys(chosen.data[0]||{}); const lines = [keys.join(',')].concat(chosen.data.map(r => keys.map(k => `"${String(r[k]||'').replace(/"/g,'""')}"`).join(','))); const blob = new Blob([lines.join('\n')], { type:'text/csv;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'dataconecta-deals.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    });
-
-    // set defaults and draw initial
-    const to = new Date(); const from = new Date(); from.setDate(to.getDate()-29);
-    if (document.getElementById('to')) document.getElementById('to').value = to.toISOString().slice(0,10);
-    if (document.getElementById('from')) document.getElementById('from').value = from.toISOString().slice(0,10);
-    refreshUI();
-
-    // refresh when data changes
-    window.addEventListener('dataconecta.change', refreshUI);
-    window.addEventListener('dataconecta.interaction', refreshUI);
-    window.addEventListener('dataconecta.email.opened', refreshUI);
-  });
+  // quick debug interface in console
+  console.info('analyticsAPI initialized (trackEvent, apiGet, acquisitionReport, retentionReport, detectTrends, etc.).');
 })();
