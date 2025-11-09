@@ -1,8 +1,35 @@
-/* modules/crm.css - styles scoped for CRM module */
-.module-crm { font-family: Inter, system-ui, Arial, sans-serif; color:#0b1220; }
-.module-crm .btn { background:#4f46e5; color:#fff; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
-#crm-contacts-list .contact-item { padding:8px; border-bottom:1px solid #eee; cursor:pointer; }
-#crm-contacts-list .contact-item:hover { background:#f7f7fb; }
-#crm-detail h3 { margin-top:0; }
-#crm-form label { display:block; margin-bottom:8px; }
-#crm-form input { width:100%; padding:8px; box-sizing:border-box; margin-top:4px; }
+/* modules/crm.css - styles for advanced CRM module */
+.crm-module { font-family: Inter, system-ui, Arial, sans-serif; color:#0b1220; padding:12px; }
+.crm-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.crm-header-actions .btn { margin-left:8px; }
+.crm-body { display:flex; gap:12px; align-items:flex-start; }
+.crm-left { width:300px; display:flex; flex-direction:column; gap:12px; }
+.panel { background:#fff; border-radius:8px; padding:12px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+.search-panel input, .search-panel select, .search-panel button { width:100%; margin-top:8px; padding:8px; box-sizing:border-box; }
+.contacts-list { max-height:420px; overflow:auto; }
+.contact-item { padding:8px; border-bottom:1px solid #eee; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+.contact-item:hover { background:#f7f7fb; }
+.crm-center { flex:1; display:flex; flex-direction:column; gap:12px; }
+.detail-header { display:flex; justify-content:space-between; align-items:center; }
+.detail-actions button { margin-left:6px; }
+.tabs { display:flex; gap:8px; margin-top:12px; }
+.tab { background:#f3f4f6; padding:6px 8px; border-radius:6px; cursor:pointer; }
+.tab.active { background:#4f46e5; color:#fff; }
+.tab-content { margin-top:12px; }
+.hidden { display:none; }
+.pipeline { display:flex; gap:8px; align-items:flex-start; overflow:auto; padding-bottom:8px; }
+.pipeline-column { min-width:220px; background:#fafafa; border-radius:6px; padding:8px; border:1px solid #eee; }
+.column-body { min-height:120px; }
+.deal-card { background:#fff; padding:8px; border-radius:6px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,0.04); cursor:grab; }
+.pipeline-actions { margin-top:8px; display:flex; justify-content:space-between; align-items:center; }
+.composer-panel textarea { width:100%; }
+.crm-right { width:320px; display:flex; flex-direction:column; gap:12px; }
+.chat-window { height:220px; overflow:auto; background:#f7f7fb; padding:8px; border-radius:6px; }
+.chat-window .msg { padding:6px; margin-bottom:6px; border-radius:6px; background:#fff; }
+.modal { position:fixed; left:0; top:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); }
+.modal.hidden { display:none; }
+.modal-panel { background:#fff; padding:18px; border-radius:8px; width:480px; max-width:95%; }
+.muted { color:#6b7280; }
+.btn { background:#4f46e5; color:#fff; border:none; padding:8px 10px; border-radius:6px; cursor:pointer; }
+.btn.small { padding:6px 8px; font-size:13px; }
+.btn.tiny { padding:4px 6px; font-size:12px; }
