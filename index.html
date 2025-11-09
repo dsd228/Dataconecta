@@ -3,230 +3,128 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DataConecta — CRM · Editor · Analítica</title>
+  <title>DataConecta — Shell</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
-
   <style>
-    :root{
-      --bg: #0f1724;
-      --card: linear-gradient(180deg,#0b1220 0%, #0f1724 100%);
-      --glass: rgba(255,255,255,0.06);
-      --accent: #7c5cff;
-      --muted: #9aa4b2;
-      color-scheme: dark;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    html,body{ height:100%; margin:0; background:linear-gradient(180deg,#071025 0%, #071428 60%); color:#e6eef8; }
-    .wrap{ max-width:1200px; margin:24px auto; padding:28px; box-sizing:border-box; }
-    header.top{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-    }
-    .brand{ display:flex; align-items:center; gap:12px; }
-    .brand .logo{ width:48px; height:48px; border-radius:10px; background:linear-gradient(135deg,var(--accent),#4fd1c5); display:flex; align-items:center; justify-content:center; font-weight:700; color:#04203a; }
-    .brand h1{ margin:0; font-size:20px; letter-spacing:0.2px; }
-    .subtitle{ color:var(--muted); font-size:13px; margin-top:6px; }
-
-    /* Hero */
-    .hero{ display:grid; grid-template-columns: 1fr 420px; gap:20px; margin-top:20px; align-items:start; }
-    .home-card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-      border-radius:14px; padding:22px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-      backdrop-filter: blur(6px);
-    }
-    .modules{ display:flex; gap:14px; }
-    .module{
-      flex:1; min-height:140px; border-radius:12px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.04);
-      cursor:pointer;
-      transition: transform .18s ease, box-shadow .18s ease;
-    }
-    .module:hover{ transform: translateY(-6px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
-    .module .icon{ font-size:28px; color:var(--accent); }
-    .module h3{ margin:6px 0 0 0; font-size:16px; }
-    .module p{ margin:6px 0 0 0; color:var(--muted); font-size:13px; }
-
-    .right-panel{ display:flex; flex-direction:column; gap:12px; }
-    .card-quick{ background:var(--glass); border-radius:12px; padding:16px; }
-    .cta{ margin-top:12px; display:flex; gap:8px; }
-    .btn{
-      background:linear-gradient(90deg,var(--accent),#4fd1c5); color:#04203a; border:none; padding:10px 12px; border-radius:8px; font-weight:600; cursor:pointer;
-      display:inline-flex; gap:8px; align-items:center;
-    }
-    .btn.ghost{ background:transparent; color:#dfe8f5; border:1px solid rgba(255,255,255,0.06); }
-    /* Views */
-    .view { display:none; margin-top:20px; }
-    .view.active { display:block; }
-    /* Simple responsive */
-    @media (max-width:1000px){
-      .hero{ grid-template-columns: 1fr; }
-      .modules{ flex-direction:column; }
-    }
-
-    /* small helpers */
-    .muted{ color:var(--muted); font-size:13px; }
-    footer{ margin-top:28px; color:var(--muted); font-size:13px; text-align:center; }
+    :root{ --bg:#0f1724; --card:#0b1220; --accent:#4f46e5; --muted:#9aa4b2; font-family:Inter,system-ui,Arial, sans-serif; color:#e6eef6; }
+    html,body{ height:100%; margin:0; background:linear-gradient(180deg,#061226 0%, #07182b 100%); }
+    .shell{ display:flex; height:100vh; gap:24px; padding:36px; box-sizing:border-box; align-items:center; justify-content:center; }
+    .panel{ background:rgba(255,255,255,0.03); border-radius:14px; padding:28px; width:100%; max-width:1100px; box-shadow: 0 10px 30px rgba(2,6,23,0.6); }
+    .hero{ display:flex; gap:24px; align-items:center; }
+    .hero-left{ flex:1; }
+    .title{ font-size:28px; margin:0 0 8px 0; color:#fff; }
+    .subtitle{ margin:0 0 18px 0; color:var(--muted); }
+    .modules{ display:flex; gap:12px; flex-wrap:wrap; }
+    .module-card{ background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); padding:16px; border-radius:10px; min-width:220px; cursor:pointer; transition:transform .12s; }
+    .module-card:hover{ transform:translateY(-6px); box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
+    .module-card h3{ margin:0 0 6px 0; color:#fff; }
+    .module-card p{ margin:0; color:var(--muted); font-size:13px; }
+    #app-root{ margin-top:24px; }
+    nav.shell-nav{ display:flex; gap:8px; justify-content:center; margin-top:18px; }
+    .btn{ background:var(--accent); color:#fff; border:none; padding:10px 12px; border-radius:8px; cursor:pointer; }
+    footer{ text-align:center; color:var(--muted); margin-top:18px; font-size:13px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="top">
-      <div class="brand">
-        <div class="logo">DC</div>
-        <div>
-          <h1>DataConecta</h1>
-          <div class="subtitle">CRM · Editor UX/UI · Analítica — Plataforma modular</div>
-        </div>
-      </div>
-
-      <div>
-        <button id="btn-open-crm" class="btn" title="Abrir CRM"><i class="fas fa-address-book"></i> Abrir CRM</button>
-        <button id="btn-open-editor" class="btn ghost" title="Abrir Editor"><i class="fas fa-pencil-ruler"></i> Editor (UX/UI)</button>
-        <button id="btn-open-analytics" class="btn ghost" title="Abrir Analítica"><i class="fas fa-chart-bar"></i> Analítica</button>
-      </div>
-    </header>
-
-    <!-- HOME -->
-    <section id="view-home" class="view active">
+  <div class="shell">
+    <div class="panel">
       <div class="hero">
-        <div class="home-card">
-          <h2 style="margin:0 0 8px 0">Bienvenido a DataConecta</h2>
-          <p class="muted" style="margin:0 0 18px 0">Plataforma que integra CRM moderno, un editor visual UX/UI y un panel de analítica. Selecciona uno de los tres módulos para comenzar.</p>
+        <div class="hero-left">
+          <h1 class="title">DataConecta</h1>
+          <p class="subtitle">CRM · UX Editor · Analítica — Plataforma integrada. Pulsa un módulo para abrirlo.</p>
 
-          <div class="modules">
-            <div id="card-crm" class="module" role="button" aria-pressed="false">
-              <div>
-                <div class="icon"><i class="fas fa-address-card"></i></div>
-                <h3>CRM</h3>
-                <p>Gestiona contactos, empresas, negocios y comunicaciones.</p>
-              </div>
-              <div>
-                <small class="muted">Incluye: búsqueda, export, import y estadísticas básicas.</small>
-              </div>
+          <div class="modules" role="navigation" aria-label="Módulos">
+            <div class="module-card" id="open-crm" role="button" tabindex="0" aria-pressed="false">
+              <h3><i class="fas fa-address-book"></i> CRM & Marketing</h3>
+              <p>Gestiona contactos, empresas, deals, campañas y comunicaciones.</p>
             </div>
 
-            <div id="card-editor" class="module" role="button" aria-pressed="false">
-              <div>
-                <div class="icon"><i class="fas fa-vector-square"></i></div>
-                <h3>Editor UX / UI</h3>
-                <p>Diseña interfaces, crea componentes y prototipos interactivos.</p>
-              </div>
-              <div><small class="muted">Canvas con undo/redo, components library y remove-bg.</small></div>
+            <div class="module-card" id="open-editor" role="button" tabindex="0" aria-pressed="false">
+              <h3><i class="fas fa-pencil-ruler"></i> Editor UX/UI</h3>
+              <p>Diseña pantallas, componentes y prototipos con artboards y export.</p>
             </div>
 
-            <div id="card-analytics" class="module" role="button" aria-pressed="false">
-              <div>
-                <div class="icon"><i class="fas fa-chart-pie"></i></div>
-                <h3>Analítica</h3>
-                <p>Dashboard con KPIs, series temporales, embudos y cohortes.</p>
-              </div>
-              <div><small class="muted">Export CSV/PNG, drill-down y mock API.</small></div>
+            <div class="module-card" id="open-analytics" role="button" tabindex="0" aria-pressed="false">
+              <h3><i class="fas fa-chart-line"></i> Analítica</h3>
+              <p>Recolección, informes, predicción, embudos y conectores (BigQuery, Ads).</p>
             </div>
+          </div>
+
+          <nav class="shell-nav" aria-label="Acciones rápidas">
+            <button class="btn" id="btn-open-crm">Abrir CRM</button>
+            <button class="btn" id="btn-open-editor-shell">Abrir Editor</button>
+            <button class="btn" id="btn-open-analytics-shell">Abrir Analítica</button>
+          </nav>
+
+        </div>
+        <div class="hero-right" style="width:360px;">
+          <div style="background:rgba(255,255,255,0.02); padding:16px; border-radius:10px;">
+            <strong>Estado</strong>
+            <p style="color:var(--muted); margin-top:8px;">Módulos cargados dinámicamente: CRM, Editor UX/UI y Analítica. Cada módulo es independiente y puede exponer init() / destroy().</p>
           </div>
         </div>
-
-        <aside class="right-panel">
-          <div class="card-quick">
-            <strong>Accesos rápidos</strong>
-            <div class="cta">
-              <button id="btn-quick-new-contact" class="btn"><i class="fas fa-plus"></i> Nuevo contacto</button>
-              <button id="btn-quick-new-page" class="btn ghost"><i class="fas fa-file"></i> Nuevo artboard</button>
-            </div>
-            <p class="muted" style="margin-top:10px">Tu trabajo se guarda por defecto en localStorage. Puedes conectar backend desde los módulos.</p>
-          </div>
-
-          <div class="card-quick">
-            <strong>Estado</strong>
-            <div style="display:flex;gap:10px;margin-top:8px">
-              <div class="muted">Contacts: <span id="status-contacts">—</span></div>
-              <div class="muted">Pages: <span id="status-pages">—</span></div>
-            </div>
-          </div>
-        </aside>
       </div>
-    </section>
 
-    <!-- CRM VIEW (will be populated by js/crm.js) -->
-    <section id="view-crm" class="view" aria-hidden="true">
-      <!-- The crm.js will manage this view (renders header, lists, modals) -->
-      <div id="crm-root"></div>
-    </section>
+      <div id="app-root" aria-live="polite"></div>
 
-    <!-- Editor and Analytics scripts will expose their own views; keep placeholders -->
-    <section id="view-editor" class="view" aria-hidden="true">
-      <div id="editor-root"></div>
-    </section>
-
-    <section id="view-analytics" class="view" aria-hidden="true">
-      <div id="analytics-root"></div>
-    </section>
-
-    <footer>© DataConecta — demo local · dsd228</footer>
+      <footer>DataConecta — Shell (mascara) — dsd228</footer>
+    </div>
   </div>
 
-  <!-- crm script (core app logic) -->
-  <script src="js/crm.js" defer></script>
-
-  <!-- editor & analytics modules (already prepared earlier) -->
-  <script src="js/editor.js" defer></script>
-  <script src="js/analytics.js" defer></script>
-
   <script>
-    // Navigation between home and modules
-    (function(){
-      function showView(id){
-        document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-        const view = document.getElementById(id);
-        if(view) view.classList.add('active');
+    // Module loader: lazy loads HTML fragment + CSS + JS and calls moduleAPI.init(params)
+    window.__currentModule = null;
+
+    async function loadModule({ name, html, js, css, params = {} }) {
+      const container = document.getElementById('app-root');
+      if (!container) throw new Error('No app root');
+      // destroy previous
+      if (window.__currentModule && window.__currentModule.apiName) {
+        try { window[window.__currentModule.apiName]?.destroy?.(); } catch(e){ console.warn('destroy error', e); }
+        container.innerHTML = '';
       }
-      // cards and header buttons
-      document.getElementById('card-crm')?.addEventListener('click', ()=> {
-        showView('view-crm');
-        // notify crm module to show main screen
-        window.crmAPI?.openHome?.();
-      });
-      document.getElementById('card-editor')?.addEventListener('click', ()=> {
-        showView('view-editor');
-        document.getElementById('editor-root') && window.openEditorForProject?.(null);
-      });
-      document.getElementById('card-analytics')?.addEventListener('click', ()=> {
-        showView('view-analytics');
-        // show analytics view (analytics.js listens to hash or direct exposure)
-        window.analyticsAPI?.refreshAll?.();
-      });
-
-      document.getElementById('btn-open-crm')?.addEventListener('click', ()=> document.getElementById('card-crm').click());
-      document.getElementById('btn-open-editor')?.addEventListener('click', ()=> document.getElementById('card-editor').click());
-      document.getElementById('btn-open-analytics')?.addEventListener('click', ()=> document.getElementById('card-analytics').click());
-
-      // quick actions
-      document.getElementById('btn-quick-new-contact')?.addEventListener('click', ()=> {
-        showView('view-crm');
-        setTimeout(()=> window.crmAPI?.openNewContactModal?.(), 120);
-      });
-      document.getElementById('btn-quick-new-page')?.addEventListener('click', ()=> {
-        showView('view-editor');
-        setTimeout(()=> window.editorAPI?.newPage && window.editorAPI.newPage('desktop'), 120);
-      });
-
-      // status placeholders
-      function refreshStatus(){
-        const contacts = window.crmAPI?.countContacts?.() ?? 0;
-        const pages = window.editorAPI?.listPages?.()?.length ?? 0;
-        document.getElementById('status-contacts').textContent = contacts;
-        document.getElementById('status-pages').textContent = pages;
+      // load HTML
+      const resp = await fetch(html, { cache: 'no-cache' });
+      if (!resp.ok) throw new Error('Failed to load module HTML: ' + html);
+      const htmlText = await resp.text();
+      container.innerHTML = htmlText;
+      // load css
+      if (css && !document.querySelector(`link[data-module="${name}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet'; link.href = css; link.setAttribute('data-module', name);
+        document.head.appendChild(link);
       }
-      // poll a few times after modules load
-      window.addEventListener('load', ()=> {
-        setTimeout(refreshStatus, 400);
-        setTimeout(refreshStatus, 1200);
-        setTimeout(refreshStatus, 3000);
-      });
-      // expose for modules
-      window.showView = showView;
-    })();
+      // load js
+      if (js && !document.querySelector(`script[data-module="${name}"]`)) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = js; s.async = true; s.setAttribute('data-module', name);
+          s.onload = () => resolve();
+          s.onerror = (e) => reject(new Error('Failed to load module script: ' + js));
+          document.body.appendChild(s);
+        });
+      }
+      // set current
+      const apiName = name + 'API';
+      window.__currentModule = { name, apiName };
+      // init
+      if (window[apiName] && typeof window[apiName].init === 'function') {
+        try { await window[apiName].init(params); } catch (err) { console.error('module init failed', err); }
+      } else {
+        console.warn(`${apiName}.init not found`);
+      }
+    }
+
+    // bind UI triggers
+    document.getElementById('open-crm')?.addEventListener('click', () => loadModule({ name:'crm', html:'modules/crm.html', js:'modules/crm.js', css:'modules/crm.css' }));
+    document.getElementById('open-editor')?.addEventListener('click', () => loadModule({ name:'editor', html:'modules/editor.html', js:'modules/editor.js', css:'modules/editor.css' }));
+    document.getElementById('open-analytics')?.addEventListener('click', () => loadModule({ name:'analytics', html:'modules/analytics.html', js:'modules/analytics.js', css:'modules/analytics.css' }));
+
+    document.getElementById('btn-open-crm')?.addEventListener('click', () => document.getElementById('open-crm').click());
+    document.getElementById('btn-open-editor-shell')?.addEventListener('click', () => document.getElementById('open-editor').click());
+    document.getElementById('btn-open-analytics-shell')?.addEventListener('click', () => document.getElementById('open-analytics').click());
   </script>
 </body>
 </html>
