@@ -19,13 +19,13 @@
     const titleEl = $id('page-title');
     if (titleEl) titleEl.textContent = title;
     document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-    const currentHash = location.hash.replace(/^#\/?, '') || 'contacts';
+    const currentHash = location.hash.replace(/^#\/?/, '') || 'contacts';
     const link = Array.from(document.querySelectorAll('.sidebar a')).find(a => a.getAttribute('href') === '#/' + currentHash);
     if (link) link.classList.add('active');
   }
 
   function router(){
-    const hash = location.hash.replace(/^#\/?, '');
+    const hash = location.hash.replace(/^#\/?/, '');
     const route = '/' + (hash.split('?')[0] || '');
     (routes[route] || routes['']).call();
   }
