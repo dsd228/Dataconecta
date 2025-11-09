@@ -1,45 +1,68 @@
-/* Editor robusto sobre Fabric.js — versión con más checks y logging.
-   Reemplaza tu js/editor.js por este archivo.
-   Recomendación: mantener <script src="https://cdnjs...fabric.min.js"> antes de este archivo.
+/* js/editor.js
+   Versión robusta: espera a Fabric y usa fallback dinámico si hace falta.
+   Reemplaza tu editor.js con este archivo.
 */
 (function () {
-  function ready(fn) {
+  function onReady(fn) {
     if (document.readyState !== 'loading') return fn();
     document.addEventListener('DOMContentLoaded', fn);
   }
 
-  ready(function () {
-    try {
-      if (!window.fabric) {
-        console.error('Editor: Fabric.js no está cargado. Revisa que fabric.min.js se cargue antes de editor.js');
-        return;
+  // Espera a que window.fabric exista; si no, intenta cargar un fallback y espera.
+  function ensureFabric(maxWait = 8000, pollInterval = 100) {
+    return new Promise((resolve, reject) => {
+      if (window.fabric) return resolve(window.fabric);
+      const start = Date.now();
+
+      // Si fabric no aparece en un tiempo, inyectar fallback CDN una sola vez
+      let fallbackInjected = false;
+      function tryInjectFallback() {
+        if (fallbackInjected) return;
+        fallbackInjected = true;
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js';
+        s.onload = () => console.info('Fabric fallback cargado (jsDelivr).');
+        s.onerror = () => console.error('Fallo carga fallback Fabric (jsDelivr).');
+        document.head.appendChild(s);
       }
 
-      // Referencias DOM (comprobaciones defensivas)
+      (function poll() {
+        if (window.fabric) return resolve(window.fabric);
+        if (Date.now() - start > maxWait) {
+          // último intento: inyectar fallback y esperar un poco más
+          tryInjectFallback();
+          // esperar un último lapso corto
+          setTimeout(() => {
+            if (window.fabric) return resolve(window.fabric);
+            return reject(new Error('Fabric no disponible después de esperar'));
+          }, 1500);
+          return;
+        }
+        // si estamos pasando la mitad del tiempo sin fabric, inyectar fallback temprano
+        if (!fallbackInjected && Date.now() - start > maxWait / 2) tryInjectFallback();
+        setTimeout(poll, pollInterval);
+      })();
+    });
+  }
+
+  onReady(function () {
+    ensureFabric().then((fabric) => {
+      // Aquí dentro fabric está disponible — inicializar editor
       const canvasEl = document.getElementById('canvas');
       const canvasWrap = document.getElementById('canvas-wrap');
-      const btnOpenEditor = document.getElementById('btn-open-editor');
-      const viewEditor = document.getElementById('view-editor');
-      const zoomLevelEl = document.getElementById('zoom-level');
-      const selSummary = document.getElementById('sel-summary');
-
       if (!canvasEl || !canvasWrap) {
-        console.error('Editor: faltan elementos #canvas o #canvas-wrap en el DOM. Comprueba index.html');
+        console.error('Editor: faltan #canvas o #canvas-wrap en DOM — comprueba index.html');
         return;
       }
 
-      // Mostrar la vista del editor (si se pulsa el botón)
-      if (btnOpenEditor && viewEditor) {
-        btnOpenEditor.addEventListener('click', () => {
-          document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
-          viewEditor.classList.remove('hidden');
-          const pageTitle = document.getElementById('page-title');
-          if (pageTitle) pageTitle.textContent = 'Editor';
-          setTimeout(() => canvasEl.focus(), 150);
-        });
+      // Mínima comprobación de dependencias previas (evita doble inicialización)
+      if (window.__editorInitialized) {
+        console.warn('Editor: ya inicializado. Omite nueva inicialización.');
+        return;
       }
+      window.__editorInitialized = true;
 
-      // Inicializar canvas
+      // Inicializar Fabric Canvas
       const fabricCanvas = new fabric.Canvas('canvas', {
         backgroundColor: '#ffffff',
         selection: true,
@@ -47,6 +70,7 @@
       });
       window.fabricCanvas = fabricCanvas;
 
+      // Resize
       function resizeCanvas() {
         try {
           const rect = canvasWrap.getBoundingClientRect();
@@ -65,28 +89,27 @@
       window.addEventListener('resize', resizeCanvas);
       resizeCanvas();
 
-      // Zoom, historial y utilidades
+      // Estado
       let currentZoom = 1;
-      const zoomUpdate = () => { if (zoomLevelEl) zoomLevelEl.textContent = Math.round(currentZoom * 100) + '%'; };
+      const zoomLevelEl = document.getElementById('zoom-level');
+      const selSummary = document.getElementById('sel-summary');
 
       function setZoom(z) {
         currentZoom = Math.max(0.1, Math.min(4, z));
         fabricCanvas.setZoom(currentZoom);
-        zoomUpdate();
+        if (zoomLevelEl) zoomLevelEl.textContent = Math.round(currentZoom * 100) + '%';
         fabricCanvas.requestRenderAll();
       }
 
+      // Undo/redo (snapshots JSON)
       const undoStack = [];
       const redoStack = [];
       function pushState() {
         try {
-          const json = fabricCanvas.toJSON(['selectable']);
-          undoStack.push(json);
+          undoStack.push(fabricCanvas.toJSON(['selectable']));
           if (undoStack.length > 60) undoStack.shift();
           redoStack.length = 0;
-        } catch (e) {
-          console.warn('pushState falla', e);
-        }
+        } catch (e) { console.warn('pushState error', e); }
       }
       function restoreState(json) {
         if (!json) return;
@@ -101,7 +124,7 @@
       function undo() { if (!undoStack.length) return; redoStack.push(fabricCanvas.toJSON()); const last = undoStack.pop(); restoreState(last); }
       function redo() { if (!redoStack.length) return; undoStack.push(fabricCanvas.toJSON()); const next = redoStack.pop(); restoreState(next); }
 
-      // Grid toggle
+      // Grid
       let gridShown = false;
       let gridLines = [];
       function toggleGrid() {
@@ -124,7 +147,7 @@
       }
 
       // Creación básica
-      function addRect() { pushState(); const rect = new fabric.Rect({ left: 40, top: 40, fill: '#4f46e5', width: 160, height: 100, rx:6, ry:6 }); fabricCanvas.add(rect).setActiveObject(rect); refreshLayersList(); }
+      function addRect() { pushState(); const rect = new fabric.Rect({ left:40, top:40, fill:'#4f46e5', width:160, height:100, rx:6, ry:6 }); fabricCanvas.add(rect).setActiveObject(rect); refreshLayersList(); }
       function addCircle() { pushState(); const c = new fabric.Circle({ left:120, top:120, radius:50, fill:'#ef4444' }); fabricCanvas.add(c).setActiveObject(c); refreshLayersList(); }
       function addLine() { pushState(); const l = new fabric.Line([50,50,200,50], { left:50, top:50, stroke:'#111', strokeWidth:2 }); fabricCanvas.add(l).setActiveObject(l); refreshLayersList(); }
       function addText() { pushState(); const t = new fabric.Textbox('Nuevo texto', { left:80, top:200, width:240, fontSize:18, fill:'#111827' }); fabricCanvas.add(t).setActiveObject(t); refreshLayersList(); }
@@ -135,7 +158,7 @@
         const reader = new FileReader();
         reader.onload = function (e) {
           fabric.Image.fromURL(e.target.result, function (img) {
-            img.set({ left:100, top:100, scaleX: 0.5, scaleY: 0.5 });
+            img.set({ left:100, top:100, scaleX:0.5, scaleY:0.5 });
             fabricCanvas.add(img).setActiveObject(img);
             refreshLayersList();
           }, { crossOrigin: 'anonymous' });
@@ -143,13 +166,13 @@
         reader.readAsDataURL(file);
       }
 
-      // Edit actions
+      // Duplicar, eliminar, agrupar, etc.
       function duplicateSelection() {
         const active = fabricCanvas.getActiveObject();
         if (!active) return;
         pushState();
         active.clone(function (cloned) {
-          cloned.set({ left: (active.left || 0) + 20, top: (active.top || 0) + 20 });
+          cloned.set({ left:(active.left||0)+20, top:(active.top||0)+20 });
           fabricCanvas.add(cloned);
           fabricCanvas.setActiveObject(cloned);
           refreshLayersList();
@@ -165,35 +188,18 @@
         refreshLayersList();
       }
       function groupSelection() { const sel = fabricCanvas.getActiveObject(); if (!sel || sel.type !== 'activeSelection') return; pushState(); sel.toGroup(); refreshLayersList(); }
-      function ungroupSelection() { const active = fabricCanvas.getActiveObject(); if (active && active.type === 'group') { pushState(); active.toActiveSelection(); refreshLayersList(); } }
-      function bringForward() { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); fabricCanvas.bringForward(obj); refreshLayersList(); }
-      function sendBackward() { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); fabricCanvas.sendBackwards(obj); refreshLayersList(); }
-      function lockToggle() { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); const locked = !!obj.lockMovementX; obj.set({ lockMovementX: !locked, lockMovementY: !locked, lockScalingX: !locked, lockScalingY: !locked, lockRotation: !locked, selectable: locked }); refreshLayersList(); }
-      function centerSelected() { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); obj.center(); obj.setCoords(); fabricCanvas.requestRenderAll(); }
+      function ungroupSelection() { const a = fabricCanvas.getActiveObject(); if (a && a.type === 'group') { pushState(); a.toActiveSelection(); refreshLayersList(); } }
+      function bringForward() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); fabricCanvas.bringForward(o); refreshLayersList(); }
+      function sendBackward() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); fabricCanvas.sendBackwards(o); refreshLayersList(); }
+      function lockToggle() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const locked = !!o.lockMovementX; o.set({ lockMovementX:!locked, lockMovementY:!locked, lockScalingX:!locked, lockScalingY:!locked, lockRotation:!locked, selectable: locked }); refreshLayersList(); }
+      function centerSelected() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.center(); o.setCoords(); fabricCanvas.requestRenderAll(); }
 
       // Export / save
-      function exportPNG() { try { const dataURL = fabricCanvas.toDataURL({ format: 'png', multiplier: 2 }); const a = document.createElement('a'); a.href = dataURL; a.download = 'canvas.png'; document.body.appendChild(a); a.click(); a.remove(); } catch (e) { console.error('exportPNG error', e); } }
-      function exportSVG() { try { const svg = fabricCanvas.toSVG(); const blob = new Blob([svg], { type: 'image/svg+xml' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'canvas.svg'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); } catch (e) { console.error('exportSVG error', e); } }
-      function saveJSON() { try { const json = JSON.stringify(fabricCanvas.toJSON()); localStorage.setItem('editor:canvas', json); alert('Lienzo guardado en localStorage'); } catch (e) { console.error('saveJSON error', e); } }
-      function loadFromLocalStorage() {
-        try {
-          const json = localStorage.getItem('editor:canvas');
-          if (!json) return;
-          fabricCanvas.loadFromJSON(JSON.parse(json), () => { fabricCanvas.renderAll(); refreshLayersList(); });
-        } catch (e) { console.warn('loadFromLocalStorage falló', e); }
-      }
-      function loadJSONFile(file) {
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          try {
-            const json = JSON.parse(e.target.result);
-            pushState();
-            fabricCanvas.loadFromJSON(json, () => { fabricCanvas.renderAll(); refreshLayersList(); updateSelectedInfo(); });
-          } catch (err) { alert('Archivo JSON inválido'); }
-        };
-        reader.readAsText(file);
-      }
+      function exportPNG() { try { const dataURL = fabricCanvas.toDataURL({ format:'png', multiplier:2 }); const a = document.createElement('a'); a.href = dataURL; a.download = 'canvas.png'; document.body.appendChild(a); a.click(); a.remove(); } catch(e){console.error(e);} }
+      function exportSVG() { try { const svg = fabricCanvas.toSVG(); const blob = new Blob([svg], { type:'image/svg+xml' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'canvas.svg'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); } catch(e){console.error(e);} }
+      function saveJSON() { try { const json = JSON.stringify(fabricCanvas.toJSON()); localStorage.setItem('editor:canvas', json); alert('Lienzo guardado en localStorage'); } catch(e){console.error(e);} }
+      function loadJSONFile(file) { if (!file) return; const r = new FileReader(); r.onload = function (ev) { try { const j = JSON.parse(ev.target.result); pushState(); fabricCanvas.loadFromJSON(j, () => { fabricCanvas.renderAll(); refreshLayersList(); updateSelectedInfo(); }); } catch(e){ alert('Archivo JSON inválido'); } }; r.readAsText(file); }
+      function loadFromLocalStorage() { try { const j = localStorage.getItem('editor:canvas'); if (!j) return; fabricCanvas.loadFromJSON(JSON.parse(j), () => { fabricCanvas.renderAll(); refreshLayersList(); }); } catch(e){ console.warn('loadFromLocalStorage failed', e); } }
 
       // Layers UI
       const layersListEl = document.getElementById('layers-list');
@@ -245,17 +251,17 @@
         refreshLayersList();
       }
 
-      // Prop -> object
-      if (propText) propText.addEventListener('input', () => { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); if ('text' in obj) { obj.text = propText.value; obj.set('text', propText.value); } fabricCanvas.requestRenderAll(); });
-      if (propFill) propFill.addEventListener('input', () => { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); obj.set('fill', propFill.value); fabricCanvas.requestRenderAll(); });
-      if (propStroke) propStroke.addEventListener('input', () => { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); obj.set('stroke', propStroke.value); fabricCanvas.requestRenderAll(); });
-      if (propFontsize) propFontsize.addEventListener('input', () => { const obj = fabricCanvas.getActiveObject(); if (!obj || !('fontSize' in obj)) return; pushState(); obj.set('fontSize', parseInt(propFontsize.value,10)||12); fabricCanvas.requestRenderAll(); });
-      if (propWidth) propWidth.addEventListener('change', () => { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); const w = parseFloat(propWidth.value) || obj.width || 1; obj.scaleX = w / (obj.width || 1); obj.setCoords(); fabricCanvas.requestRenderAll(); });
-      if (propHeight) propHeight.addEventListener('change', () => { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); const h = parseFloat(propHeight.value) || obj.height || 1; obj.scaleY = h / (obj.height || 1); obj.setCoords(); fabricCanvas.requestRenderAll(); });
-      if (propAngle) propAngle.addEventListener('change', () => { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); obj.angle = parseFloat(propAngle.value) || 0; obj.setCoords(); fabricCanvas.requestRenderAll(); });
-      if (propOpacity) propOpacity.addEventListener('input', () => { const obj = fabricCanvas.getActiveObject(); if (!obj) return; pushState(); obj.opacity = parseFloat(propOpacity.value); fabricCanvas.requestRenderAll(); });
+      // Prop -> obj bindings
+      if (propText) propText.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); if ('text' in o) { o.text = propText.value; o.set('text', propText.value); } fabricCanvas.requestRenderAll(); });
+      if (propFill) propFill.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.set('fill', propFill.value); fabricCanvas.requestRenderAll(); });
+      if (propStroke) propStroke.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.set('stroke', propStroke.value); fabricCanvas.requestRenderAll(); });
+      if (propFontsize) propFontsize.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o || !('fontSize' in o)) return; pushState(); o.set('fontSize', parseInt(propFontsize.value,10) || 12); fabricCanvas.requestRenderAll(); });
+      if (propWidth) propWidth.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const w = parseFloat(propWidth.value) || o.width || 1; o.scaleX = w / (o.width || 1); o.setCoords(); fabricCanvas.requestRenderAll(); });
+      if (propHeight) propHeight.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const h = parseFloat(propHeight.value) || o.height || 1; o.scaleY = h / (o.height || 1); o.setCoords(); fabricCanvas.requestRenderAll(); });
+      if (propAngle) propAngle.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.angle = parseFloat(propAngle.value) || 0; o.setCoords(); fabricCanvas.requestRenderAll(); });
+      if (propOpacity) propOpacity.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.opacity = parseFloat(propOpacity.value); fabricCanvas.requestRenderAll(); });
 
-      // Eventos canvas para mantener UI sincronizada
+      // Canvas events
       fabricCanvas.on('selection:created', updateSelectedInfo);
       fabricCanvas.on('selection:updated', updateSelectedInfo);
       fabricCanvas.on('selection:cleared', updateSelectedInfo);
@@ -274,7 +280,7 @@
         if (mod && ev.shiftKey && ev.key.toLowerCase() === 'g') { ev.preventDefault(); ungroupSelection(); return; }
       });
 
-      // Wire UI buttons (defensivo)
+      // Wire buttons (defensivo)
       function bind(id, fn) { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); }
       bind('btn-add-rect', addRect);
       bind('btn-add-circle', addCircle);
@@ -294,7 +300,20 @@
       bind('btn-redo', redo);
       bind('btn-zoom-in', () => setZoom(currentZoom * 1.2));
       bind('btn-zoom-out', () => setZoom(currentZoom / 1.2));
-      bind('btn-fit', () => { try { const objs = fabricCanvas.getObjects(); if (!objs.length) { setZoom(1); return; } const bounds = objs.map(o => o.getBoundingRect()); const minX = Math.min(...bounds.map(b=>b.left)), minY = Math.min(...bounds.map(b=>b.top)); const maxW = Math.max(...bounds.map(b=>b.left + b.width)) - minX; const maxH = Math.max(...bounds.map(b=>b.top + b.height)) - minY; const wRatio = fabricCanvas.getWidth() / maxW; const hRatio = fabricCanvas.getHeight() / maxH; const z = Math.max(0.1, Math.min(2, Math.min(wRatio, hRatio) * 0.9)); setZoom(z); } catch(e){ setZoom(1); }});
+      bind('btn-fit', () => {
+        try {
+          const objs = fabricCanvas.getObjects();
+          if (!objs.length) { setZoom(1); return; }
+          const bounds = objs.map(o => o.getBoundingRect());
+          const minX = Math.min(...bounds.map(b=>b.left)), minY = Math.min(...bounds.map(b=>b.top));
+          const maxW = Math.max(...bounds.map(b=>b.left + b.width)) - minX;
+          const maxH = Math.max(...bounds.map(b=>b.top + b.height)) - minY;
+          const wRatio = fabricCanvas.getWidth() / maxW;
+          const hRatio = fabricCanvas.getHeight() / maxH;
+          const z = Math.max(0.1, Math.min(2, Math.min(wRatio, hRatio) * 0.9));
+          setZoom(z);
+        } catch(e) { setZoom(1); }
+      });
       bind('btn-toggle-grid', toggleGrid);
       bind('btn-export-png', exportPNG);
       bind('btn-export-svg', exportSVG);
@@ -304,24 +323,33 @@
       if (fileJson) fileJson.addEventListener('change', (e) => { const f = e.target.files && e.target.files[0]; if (f) loadJSONFile(f); e.target.value = ''; });
       bind('btn-reset', () => { setZoom(1); fabricCanvas.absolutePan({ x:0,y:0 }); fabricCanvas.renderAll(); });
 
-      // Panning con Shift + pointer
+      // Panning con Shift + drag
       let isPanning=false, lastPos=null;
       canvasWrap.addEventListener('pointerdown', (ev) => { if (ev.shiftKey) { isPanning=true; lastPos={x:ev.clientX,y:ev.clientY}; ev.preventDefault(); }});
       document.addEventListener('pointermove', (ev) => { if (!isPanning) return; const dx = ev.clientX - lastPos.x; const dy = ev.clientY - lastPos.y; const v = fabricCanvas.viewportTransform; v[4] += dx; v[5] += dy; lastPos={x:ev.clientX,y:ev.clientY}; fabricCanvas.requestRenderAll(); });
       document.addEventListener('pointerup', () => { isPanning=false; lastPos=null; });
 
-      // Inicializar UI y cargar estado
+      // Cargar estado guardado y push inicial
       refreshLayersList();
       loadFromLocalStorage();
       try { pushState(); } catch(e){}
 
-      // Exponer utilidades para debugging
+      // Exponer utilidades
       window.getEditorState = function () { try { return JSON.stringify(fabricCanvas.toJSON()); } catch(e) { return null; } };
-      window.openEditorForProject = function (projectId) { if (btnOpenEditor) btnOpenEditor.click(); console.log('openEditorForProject', projectId); };
+      window.openEditorForProject = function (projectId) { const btn = document.getElementById('btn-open-editor'); if (btn) btn.click(); console.log('Editor abierto para proyecto:', projectId); };
 
-      console.info('Editor inicializado correctamente.');
-    } catch (err) {
-      console.error('Editor inicialización falló:', err);
-    }
+      console.info('Editor inicializado.');
+    }).catch((err) => {
+      // Si no se pudo cargar Fabric, mostrar mensaje útil al desarrollador/usuario
+      console.error('No se pudo inicializar el editor porque Fabric.js no está disponible:', err);
+      // Opcional: mostrar una notificación en la UI (si quieres)
+      const viewEditor = document.getElementById('view-editor');
+      if (viewEditor) {
+        const p = document.createElement('p');
+        p.style.color = 'red';
+        p.textContent = 'Error: el componente de dibujo Fabric.js no se cargó. Revisa la conexión o el CDN.';
+        viewEditor.querySelector('.panel')?.appendChild(p);
+      }
+    });
   });
 })();
