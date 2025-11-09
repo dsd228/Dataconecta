@@ -4,38 +4,84 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>DataConecta — CRM Moderno</title>
+
+  <!-- Fonts & icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+
+  <!-- Your app stylesheet (keep your own css file) -->
   <link rel="stylesheet" href="css/style.css">
+
+  <!-- Chart.js (deferred) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+
+  <!-- Fabric CDN primary (defer) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js" defer></script>
-  <!-- El orden importa -->
-  <script src="js/storage.js" defer></script>
-  <script src="js/app.js" defer></script>
-  <script src="js/contacts.js" defer></script>
-  <script src="js/companies.js" defer></script>
-  <script src="js/deals.js" defer></script>
-  <script src="js/communications.js" defer></script>
-  <script src="js/editor.js" defer></script>
-  <script src="js/analytics-full.js" defer></script>
+
+  <!-- Fallback loader for Fabric.js: if not available quickly, inject fallback CDN -->
+  <script>
+    (function () {
+      function ensureFabricLoaded(timeoutMs = 1200) {
+        return new Promise((resolve, reject) => {
+          if (window.fabric) return resolve(true);
+          const start = Date.now();
+          (function check() {
+            if (window.fabric) return resolve(true);
+            if (Date.now() - start > timeoutMs) return reject(new Error('timeout'));
+            setTimeout(check, 80);
+          })();
+        });
+      }
+
+      ensureFabricLoaded(1200).catch(() => {
+        console.warn('Fabric no detectado en tiempo; cargando fallback desde jsDelivr...');
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js';
+        s.onload = function () { console.info('Fabric cargado desde fallback jsDelivr'); };
+        s.onerror = function () { console.error('No se pudo cargar Fabric desde fallback'); };
+        document.head.appendChild(s);
+      });
+    })();
+  </script>
 
   <style>
-    /* Pequeñas reglas específicas para el editor */
-    #editor-panel { display:flex; gap:12px; height: calc(100vh - 200px); }
-    .editor-left, .editor-right { width: 260px; background:#fff; border:1px solid #eee; padding:10px; overflow:auto; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+    /* Minimal editor-specific styles to ensure layout works when you paste */
+    :root { --bg:#f6f7fb; --panel-bg: #ffffff; --muted:#777; --accent:#4f46e5; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    html,body { height:100%; margin:0; background:var(--bg); color:#111; }
+    .sidebar { width:280px; position:fixed; top:0; left:0; bottom:0; background:#0f1724; color:#fff; padding:20px; box-sizing:border-box; overflow:auto; }
+    .sidebar .brand { font-weight:700; font-size:18px; margin-bottom:12px; display:flex; gap:8px; align-items:center; }
+    .sidebar nav a { display:block; color:rgba(255,255,255,0.85); padding:10px 8px; text-decoration:none; border-radius:6px; margin-bottom:4px; }
+    .sidebar nav a:hover { background:rgba(255,255,255,0.04); }
+    main.main { margin-left:300px; padding:18px; min-height:100vh; box-sizing:border-box; }
+    .topbar { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:12px; }
+    .topbar .top-left { max-width:70%; }
+    .topbar .top-right { display:flex; gap:8px; align-items:center; }
+    .btn { background:#fff; border:1px solid #e6e6e6; padding:8px 10px; border-radius:6px; cursor:pointer; }
+    .btn.primary { background:var(--accent); color:#fff; border:none; }
+    .btn.small { padding:6px 8px; font-size:13px; }
+    .panel { background:var(--panel-bg); padding:14px; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+    .view-panel { display:block; }
+    .hidden { display:none !important; }
+    .editor-left, .editor-right { width:260px; background:#fff; border:1px solid #eee; padding:10px; overflow:auto; border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+    #editor-panel { display:flex; gap:12px; height:calc(100vh - 220px); align-items:stretch; }
     .editor-center { flex:1; display:flex; flex-direction:column; gap:8px; align-items:stretch; }
     #editor-toolbar { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
-    #canvas-wrap { flex:1; background:linear-gradient(#f7f7f7,#fff); border:1px solid #e6e6e6; border-radius:6px; position:relative; overflow:hidden; }
-    #canvas { background: #fff; display:block; margin:0; }
+    #canvas-wrap { flex:1; background:linear-gradient(#f7f7f7,#fff); border:1px solid #e6e6e6; border-radius:6px; position:relative; overflow:hidden; display:flex; justify-content:center; align-items:center; }
+    #canvas { background:#fff; display:block; margin:0; }
     .layers-list { list-style:none; padding:0; margin:0; }
     .layers-list li { padding:6px 8px; border-radius:4px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:8px; }
     .layers-list li.active { background:#eef2ff; }
     .prop-row { margin-bottom:8px; display:flex; gap:8px; align-items:center; }
-    .prop-row label { flex:1; font-size:13px; color:#333; }
-    .btn.small { padding:6px 8px; font-size:13px; }
+    .prop-row label { flex:1; font-size:13px; color:#333; display:flex; gap:8px; align-items:center; }
+    .pagination { margin-top:8px; }
+    footer.footer { margin-top:18px; color:#666; }
+    /* pages UI small */
+    #pages-list button.primary { background:var(--accent); color:#fff; border:none; }
+    #pages-list div { margin-bottom:6px; }
+    input[type="color"] { width:38px; height:28px; padding:0; border:none; background:transparent; }
   </style>
 </head>
-<body style="font-family: 'Inter', sans-serif;">
+<body>
   <aside class="sidebar">
     <div class="brand"><i class="fas fa-database"></i> DataConecta</div>
     <nav>
@@ -48,24 +94,21 @@
       <a href="#/analytics" data-route><i class="fas fa-chart-bar"></i> Analítica</a>
       <a href="#/settings" data-route><i class="fas fa-cog"></i> Ajustes</a>
     </nav>
-    <div class="sidebar-footer">
-      <button id="btn-seed" class="btn tiny"><i class="fas fa-magic"></i> Demo</button>
-      <button id="btn-clear" class="btn tiny danger"><i class="fas fa-trash"></i> Borrar datos</button>
+    <div style="margin-top:18px;color:#bbb;font-size:13px">
+      Demo local — los datos se guardan en localStorage
     </div>
   </aside>
+
   <main class="main">
     <header class="topbar">
       <div class="top-left">
         <h1 id="page-title">Contactos</h1>
         <p style="color:#777;font-size:1rem;">Unifica clientes, gestiona comunicación y acelera ventas desde una plataforma moderna.</p>
-        <div class="search-inline">
-          <input id="global-q" placeholder="Buscar por nombre, email, empresa..." />
-          <select id="global-stage">
+        <div class="search-inline" style="margin-top:8px;display:flex;gap:8px;">
+          <input id="global-q" placeholder="Buscar por nombre, email, empresa..." style="padding:8px;border-radius:6px;border:1px solid #e6e6e6;flex:1" />
+          <select id="global-stage" style="padding:8px;border-radius:6px;border:1px solid #e6e6e6;">
             <option value="">Todas</option>
-            <option>Lead</option>
-            <option>Contacto</option>
-            <option>Prospecto</option>
-            <option>Cliente</option>
+            <option>Lead</option><option>Contacto</option><option>Prospecto</option><option>Cliente</option>
           </select>
           <button id="global-filter" class="btn">Filtrar</button>
         </div>
@@ -74,13 +117,12 @@
         <button id="btn-new-contact" class="btn primary"><i class="fas fa-plus"></i> Nuevo</button>
         <button id="btn-export-json" class="btn" title="Exportar JSON"><i class="fas fa-file-export"></i></button>
         <button id="btn-import-json" class="btn" title="Importar JSON"><i class="fas fa-file-import"></i></button>
-        <!-- Botón visible y directo para abrir el editor (Figma Pro like) -->
-        <button id="btn-open-editor" class="btn primary" title="Abrir Editor (Figma Pro)"><i class="fas fa-pencil-ruler"></i> Editor (Pro)</button>
+        <button id="btn-open-editor" class="btn primary" title="Abrir Editor (Pro)"><i class="fas fa-pencil-ruler"></i> Editor (Pro)</button>
       </div>
     </header>
 
     <section id="view-container" class="view">
-      <!-- ... otras vistas ... -->
+      <!-- Editor view -->
       <div id="view-editor" class="view-panel hidden">
         <div class="panel">
           <h3><i class="fas fa-edit"></i> Editor</h3>
@@ -113,6 +155,15 @@
                 <button id="btn-load-json" class="btn small" title="Cargar JSON"><i class="fas fa-file-import"></i></button>
                 <input id="editor-file-json" type="file" accept="application/json" style="display:none" />
               </div>
+
+              <hr/>
+              <h4>Páginas / Artboards</h4>
+              <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+                <select id="device-select" class="btn small" style="padding:6px 8px"></select>
+                <button id="btn-add-artboard-from-preset" class="btn small">Nueva página</button>
+                <button id="btn-new-page" class="btn tiny">+Quick</button>
+              </div>
+              <div id="pages-list" style="max-height:220px;overflow:auto"></div>
 
               <hr/>
               <h4>Capas</h4>
@@ -184,15 +235,14 @@
         </div>
       </div>
 
-      <!-- Resto de vistas (sin cambios) -->
+      <!-- Contacts view (example) -->
       <div id="view-contacts" class="view-panel">
         <div class="panel"><h3>Contactos</h3>
           <div class="table-wrap">
-            <table id="contacts-table" aria-label="Lista de contactos">
+            <table id="contacts-table" aria-label="Lista de contactos" style="width:100%;border-collapse:collapse">
               <thead>
-                <tr>
-                  <th>Nombre</th><th>Email</th><th>Tel</th>
-                  <th>Empresa</th><th>Etapa</th><th>Creado</th><th>Acciones</th>
+                <tr style="text-align:left;border-bottom:1px solid #eee">
+                  <th>Nombre</th><th>Email</th><th>Tel</th><th>Empresa</th><th>Etapa</th><th>Creado</th><th>Acciones</th>
                 </tr>
               </thead>
               <tbody id="contacts-tbody">
@@ -204,7 +254,14 @@
         </div>
       </div>
 
-      <!-- otras vistas... -->
+      <!-- Placeholder views -->
+      <div id="view-companies" class="view-panel hidden"><div class="panel"><h3>Empresas</h3></div></div>
+      <div id="view-deals" class="view-panel hidden"><div class="panel"><h3>Ventas</h3></div></div>
+      <div id="view-communications" class="view-panel hidden"><div class="panel"><h3>Comunicaciones</h3></div></div>
+      <div id="view-dashboard" class="view-panel hidden"><div class="panel"><h3>Dashboard</h3></div></div>
+      <div id="view-analytics" class="view-panel hidden"><div class="panel"><h3>Analítica</h3></div></div>
+      <div id="view-settings" class="view-panel hidden"><div class="panel"><h3>Configuración</h3></div></div>
+      <div id="view-placeholder" class="view-panel hidden"><div class="panel"><h3>Próximamente</h3></div></div>
     </section>
 
     <footer class="footer">
@@ -213,7 +270,7 @@
   </main>
 
   <div id="modal-root" class="modal-root hidden" role="dialog" aria-modal="true">
-    <div class="modal">
+    <div class="modal panel">
       <h3 id="modal-title">Nuevo contacto</h3>
       <div class="modal-body">
         <label>Nombre <input id="m-name"/></label>
@@ -235,6 +292,695 @@
       </div>
     </div>
   </div>
+
   <input id="file-import" type="file" accept="application/json" class="hidden"/>
+
+  <!-- Navigation router to ensure hash routes show correct view -->
+  <script>
+    (function () {
+      function showViewByHash() {
+        const hash = location.hash.replace(/^#/, '') || '/dashboard';
+        const route = hash.replace(/^\//, '').split('?')[0];
+        const targetId = 'view-' + (route || 'dashboard');
+        document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
+        const target = document.getElementById(targetId);
+        if (target) {
+          target.classList.remove('hidden');
+          const titleMap = {
+            'dashboard': 'Dashboard',
+            'contacts': 'Contactos',
+            'companies': 'Empresas',
+            'deals': 'Ventas',
+            'communications': 'Comunicación',
+            'editor': 'Editor',
+            'analytics': 'Analítica',
+            'settings': 'Ajustes'
+          };
+          const pageTitle = document.getElementById('page-title');
+          if (pageTitle) pageTitle.textContent = titleMap[route] || pageTitle.textContent;
+        } else {
+          const placeholder = document.getElementById('view-placeholder');
+          if (placeholder) placeholder.classList.remove('hidden');
+        }
+      }
+
+      document.addEventListener('click', function (e) {
+        const a = e.target.closest && e.target.closest('[data-route]');
+        if (!a) return;
+        e.preventDefault();
+        const href = a.getAttribute('href') || '#/dashboard';
+        location.hash = href.replace(/^#/, '');
+      });
+
+      window.addEventListener('hashchange', showViewByHash);
+      document.addEventListener('DOMContentLoaded', showViewByHash);
+    })();
+  </script>
+
+  <!-- Editor script (robusto, con subida de imágenes y páginas/artboards).
+       Inline to make copy/paste easier: if you prefer a separate file, move content to js/editor.js and remove this block. -->
+  <script>
+  /* START editor script */
+  (function () {
+    // Helpers
+    function loadScript(src, timeout = 8000) {
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        let done = false;
+        s.src = src;
+        s.async = true;
+        s.onload = () => { if (!done) { done = true; resolve(); } };
+        s.onerror = () => { if (!done) { done = true; reject(new Error('Failed to load ' + src)); } };
+        document.head.appendChild(s);
+        setTimeout(() => { if (!done) { done = true; reject(new Error('Timeout loading ' + src)); } }, timeout);
+      });
+    }
+    function normalizeColor(value) {
+      try {
+        if (!value) return '#000000';
+        if (typeof value !== 'string') return '#000000';
+        value = value.trim();
+        if (value[0] === '#') {
+          if (value.length === 4) {
+            const r = value[1], g = value[2], b = value[3];
+            return ('#' + r + r + g + g + b + b).toLowerCase();
+          }
+          return value.slice(0, 7).toLowerCase();
+        }
+        const rgbMatch = value.match(/rgba?\s*\(\s*([0-9.]+)[^\d]*([0-9.]+)[^\d]*([0-9.]+)/i);
+        if (rgbMatch) {
+          const r = Math.max(0, Math.min(255, parseInt(rgbMatch[1], 10) || 0));
+          const g = Math.max(0, Math.min(255, parseInt(rgbMatch[2], 10) || 0));
+          const b = Math.max(0, Math.min(255, parseInt(rgbMatch[3], 10) || 0));
+          const toHex = (n) => ('0' + n.toString(16)).slice(-2);
+          return ('#' + toHex(r) + toHex(g) + toHex(b)).toLowerCase();
+        }
+        try {
+          const cvs = document.createElement('canvas'); cvs.width = cvs.height = 1;
+          const ctx = cvs.getContext('2d');
+          ctx.fillStyle = '#000';
+          ctx.fillStyle = value;
+          const computed = ctx.fillStyle;
+          if (typeof computed === 'string') {
+            if (computed[0] === '#') {
+              if (computed.length === 7) return computed.toLowerCase();
+              if (computed.length === 4) {
+                const r = computed[1], g = computed[2], b = computed[3];
+                return ('#' + r + r + g + g + b + b).toLowerCase();
+              }
+            }
+            const m = computed.match(/rgba?\s*\(\s*([0-9.]+)[^\d]*([0-9.]+)[^\d]*([0-9.]+)/i);
+            if (m) {
+              const r = Math.max(0, Math.min(255, parseInt(m[1], 10) || 0));
+              const g = Math.max(0, Math.min(255, parseInt(m[2], 10) || 0));
+              const b = Math.max(0, Math.min(255, parseInt(m[3], 10) || 0));
+              const toHex = (n) => ('0' + n.toString(16)).slice(-2);
+              return ('#' + toHex(r) + toHex(g) + toHex(b)).toLowerCase();
+            }
+          }
+        } catch (e) {}
+      } catch (e) {}
+      return '#000000';
+    }
+
+    async function ensureFabricAvailable() {
+      if (window.fabric) return window.fabric;
+      // wait shortly for preloaded script with defer
+      const waitShort = (ms) => new Promise(r => {
+        const start = Date.now();
+        (function poll() {
+          if (window.fabric) return r(true);
+          if (Date.now() - start > ms) return r(false);
+          setTimeout(poll, 80);
+        })();
+      });
+      const found = await waitShort(1200);
+      if (found) return window.fabric;
+
+      const cdns = [
+        'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js',
+        'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js'
+      ];
+      let lastErr = null;
+      for (let src of cdns) {
+        try {
+          await loadScript(src, 8000);
+          const start = Date.now();
+          while (!window.fabric && Date.now() - start < 2000) {
+            await new Promise(r => setTimeout(r, 80));
+          }
+          if (window.fabric) {
+            console.info('Fabric cargado desde', src);
+            return window.fabric;
+          } else {
+            lastErr = new Error('Script cargado pero window.fabric no inicializó: ' + src);
+          }
+        } catch (err) {
+          lastErr = err;
+          console.warn('No se pudo cargar Fabric desde', src, err);
+        }
+      }
+      throw lastErr || new Error('No se pudo cargar Fabric.js');
+    }
+
+    // Main editor start
+    async function start() {
+      try {
+        await ensureFabricAvailable();
+      } catch (err) {
+        console.error('Fabric no disponible:', err);
+        const viewEditor = document.getElementById('view-editor');
+        if (viewEditor) {
+          const p = document.createElement('p');
+          p.style.color = 'red';
+          p.textContent = 'Error: Fabric.js no se cargó. Revisa conexión/CDN.';
+          viewEditor.querySelector('.panel')?.appendChild(p);
+        }
+        return;
+      }
+
+      if (window.__editorInitialized) return;
+      window.__editorInitialized = true;
+
+      const canvasEl = document.getElementById('canvas');
+      const canvasWrap = document.getElementById('canvas-wrap');
+      if (!canvasEl || !canvasWrap) {
+        console.error('Faltan elementos #canvas o #canvas-wrap');
+        return;
+      }
+
+      const fabricCanvas = new fabric.Canvas('canvas', {
+        backgroundColor: '#ffffff',
+        selection: true,
+        preserveObjectStacking: true
+      });
+      window.fabricCanvas = fabricCanvas;
+
+      // device presets
+      const devicePresets = [
+        { id: 'desktop', name: 'Desktop (1440x900)', w: 1440, h: 900 },
+        { id: 'laptop', name: 'Laptop (1366x768)', w: 1366, h: 768 },
+        { id: 'tablet', name: 'Tablet (768x1024)', w: 768, h: 1024 },
+        { id: 'mobile', name: 'Mobile (375x812)', w: 375, h: 812 }
+      ];
+
+      let pages = [];
+      let currentPage = -1;
+
+      function savePages() { try { localStorage.setItem('editor:pages', JSON.stringify(pages)); } catch (e) { console.warn(e); } }
+      function loadPages() { try { const j = localStorage.getItem('editor:pages'); if (!j) return; pages = JSON.parse(j) || []; } catch (e) { console.warn('Error loadPages', e); } }
+
+      function resizeCanvas() {
+        try {
+          const rect = canvasWrap.getBoundingClientRect();
+          const minW = 800, minH = 400;
+          const w = Math.max(minW, Math.floor(rect.width));
+          const h = Math.max(minH, Math.floor(rect.height));
+          canvasEl.width = w; canvasEl.height = h;
+          fabricCanvas.setWidth(w); fabricCanvas.setHeight(h);
+          fabricCanvas.calcOffset(); fabricCanvas.requestRenderAll();
+        } catch (e) { console.warn('resizeCanvas', e); }
+      }
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      let currentZoom = 1;
+      const zoomLevelEl = document.getElementById('zoom-level');
+      function setZoom(z) { currentZoom = Math.max(0.1, Math.min(4, z)); fabricCanvas.setZoom(currentZoom); if (zoomLevelEl) zoomLevelEl.textContent = Math.round(currentZoom * 100) + '%'; fabricCanvas.requestRenderAll(); }
+
+      const undoStack = [], redoStack = [], HISTORY_LIMIT = 80;
+      function pushState() { try { undoStack.push(fabricCanvas.toJSON(['selectable'])); if (undoStack.length > HISTORY_LIMIT) undoStack.shift(); redoStack.length = 0; } catch (e) { console.warn(e); } }
+      function restoreState(json) { if (!json) return; try { fabricCanvas.loadFromJSON(json, () => { fabricCanvas.renderAll(); refreshLayersList(); updateSelectedInfo(); }); } catch (e) { console.warn(e); } }
+      function undo() { if (!undoStack.length) return; redoStack.push(fabricCanvas.toJSON()); const last = undoStack.pop(); restoreState(last); }
+      function redo() { if (!redoStack.length) return; undoStack.push(fabricCanvas.toJSON()); const next = redoStack.pop(); restoreState(next); }
+
+      let gridShown = false, gridLines = [];
+      function toggleGrid() {
+        gridShown = !gridShown; gridLines.forEach(l => fabricCanvas.remove(l)); gridLines = [];
+        if (gridShown) {
+          const step = 20;
+          for (let i = 0; i < fabricCanvas.width; i += step) {
+            const line = new fabric.Line([i,0,i,fabricCanvas.height], { stroke: '#eee', selectable: false, evented: false, excludeFromExport: true });
+            fabricCanvas.add(line); gridLines.push(line);
+          }
+          for (let j = 0; j < fabricCanvas.height; j += step) {
+            const line = new fabric.Line([0,j,fabricCanvas.width,j], { stroke: '#eee', selectable: false, evented: false, excludeFromExport: true });
+            fabricCanvas.add(line); gridLines.push(line);
+          }
+          gridLines.forEach(l => l.sendToBack());
+        }
+        fabricCanvas.requestRenderAll();
+      }
+
+      const layersListEl = document.getElementById('layers-list');
+      function refreshLayersList() {
+        if (!layersListEl) return;
+        layersListEl.innerHTML = '';
+        const objs = fabricCanvas.getObjects().slice().reverse();
+        objs.forEach(o => {
+          const li = document.createElement('li');
+          li.textContent = o.type + (o.text ? ' — ' + (o.text.length > 20 ? o.text.slice(0,20)+'…' : o.text) : '');
+          if (fabricCanvas.getActiveObject() === o) li.classList.add('active');
+          const right = document.createElement('div'); right.style.display='flex'; right.style.gap='6px';
+          const eye = document.createElement('button'); eye.className='btn small'; eye.innerHTML = o.visible === false ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+          eye.addEventListener('click', (ev) => { ev.stopPropagation(); pushState(); o.set('visible', !o.visible); eye.innerHTML = o.visible ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>'; fabricCanvas.requestRenderAll(); });
+          right.appendChild(eye);
+          li.appendChild(right);
+          li.addEventListener('click', () => { fabricCanvas.setActiveObject(o); fabricCanvas.requestRenderAll(); });
+          layersListEl.appendChild(li);
+        });
+      }
+
+      const propText = document.getElementById('prop-text');
+      const propFill = document.getElementById('prop-fill');
+      const propStroke = document.getElementById('prop-stroke');
+      const propFontsize = document.getElementById('prop-fontsize');
+      const propWidth = document.getElementById('prop-width');
+      const propHeight = document.getElementById('prop-height');
+      const propAngle = document.getElementById('prop-angle');
+      const propOpacity = document.getElementById('prop-opacity');
+      const selSummary = document.getElementById('sel-summary');
+
+      function safeColor(v) { try { return normalizeColor(v); } catch (e) { return '#000000'; } }
+      function updateSelectedInfo() {
+        const obj = fabricCanvas.getActiveObject();
+        if (!obj) {
+          if (selSummary) selSummary.textContent = 'Ninguno';
+          if (propText) propText.value = '';
+          if (propFill) propFill.value = '#000000';
+          if (propStroke) propStroke.value = '#000000';
+          return;
+        }
+        if (selSummary) selSummary.textContent = obj.type + (obj.text ? ' — "' + (obj.text).slice(0,30) + '"' : '');
+        if (propText && ('text' in obj)) propText.value = obj.text || '';
+        try {
+          if (propFill) {
+            const fillVal = (obj.fill && typeof obj.fill === 'string') ? obj.fill : (obj.fill && obj.fill.colorStops ? (obj.fill.colorStops[0] && obj.fill.colorStops[0].color) : null);
+            propFill.value = safeColor(fillVal);
+          }
+        } catch (e) { if (propFill) propFill.value = '#000000'; }
+        try { if (propStroke) propStroke.value = safeColor(obj.stroke || '#000000'); } catch (e) { if (propStroke) propStroke.value = '#000000'; }
+        try { if (propFontsize && obj.fontSize) propFontsize.value = obj.fontSize; } catch (e) {}
+        try { if (propWidth) propWidth.value = Math.round(obj.getScaledWidth()); } catch (e) {}
+        try { if (propHeight) propHeight.value = Math.round(obj.getScaledHeight()); } catch (e) {}
+        try { if (propAngle) propAngle.value = Math.round(obj.angle || 0); } catch (e) {}
+        try { if (propOpacity) propOpacity.value = (obj.opacity != null ? obj.opacity : 1); } catch (e) {}
+        refreshLayersList();
+      }
+
+      if (propText) propText.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); if ('text' in o) { o.text = propText.value; o.set('text', propText.value); } fabricCanvas.requestRenderAll(); });
+      if (propFill) propFill.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); try { o.set('fill', normalizeColor(propFill.value)); } catch (e) { o.set('fill', propFill.value); } fabricCanvas.requestRenderAll(); });
+      if (propStroke) propStroke.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); try { o.set('stroke', normalizeColor(propStroke.value)); } catch (e) { o.set('stroke', propStroke.value); } fabricCanvas.requestRenderAll(); });
+      if (propFontsize) propFontsize.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o || !('fontSize' in o)) return; pushState(); o.set('fontSize', parseInt(propFontsize.value, 10) || 12); fabricCanvas.requestRenderAll(); });
+      if (propWidth) propWidth.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const w = parseFloat(propWidth.value) || o.width || 1; o.scaleX = w / (o.width || 1); o.setCoords(); fabricCanvas.requestRenderAll(); });
+      if (propHeight) propHeight.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const h = parseFloat(propHeight.value) || o.height || 1; o.scaleY = h / (o.height || 1); o.setCoords(); fabricCanvas.requestRenderAll(); });
+      if (propAngle) propAngle.addEventListener('change', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.angle = parseFloat(propAngle.value) || 0; o.setCoords(); fabricCanvas.requestRenderAll(); });
+      if (propOpacity) propOpacity.addEventListener('input', () => { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.opacity = parseFloat(propOpacity.value); fabricCanvas.requestRenderAll(); });
+
+      fabricCanvas.on('selection:created', updateSelectedInfo);
+      fabricCanvas.on('selection:updated', updateSelectedInfo);
+      fabricCanvas.on('selection:cleared', updateSelectedInfo);
+      fabricCanvas.on('object:modified', function () { pushState(); updateSelectedInfo(); refreshLayersList(); });
+      fabricCanvas.on('object:added', function (e) { if (e.target && e.target.excludeFromExport) return; pushState(); refreshLayersList(); });
+      fabricCanvas.on('object:removed', function () { pushState(); refreshLayersList(); });
+
+      document.addEventListener('keydown', (ev) => {
+        const mod = ev.ctrlKey || ev.metaKey;
+        if (mod && ev.key.toLowerCase() === 'z') { ev.preventDefault(); undo(); return; }
+        if (mod && (ev.key.toLowerCase() === 'y' || (ev.shiftKey && ev.key.toLowerCase() === 'z'))) { ev.preventDefault(); redo(); return; }
+        if (ev.key === 'Delete' || ev.key === 'Backspace') { deleteSelection(); return; }
+        if (mod && ev.key.toLowerCase() === 'd') { ev.preventDefault(); duplicateSelection(); return; }
+        if (mod && ev.key.toLowerCase() === 'g') { ev.preventDefault(); groupSelection(); return; }
+        if (mod && ev.shiftKey && ev.key.toLowerCase() === 'g') { ev.preventDefault(); ungroupSelection(); return; }
+      });
+
+      function addRect() { pushState(); const rect = new fabric.Rect({ left: 40, top: 40, fill: '#4f46e5', width: 160, height: 100, rx: 6, ry: 6 }); fabricCanvas.add(rect).setActiveObject(rect); refreshLayersList(); }
+      function addCircle() { pushState(); const c = new fabric.Circle({ left: 120, top: 120, radius: 50, fill: '#ef4444' }); fabricCanvas.add(c).setActiveObject(c); refreshLayersList(); }
+      function addLine() { pushState(); const l = new fabric.Line([50, 50, 200, 50], { left: 50, top: 50, stroke: '#111111', strokeWidth: 2 }); fabricCanvas.add(l).setActiveObject(l); refreshLayersList(); }
+      function addText() { pushState(); const t = new fabric.Textbox('Nuevo texto', { left: 80, top: 200, width: 240, fontSize: 18, fill: '#111827' }); fabricCanvas.add(t).setActiveObject(t); refreshLayersList(); }
+
+      // robust image upload
+      async function addImageFromFile(file) {
+        if (!file) return;
+        pushState();
+        try {
+          if (window.createImageBitmap) {
+            try {
+              const bitmap = await createImageBitmap(file);
+              const canvasForBlob = document.createElement('canvas');
+              canvasForBlob.width = bitmap.width;
+              canvasForBlob.height = bitmap.height;
+              const ctx = canvasForBlob.getContext('2d');
+              ctx.drawImage(bitmap, 0, 0);
+              const MAX_DIM = 2048;
+              let targetW = bitmap.width, targetH = bitmap.height;
+              if (Math.max(targetW, targetH) > MAX_DIM) {
+                const ratio = MAX_DIM / Math.max(targetW, targetH);
+                targetW = Math.round(targetW * ratio);
+                targetH = Math.round(targetH * ratio);
+              }
+              if (targetW !== canvasForBlob.width || targetH !== canvasForBlob.height) {
+                const scaled = document.createElement('canvas');
+                scaled.width = targetW; scaled.height = targetH;
+                const sctx = scaled.getContext('2d');
+                sctx.drawImage(canvasForBlob, 0, 0, targetW, targetH);
+                const dataUrl = scaled.toDataURL('image/png');
+                fabric.Image.fromURL(dataUrl, function (img) {
+                  img.set({ left: 100, top: 100, scaleX: 1, scaleY: 1 });
+                  fabricCanvas.add(img).setActiveObject(img);
+                  refreshLayersList();
+                }, { crossOrigin: 'anonymous' });
+                return;
+              } else {
+                const dataUrl = canvasForBlob.toDataURL('image/png');
+                fabric.Image.fromURL(dataUrl, function (img) {
+                  img.set({ left: 100, top: 100, scaleX: 1, scaleY: 1 });
+                  fabricCanvas.add(img).setActiveObject(img);
+                  refreshLayersList();
+                }, { crossOrigin: 'anonymous' });
+                return;
+              }
+            } catch (e) {
+              console.warn('createImageBitmap falló, usando objectURL', e);
+            }
+          }
+          const url = URL.createObjectURL(file);
+          fabric.Image.fromURL(url, function (img) {
+            const MAX_DIM = 2048;
+            let scale = 1;
+            if (Math.max(img.width, img.height) > MAX_DIM) {
+              scale = MAX_DIM / Math.max(img.width, img.height);
+              img.scaleX = img.scaleY = scale;
+            }
+            img.set({ left: 100, top: 100 });
+            fabricCanvas.add(img).setActiveObject(img);
+            refreshLayersList();
+            setTimeout(() => URL.revokeObjectURL(url), 2000);
+          }, { crossOrigin: 'anonymous' });
+        } catch (err) {
+          console.error('addImageFromFile error', err);
+          alert('No se pudo subir la imagen.');
+        }
+      }
+
+      function createArtboardRect(w, h, name) {
+        const rect = new fabric.Rect({
+          left: (fabricCanvas.getWidth() - w) / 2,
+          top: (fabricCanvas.getHeight() - h) / 2,
+          width: w,
+          height: h,
+          fill: '#ffffff',
+          stroke: '#ddd',
+          selectable: false,
+          hoverCursor: 'default',
+          customArtboard: true,
+          originX: 'left',
+          originY: 'top'
+        });
+        return rect;
+      }
+
+      function newPage(presetIdOrObject) {
+        pushState();
+        let preset = devicePresets.find(p => p.id === presetIdOrObject);
+        if (!preset && typeof presetIdOrObject === 'object') preset = presetIdOrObject;
+        if (!preset) preset = { name: 'Página', w: 1024, h: 768 };
+        const page = { name: preset.name || 'Página', width: preset.w || 1024, height: preset.h || 768, json: null };
+        pages.push(page);
+        savePages();
+        switchPage(pages.length - 1);
+        renderPagesList();
+      }
+
+      function duplicatePage(index = currentPage) {
+        if (index < 0 || index >= pages.length) return;
+        const copy = Object.assign({}, pages[index], { name: pages[index].name + ' (copia)' });
+        pages.splice(index + 1, 0, copy);
+        savePages();
+        renderPagesList();
+        switchPage(index + 1);
+      }
+
+      function deletePage(index = currentPage) {
+        if (pages.length <= 1) {
+          if (!confirm('¿Eliminar la única página? Se reseteará.')) return;
+        }
+        pages.splice(index, 1);
+        if (currentPage >= pages.length) currentPage = pages.length - 1;
+        savePages();
+        renderPagesList();
+        switchPage(Math.max(0, currentPage));
+      }
+
+      function switchPage(index) {
+        if (index < 0 || index >= pages.length) return;
+        if (currentPage >= 0 && pages[currentPage]) {
+          try { pages[currentPage].json = fabricCanvas.toJSON(); } catch (e) { console.warn(e); }
+        }
+        currentPage = index;
+        fabricCanvas.clear();
+        const page = pages[index];
+        const artboard = createArtboardRect(page.width, page.height, page.name);
+        fabricCanvas.add(artboard);
+        if (page.json) {
+          try {
+            fabricCanvas.loadFromJSON(page.json, () => {
+              const ab = fabricCanvas.getObjects().filter(o => o.customArtboard);
+              ab.forEach(o => fabricCanvas.remove(o));
+              const art = createArtboardRect(page.width, page.height, page.name);
+              fabricCanvas.insertAt(art, 0);
+              fabricCanvas.renderAll();
+              refreshLayersList();
+              updateSelectedInfo();
+            });
+          } catch (e) {
+            console.warn('Error loading page JSON', e);
+            fabricCanvas.renderAll();
+          }
+        } else {
+          fabricCanvas.renderAll();
+        }
+        renderPagesList();
+      }
+
+      function renderPagesList() {
+        const container = document.getElementById('pages-list');
+        if (!container) return;
+        container.innerHTML = '';
+        pages.forEach((p, idx) => {
+          const b = document.createElement('button');
+          b.className = 'btn small';
+          if (idx === currentPage) b.classList.add('primary');
+          b.textContent = `${idx + 1}. ${p.name}`;
+          b.addEventListener('click', () => switchPage(idx));
+          const del = document.createElement('button'); del.className = 'btn tiny danger'; del.textContent = '✕';
+          del.style.marginLeft = '6px';
+          del.addEventListener('click', (ev) => { ev.stopPropagation(); if (confirm('Eliminar página?')) deletePage(idx); });
+          const wrap = document.createElement('div'); wrap.style.display = 'flex'; wrap.style.alignItems = 'center'; wrap.style.marginBottom = '6px';
+          wrap.appendChild(b); wrap.appendChild(del);
+          container.appendChild(wrap);
+        });
+        const add = document.getElementById('btn-new-page');
+        if (add) add.onclick = () => newPage('desktop');
+      }
+
+      function exportCurrentPagePNG() {
+        const art = fabricCanvas.getObjects().find(o => o.customArtboard);
+        if (!art) {
+          const dataURL = fabricCanvas.toDataURL({ format: 'png', multiplier: 2 });
+          downloadDataURL(dataURL, 'page.png');
+          return;
+        }
+        const rect = art;
+        try {
+          const dataURL = fabricCanvas.toDataURL({
+            format: 'png',
+            multiplier: 2,
+            left: rect.left,
+            top: rect.top,
+            width: rect.width * (rect.scaleX || 1),
+            height: rect.height * (rect.scaleY || 1)
+          });
+          downloadDataURL(dataURL, (pages[currentPage]?.name || 'page') + '.png');
+        } catch (e) {
+          const dataURL = fabricCanvas.toDataURL({ format: 'png', multiplier: 2 });
+          downloadDataURL(dataURL, 'page.png');
+        }
+      }
+
+      function exportCurrentPageSVG() {
+        try {
+          const svg = fabricCanvas.toSVG();
+          const blob = new Blob([svg], { type: 'image/svg+xml' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = (pages[currentPage]?.name || 'page') + '.svg';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        } catch (e) { console.error('export svg', e); }
+      }
+
+      function downloadDataURL(dataURL, filename) {
+        const a = document.createElement('a');
+        a.href = dataURL;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+
+      function duplicateSelection() {
+        const a = fabricCanvas.getActiveObject();
+        if (!a) return;
+        pushState();
+        a.clone(function (cloned) {
+          cloned.set({ left: (a.left || 0) + 20, top: (a.top || 0) + 20 });
+          fabricCanvas.add(cloned);
+          fabricCanvas.setActiveObject(cloned);
+          refreshLayersList();
+        });
+      }
+      function deleteSelection() {
+        const a = fabricCanvas.getActiveObject();
+        if (!a) return;
+        pushState();
+        if (a.type === 'activeSelection') a.forEachObject(o => fabricCanvas.remove(o)); else fabricCanvas.remove(a);
+        fabricCanvas.discardActiveObject(); fabricCanvas.requestRenderAll(); refreshLayersList();
+      }
+      function groupSelection() { const s = fabricCanvas.getActiveObject(); if (!s || s.type !== 'activeSelection') return; pushState(); s.toGroup(); refreshLayersList(); }
+      function ungroupSelection() { const a = fabricCanvas.getActiveObject(); if (a && a.type === 'group') { pushState(); a.toActiveSelection(); refreshLayersList(); } }
+      function bringForward() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); fabricCanvas.bringForward(o); refreshLayersList(); }
+      function sendBackward() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); fabricCanvas.sendBackwards(o); refreshLayersList(); }
+      function lockToggle() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); const locked = !!o.lockMovementX; o.set({ lockMovementX: !locked, lockMovementY: !locked, lockScalingX: !locked, lockScalingY: !locked, lockRotation: !locked, selectable: locked }); refreshLayersList(); }
+      function centerSelected() { const o = fabricCanvas.getActiveObject(); if (!o) return; pushState(); o.center(); o.setCoords(); fabricCanvas.requestRenderAll(); }
+
+      function bind(id, fn) { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); }
+      bind('btn-add-rect', addRect);
+      bind('btn-add-circle', addCircle);
+      bind('btn-add-line', addLine);
+      bind('btn-add-text', addText);
+      const imgIn = document.getElementById('editor-image-input');
+      document.getElementById('btn-upload-image')?.addEventListener('click', () => imgIn?.click());
+      if (imgIn) imgIn.addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (f) addImageFromFile(f);
+        e.target.value = '';
+      });
+      bind('btn-duplicate', duplicateSelection);
+      bind('btn-delete', deleteSelection);
+      bind('btn-group', groupSelection);
+      bind('btn-ungroup', ungroupSelection);
+      bind('btn-bring-forward', bringForward);
+      bind('btn-send-backward', sendBackward);
+      bind('btn-lock', lockToggle);
+      bind('btn-center', centerSelected);
+      bind('btn-undo', undo);
+      bind('btn-redo', redo);
+      bind('btn-zoom-in', () => setZoom(currentZoom * 1.2));
+      bind('btn-zoom-out', () => setZoom(currentZoom / 1.2));
+      bind('btn-fit', () => setZoom(1));
+      bind('btn-toggle-grid', toggleGrid);
+      bind('btn-export-png', exportCurrentPagePNG);
+      bind('btn-export-svg', exportCurrentPageSVG);
+      bind('btn-save-json', () => {
+        if (currentPage >= 0 && pages[currentPage]) {
+          pages[currentPage].json = fabricCanvas.toJSON();
+          savePages();
+          alert('Página guardada en localStorage');
+        } else {
+          const json = fabricCanvas.toJSON();
+          localStorage.setItem('editor:canvas', JSON.stringify(json));
+          alert('Lienzo guardado en localStorage');
+        }
+      });
+      bind('btn-load-json', () => { const f = document.getElementById('editor-file-json'); if (f) f.click(); });
+      const fileJson = document.getElementById('editor-file-json');
+      if (fileJson) fileJson.addEventListener('change', (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (f) {
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            try {
+              const json = JSON.parse(ev.target.result);
+              pushState();
+              fabricCanvas.loadFromJSON(json, () => { fabricCanvas.renderAll(); refreshLayersList(); updateSelectedInfo(); });
+            } catch (err) {
+              alert('JSON inválido');
+            }
+          };
+          reader.readAsText(f);
+        }
+        e.target.value = '';
+      });
+      bind('btn-reset', () => { setZoom(1); fabricCanvas.absolutePan({ x: 0, y: 0 }); fabricCanvas.renderAll(); });
+
+      let isPanning = false, lastPos = null;
+      canvasWrap.addEventListener('pointerdown', (ev) => { if (ev.shiftKey) { isPanning = true; lastPos = { x: ev.clientX, y: ev.clientY }; ev.preventDefault(); } });
+      document.addEventListener('pointermove', (ev) => {
+        if (!isPanning) return;
+        const dx = ev.clientX - lastPos.x; const dy = ev.clientY - lastPos.y;
+        const v = fabricCanvas.viewportTransform;
+        v[4] += dx; v[5] += dy;
+        lastPos = { x: ev.clientX, y: ev.clientY };
+        fabricCanvas.requestRenderAll();
+      });
+      document.addEventListener('pointerup', () => { isPanning = false; lastPos = null; });
+
+      loadPages();
+      if (!pages.length) {
+        pages.push({ name: 'Página 1', width: 1024, height: 768, json: null });
+      }
+      try {
+        const old = localStorage.getItem('editor:canvas');
+        if (old && !pages[0].json) {
+          pages[0].json = JSON.parse(old);
+          savePages();
+        }
+      } catch (e) {}
+      renderPagesList();
+
+      // populate device presets select
+      const presetSelect = document.getElementById('device-select');
+      if (presetSelect) {
+        presetSelect.innerHTML = '';
+        devicePresets.forEach(p => {
+          const o = document.createElement('option');
+          o.value = p.id; o.textContent = p.name;
+          presetSelect.appendChild(o);
+        });
+      }
+      document.getElementById('btn-add-artboard-from-preset')?.addEventListener('click', () => {
+        const presetId = document.getElementById('device-select')?.value;
+        newPage(presetId);
+      });
+      document.getElementById('btn-new-page')?.addEventListener('click', () => newPage('desktop'));
+
+      switchPage(0);
+      pushState();
+
+      window.editorAPI = {
+        newPage, duplicatePage, deletePage, switchPage, exportCurrentPagePNG, exportCurrentPageSVG,
+        addImageFromFile, addRect, addCircle, addLine, addText, getState: () => fabricCanvas.toJSON()
+      };
+
+      // wire open editor button (topbar)
+      document.getElementById('btn-open-editor')?.addEventListener('click', () => {
+        document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
+        document.getElementById('view-editor')?.classList.remove('hidden');
+        const pageTitle = document.getElementById('page-title');
+        if (pageTitle) pageTitle.textContent = 'Editor';
+        setTimeout(() => canvasEl.focus(), 120);
+      });
+
+      console.info('Editor inicializado con páginas/artboards e imágenes robustas.');
+    } // end start
+
+    if (document.readyState !== 'loading') start(); else document.addEventListener('DOMContentLoaded', start);
+  })();
+  /* END editor script */
+  </script>
 </body>
 </html>
