@@ -151,9 +151,44 @@
       }
     }
 
-    // bind UI triggers using safe loader
+    // Utility: check resource existence (HEAD) with graceful fallback to GET for some hosts
+    async function exists(url) {
+      try {
+        const r = await fetch(url, { method: 'HEAD' });
+        if (r.ok) return true;
+        // some static hosts block HEAD -> try GET lightweight
+        const r2 = await fetch(url, { method: 'GET' });
+        return r2.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Open editor: prefer module injection, fallback to standalone editor/index.html
+    async function openEditorModuleOrStandalone() {
+      const moduleHtml = 'modules/editor.html';
+      const moduleJs = 'modules/editor.js';
+      const moduleCss = 'modules/editor.css';
+      const standalone = 'editor/index.html';
+
+      // prefer module (embedded)
+      if (await exists(moduleHtml) && await exists(moduleJs)) {
+        return safeLoadModule({ name: 'editor', html: moduleHtml, js: moduleJs, css: moduleCss });
+      }
+
+      // fallback to standalone page
+      if (await exists(standalone)) {
+        window.open(standalone, '_blank');
+        return;
+      }
+
+      // nothing found: actionable message
+      alert('Editor no encontrado en el repositorio.\n\nAgrega:\n- modules/editor.html + modules/editor.js + modules/editor.css  (para cargar en la máscara) \n- o editor/index.html + editor/editor.js + editor/styles.css (standalone)\n\nPuedo generar esos archivos y sus vínculos si quieres.');
+    }
+
+    // bind UI triggers using safe loader; editor button uses robust openEditorModuleOrStandalone
     document.getElementById('open-crm')?.addEventListener('click', () => safeLoadModule({ name:'crm', html:'modules/crm.html', js:'modules/crm.js', css:'modules/crm.css' }));
-    document.getElementById('open-editor')?.addEventListener('click', () => safeLoadModule({ name:'editor', html:'modules/editor.html', js:'modules/editor.js', css:'modules/editor.css' }));
+    document.getElementById('open-editor')?.addEventListener('click', () => openEditorModuleOrStandalone());
     document.getElementById('open-analytics')?.addEventListener('click', () => safeLoadModule({ name:'analytics', html:'modules/analytics.html', js:'modules/analytics.js', css:'modules/analytics.css' }));
 
     document.getElementById('btn-open-crm')?.addEventListener('click', () => document.getElementById('open-crm').click());
