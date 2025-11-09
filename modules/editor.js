@@ -1,509 +1,443 @@
-/* modules/editor.js
-   Advanced Editor (UX/UI) module implementing:
-   - reusable components + instances + overrides
-   - design tokens (colors/fonts) and export CSS variables
-   - prototyping (hotspots & transitions)
-   - comments anchored to objects
-   - collaboration stub (WebSocket optional) with ops & live cursors
-   - export assets / CSS / iOS/Android snippets
-   - plugins registry (icons/image bank/AI)
-   - heatmaps & session recordings (client-side capture + heatmap generator)
-   - background removal (on-device heuristic flood-fill)
-   Exposes window.editorAPI.init(params) and destroy()
-*/
+// modules/editor.js — module-ready Editor script (robust canvas detection + fallback creation)
+// Exposes window.editorAPI.init(params) and window.editorAPI.destroy()
 (function () {
-  // Config
   const CONFIG = {
-    wsUrl: null, // set to wss://... to enable real-time features
-    localFallbackFabric: '/modules/vendor/fabric.min.js', // expected on GitHub Pages if CDN blocked
-    recordingMaxEvents: 20000
+    cdnList: [
+      'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js'
+    ],
+    localFallback: '/modules/vendor/fabric.min.js'
   };
 
-  // Utilities
   const $ = (sel, root = document) => root.querySelector(sel);
-  const qsa = (sel, root = document) => Array.from((root||document).querySelectorAll(sel));
+  const qsa = (sel, root = document) => Array.from((root || document).querySelectorAll(sel));
   const uid = (p='id') => p + '_' + Math.random().toString(36).slice(2,9);
   const nowIso = () => new Date().toISOString();
 
-  // Storage keys
-  const KEYS = {
-    PAGES: 'editor:pages_v2',
-    COMPONENTS: 'editor:components_v2',
-    TOKENS: 'editor:tokens_v1',
-    COMMENTS: 'editor:comments_v1',
-    RECORDINGS: 'editor:recordings_v1'
-  };
-
-  // State
-  let fabricCanvas = null;
   let mounted = false;
-  let ws = null;
-  let pluginRegistry = {};
-  let recordBuffer = [];
-  let recording = false;
+  let fabricCanvas = null;
+  let state = { components: [], history: { undo: [], redo: [], limit: 80 }, tokens: { primary: '#4f46e5', font: 'Inter, system-ui' }, recordings: [] };
+  let handlers = [];
+  let recHandlers = [];
 
-  // Persistence helpers
-  function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
-  function load(key, fallback) { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : fallback; } catch(e){ return fallback; } }
+  function saveLS(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function loadLS(k, fallback) { try { const s = localStorage.getItem(k); return s ? JSON.parse(s) : fallback; } catch (e) { return fallback; } }
 
-  // Ensure Fabric loaded (tries CDN then local)
-  function loadScript(src, timeout=8000) {
+  function loadScript(src, timeout = 8000) {
     return new Promise((resolve, reject) => {
-      if (document.querySelector(`script[src="${src}"]`)) {
+      if (document.querySelector('script[src="' + src + '"]')) {
         const start = Date.now();
-        (function poll(){ if (window.fabric) return resolve(); if (Date.now()-start>3000) return reject(new Error('Script present but fabric not initialized')); setTimeout(poll,80); })();
+        (function poll() { if (window.fabric) return resolve(); if (Date.now() - start > 3000) return reject(new Error('Script present but fabric not initialized: ' + src)); setTimeout(poll, 80); })();
         return;
       }
-      const s = document.createElement('script'); s.src = src; s.async = true;
-      let done=false;
-      s.onload = ()=> { if(!done){done=true;resolve();} };
-      s.onerror = ()=> { if(!done){done=true;reject(new Error('Failed to load '+src));} };
+      const s = document.createElement('script');
+      s.src = src; s.async = true;
+      let done = false;
+      s.onload = () => { if (!done) { done = true; resolve(); } };
+      s.onerror = () => { if (!done) { done = true; reject(new Error('Failed to load ' + src)); } };
       document.head.appendChild(s);
-      setTimeout(()=>{ if(!done){done=true;reject(new Error('Timeout loading '+src));} }, timeout);
+      setTimeout(() => { if (!done) { done = true; reject(new Error('Timeout loading ' + src)); } }, timeout);
     });
   }
-  async function ensureFabric() {
+
+  async function ensureFabricAvailable() {
     if (window.fabric) return window.fabric;
-    const cdns = [
-      'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js'
-    ];
-    for (const src of cdns) {
-      try { await loadScript(src); if (window.fabric) return window.fabric; } catch(e){ console.warn('fabric cdn error', e); }
+    for (const src of CONFIG.cdnList) {
+      try {
+        await loadScript(src);
+        const start = Date.now();
+        while (!window.fabric && Date.now() - start < 2000) await new Promise(r => setTimeout(r, 80));
+        if (window.fabric) { console.info('Fabric loaded from', src); return window.fabric; }
+      } catch (e) { console.warn('Failed to load Fabric from', src, e); }
     }
-    // local fallback
-    try { await loadScript(CONFIG.localFallbackFabric); if (window.fabric) return window.fabric; } catch(e){ console.warn('local fallback failed', e); }
-    throw new Error('Fabric.js not available');
+    try {
+      await loadScript(CONFIG.localFallback);
+      const start = Date.now();
+      while (!window.fabric && Date.now() - start < 2000) await new Promise(r => setTimeout(r, 80));
+      if (window.fabric) { console.info('Fabric loaded from local fallback', CONFIG.localFallback); return window.fabric; }
+    } catch (e) { console.warn('Local fallback failed', e); }
+    throw new Error('Fabric.js could not be loaded');
   }
 
-  // Design tokens
-  function getTokens() { return load(KEYS.TOKENS, { primary:'#4f46e5', accent:'#06b6D4', font:'Inter, system-ui' }); }
-  function setTokens(t) { save(KEYS.TOKENS, t); applyTokensToUI(t); }
-  function applyTokensToUI(t) {
-    // update color inputs if present
-    const primary = $('#token-primary'); if (primary) primary.value = t.primary || '#4f46e5';
-    const accent = $('#token-accent'); if (accent) accent.value = t.accent || '#06b6D4';
-    const font = $('#token-font'); if (font) font.value = t.font || 'Inter, system-ui';
-    // apply CSS variables for preview/export
-    document.documentElement.style.setProperty('--editor-primary', t.primary);
-    document.documentElement.style.setProperty('--editor-accent', t.accent);
-    document.documentElement.style.setProperty('--editor-font', t.font);
+  function bind(el, ev, fn) {
+    if (!el) return;
+    el.addEventListener(ev, fn);
+    handlers.push({ el, ev, fn });
   }
-  function exportTokensAsCSS() {
-    const t = getTokens();
-    const css = `:root {\n  --color-primary: ${t.primary};\n  --color-accent: ${t.accent};\n  --font-family: ${t.font};\n}\n`;
-    const blob = new Blob([css], { type:'text/css' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download='design-tokens.css'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-  }
-
-  // Components system
-  function loadComponents() { return load(KEYS.COMPONENTS, []); }
-  function saveComponents(comps) { save(KEYS.COMPONENTS, comps); }
-  function createComponentFromSelection(name) {
-    const sel = fabricCanvas.getActiveObject();
-    if (!sel) return null;
-    let compJson = null;
-    if (sel.type === 'activeSelection') {
-      const objs = sel.getObjects().map(o => o.toObject(['__objectId','__isInstance','__componentId']));
-      compJson = { objects: objs };
-    } else {
-      compJson = { objects: [ sel.toObject(['__objectId','__isInstance','__componentId']) ] };
-    }
-    const comps = loadComponents();
-    const id = uid('comp');
-    comps.unshift({ id, name: name || 'Component '+(comps.length+1), json: compJson });
-    saveComponents(comps);
-    renderComponentsList();
-    return id;
-  }
-  async function insertComponentInstance(componentId, opts={left:120,top:120}) {
-    const comps = loadComponents();
-    const comp = comps.find(c=>c.id===componentId); if(!comp) return null;
-    // enliven objects
-    const objsJson = comp.json.objects || [];
-    fabric.util.enlivenObjects(objsJson, (enlivened) => {
-      const group = new fabric.Group(enlivened, { left: opts.left||120, top: opts.top||120 });
-      group.__componentId = componentId;
-      group.__isInstance = true;
-      group.__overrides = {}; // map propPath -> value
-      group.__objectId = uid('o');
-      fabricCanvas.add(group);
-      fabricCanvas.setActiveObject(group);
-    }, '');
-  }
-  function updateComponent(componentId, newJson) {
-    const comps = loadComponents();
-    const comp = comps.find(c=>c.id===componentId); if(!comp) return false;
-    comp.json = newJson;
-    saveComponents(comps);
-    // propagate to instances on canvas
-    const instances = fabricCanvas.getObjects().filter(o => o.__componentId === componentId);
-    instances.forEach(inst => {
-      const left = inst.left, top = inst.top, angle = inst.angle, scaleX = inst.scaleX, scaleY = inst.scaleY;
-      fabricCanvas.remove(inst);
-      insertComponentInstance(componentId, { left, top }).then(() => {
-        const newInst = fabricCanvas.getObjects().slice(-1)[0];
-        if (newInst) newInst.set({ angle, scaleX, scaleY });
-      });
+  function unbindAll() {
+    handlers.forEach(h => { try { h.el.removeEventListener(h.ev, h.fn); } catch (e) {} });
+    handlers = [];
+    recHandlers.forEach(h => {
+      try {
+        h.wrap.removeEventListener('mousemove', h.onPointer);
+        h.wrap.removeEventListener('click', h.onPointer);
+      } catch (e) {}
     });
-    return true;
+    recHandlers = [];
   }
 
-  // Overrides: for an instance store map of objectPath->value. We'll support simple top-level overrides: fill, text, fontSize.
-  function setInstanceOverride(instanceObj, key, value) {
-    instanceObj.__overrides = instanceObj.__overrides || {};
-    instanceObj.__overrides[key] = value;
-    // apply immediately
-    try { instanceObj.set(key, value); instanceObj.setCoords(); fabricCanvas.requestRenderAll(); } catch(e){}
-    // persist not necessary (instance exists in canvas state)
-  }
+  // Robust canvas finder: checks #app-root (injected), .module-editor, document, and can create a fallback canvas
+  function findOrCreateCanvas() {
+    const appRoot = document.getElementById('app-root');
+    const candidates = [];
 
-  // Prototyping: hotspots & transitions
-  function createHotspotForObject(obj, targetPageId, transition='none') {
-    obj.__hotspot = { targetPageId, transition };
-    obj.set({ hasControls: true }); // remain selectable
-    fabricCanvas.requestRenderAll();
-    emit('prototype.hotspot.created', { objectId: obj.__objectId, targetPageId, transition });
-  }
-  function playPrototypeAt(pageIndex=0) {
-    // simple: hide UI in module and listen clicks on canvas to navigate between pages by hotspots
-    alert('Prototype play — click hotspots to navigate (demo)');
-    let playing = true;
-    function onCanvasDown(e) {
-      const pointer = fabricCanvas.getPointer(e.e);
-      const objs = fabricCanvas.getObjects().slice().reverse();
-      for (const o of objs) {
-        try {
-          if (o.containsPoint && o.containsPoint(pointer)) {
-            if (o.__hotspot && o.__hotspot.targetPageId != null) {
-              alert('Navigate to: ' + o.__hotspot.targetPageId + ' (demo)');
-              // in a full app switch viewport to that page
-            }
-            break;
-          }
-        } catch(err){}
+    // 1) prefer inside app-root (when module injected)
+    if (appRoot) {
+      const c1 = appRoot.querySelector('#canvas');
+      const w1 = appRoot.querySelector('#canvas-wrap');
+      if (c1 && w1) return { canvasEl: c1, wrap: w1, contextRoot: appRoot };
+      // try any canvas inside appRoot
+      const anyCanvas = appRoot.querySelector('canvas');
+      if (anyCanvas) {
+        return { canvasEl: anyCanvas, wrap: anyCanvas.parentElement || appRoot, contextRoot: appRoot };
       }
     }
-    fabricCanvas.on('mouse:down', onCanvasDown);
-    return () => { fabricCanvas.off('mouse:down', onCanvasDown); playing = false; };
+
+    // 2) module root
+    const moduleRoot = document.querySelector('.module-editor');
+    if (moduleRoot) {
+      const c2 = moduleRoot.querySelector('#canvas');
+      const w2 = moduleRoot.querySelector('#canvas-wrap');
+      if (c2 && w2) return { canvasEl: c2, wrap: w2, contextRoot: moduleRoot };
+      const anyCanvas = moduleRoot.querySelector('canvas');
+      if (anyCanvas) return { canvasEl: anyCanvas, wrap: anyCanvas.parentElement || moduleRoot, contextRoot: moduleRoot };
+    }
+
+    // 3) global fallback
+    const globalCanvas = document.querySelector('#canvas') || document.querySelector('canvas');
+    if (globalCanvas) return { canvasEl: globalCanvas, wrap: globalCanvas.parentElement || document.body, contextRoot: document.body };
+
+    // 4) Create fallback inside #app-root if available, else body
+    const host = appRoot || moduleRoot || document.body;
+    const wrap = document.createElement('div');
+    wrap.id = 'canvas-wrap';
+    wrap.style.position = 'relative';
+    wrap.style.minHeight = '400px';
+    wrap.style.border = '1px solid #e6e6e6';
+    wrap.style.background = '#fff';
+    const canvasEl = document.createElement('canvas');
+    canvasEl.id = 'canvas';
+    canvasEl.width = 1000;
+    canvasEl.height = 600;
+    wrap.appendChild(canvasEl);
+    host.appendChild(wrap);
+    console.warn('Created fallback canvas dynamically inside', host === document.body ? 'document.body' : (host.id || host.className));
+    return { canvasEl, wrap, contextRoot: host };
   }
 
-  // Comments system
-  function loadComments() { return load(KEYS.COMMENTS, []); }
-  function saveComments(list) { save(KEYS.COMMENTS, list); }
-  function addComment(objectId, author, text) {
-    const list = loadComments();
-    const c = { id: uid('c'), objectId, author, text, ts: nowIso() };
-    list.unshift(c); saveComments(list); renderComments(); emit('comment.added', c); return c;
+  // History helpers
+  function pushHistory() {
+    try {
+      const snap = fabricCanvas.toJSON(['__objectId','__componentId','__isInstance','__overrides']);
+      state.history = state.history || { undo: [], redo: [], limit: 80 };
+      state.history.undo.push(snap);
+      if (state.history.undo.length > state.history.limit) state.history.undo.shift();
+      state.history.redo = [];
+      saveLS('editor:state', state);
+    } catch (e) { console.warn('pushHistory', e); }
   }
-  function renderComments() {
-    const list = loadComments();
-    const out = $('#comments-list');
+  function undo() {
+    if (!state.history || !state.history.undo.length) return;
+    try {
+      const last = state.history.undo.pop();
+      state.history.redo = state.history.redo || [];
+      state.history.redo.push(fabricCanvas.toJSON());
+      fabricCanvas.loadFromJSON(last, () => fabricCanvas.renderAll());
+    } catch (e) { console.warn('undo', e); }
+  }
+  function redo() {
+    if (!state.history || !state.history.redo.length) return;
+    try {
+      const next = state.history.redo.pop();
+      state.history.undo.push(fabricCanvas.toJSON());
+      fabricCanvas.loadFromJSON(next, () => fabricCanvas.renderAll());
+    } catch (e) { console.warn('redo', e); }
+  }
+
+  // Component & UI render helpers (kept concise)
+  function renderLayers() {
+    const container = document.getElementById('layers-list') || (document.querySelector('.module-editor') && document.querySelector('.module-editor').querySelector('#layers-list'));
+    if (!container) return;
+    container.innerHTML = '';
+    fabricCanvas.getObjects().slice().reverse().forEach(obj => {
+      const el = document.createElement('div'); el.className = 'component-card';
+      el.textContent = (obj.type || 'object') + (obj.__objectId ? ' • ' + obj.__objectId : '');
+      el.addEventListener('click', () => { fabricCanvas.setActiveObject(obj); fabricCanvas.requestRenderAll(); });
+      container.appendChild(el);
+    });
+  }
+  function renderComponentsList() {
+    const out = document.getElementById('components-list') || (document.querySelector('.module-editor') && document.querySelector('.module-editor').querySelector('#components-list'));
     if (!out) return;
-    out.innerHTML = list.map(c => `<div class="comment-item"><strong>${c.author}</strong> <small class="muted">${new Date(c.ts).toLocaleString()}</small><div>${c.text}</div></div>`).join('') || '<div class="muted">No comments</div>';
+    out.innerHTML = (state.components || []).map(c => `<div class="component-card"><div>${c.name}</div><div><button data-id="${c.id}" class="btn small comp-insert">Insert</button></div></div>`).join('') || '<div class="muted">Sin componentes</div>';
+    qsa('.comp-insert', out).forEach(btn => btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const comp = state.components.find(x => x.id === id);
+      if (comp) fabric.util.enlivenObjects(comp.json.objects || [], (enlivened) => {
+        const g = new fabric.Group(enlivened, { left: 120, top: 120 });
+        g.__componentId = id; g.__isInstance = true; g.__objectId = uid('o');
+        fabricCanvas.add(g); fabricCanvas.setActiveObject(g); pushHistory();
+      }, '');
+    }));
+  }
+  function refreshInspector() {
+    const out = document.getElementById('inspector') || (document.querySelector('.module-editor') && document.querySelector('.module-editor').querySelector('#inspector'));
+    if (!out) return;
+    const sel = fabricCanvas.getActiveObject();
+    if (!sel) { out.innerHTML = '<div class="muted">Ningún objeto seleccionado</div>'; return; }
+    out.innerHTML = `
+      <label>Nombre <input id="ins-name" value="${sel.__objectId || ''}" /></label>
+      <label>Fill <input id="ins-fill" type="color" value="${sel.fill ? sel.fill : '#000000'}" /></label>
+      <label>Left <input id="ins-left" type="number" value="${Math.round(sel.left || 0)}" /></label>
+      <label>Top <input id="ins-top" type="number" value="${Math.round(sel.top || 0)}" /></label>
+      <label>Angle <input id="ins-angle" type="number" value="${Math.round(sel.angle || 0)}" /></label>
+    `;
+    bind(document.getElementById('ins-fill'), 'input', (e) => { sel.set('fill', e.target.value); fabricCanvas.requestRenderAll(); pushHistory(); });
+    bind(document.getElementById('ins-left'), 'change', (e) => { sel.set('left', parseFloat(e.target.value)); sel.setCoords(); fabricCanvas.requestRenderAll(); pushHistory(); });
+    bind(document.getElementById('ins-top'), 'change', (e) => { sel.set('top', parseFloat(e.target.value)); sel.setCoords(); fabricCanvas.requestRenderAll(); pushHistory(); });
+    bind(document.getElementById('ins-angle'), 'change', (e) => { sel.set('angle', parseFloat(e.target.value)); sel.setCoords(); fabricCanvas.requestRenderAll(); pushHistory(); });
   }
 
-  // Recordings & heatmaps (client-side)
-  function startRecording(sessionName) {
-    recordBuffer = []; recording = true;
-    const wrap = $('#ed-canvas-wrap');
+  // Recording / Heatmap helpers
+  function startRecording() {
+    recHandlers = [];
+    recHandlers = recHandlers || [];
+    const wrap = document.getElementById('canvas-wrap') || document.querySelector('.canvas-wrap');
+    if (!wrap) return;
+    recording = true;
     const onPointer = (e) => {
       if (!recording) return;
-      const rect = wrap.getBoundingClientRect();
-      const x = e.clientX - rect.left, y = e.clientY - rect.top;
-      recordBuffer.push({ type: e.type, x, y, ts: Date.now() });
-      if (recordBuffer.length > CONFIG.recordingMaxEvents) recordBuffer.shift();
+      const r = wrap.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      recHandlers.buffer = recHandlers.buffer || [];
+      recHandlers.buffer.push({ type: e.type, x, y, ts: Date.now() });
+      if (recHandlers.buffer.length > 20000) recHandlers.buffer.shift();
     };
-    wrap.addEventListener('click', onPointer);
     wrap.addEventListener('mousemove', onPointer);
-    // store handler for stop
-    editorInternal._recHandlers = editorInternal._recHandlers || [];
-    editorInternal._recHandlers.push({ onPointer, wrap });
-    return true;
+    wrap.addEventListener('click', onPointer);
+    recHandlers.push({ wrap, onPointer });
   }
   function stopRecording(name) {
     recording = false;
-    // remove listeners
-    (editorInternal._recHandlers || []).forEach(h => { try { h.wrap.removeEventListener('click', h.onPointer); h.wrap.removeEventListener('mousemove', h.onPointer); } catch(e){} });
-    editorInternal._recHandlers = [];
-    const recordings = load(KEYS.RECORDINGS, []);
-    const rec = { id: uid('rec'), name: name || ('rec_'+Date.now()), createdAt: nowIso(), events: recordBuffer.slice() };
-    recordings.unshift(rec); save(KEYS.RECORDINGS, recordings);
-    document.getElementById('recordings-list').innerHTML = recordings.map(r => `<div>${r.name} • ${new Date(r.createdAt).toLocaleString()}</div>`).join('');
-    recordBuffer = [];
+    if (recHandlers && recHandlers.length) {
+      recHandlers.forEach(h => {
+        try { h.wrap.removeEventListener('mousemove', h.onPointer); h.wrap.removeEventListener('click', h.onPointer); } catch (e) {}
+      });
+    }
+    const recs = loadLS('editor:recordings', []);
+    const rec = { id: uid('rec'), name: name || ('rec_' + Date.now()), createdAt: nowIso(), events: (recHandlers.buffer || []).slice() };
+    recs.unshift(rec); saveLS('editor:recordings', recs); state.recordings = recs;
+    renderRecordingsList();
+    recHandlers.buffer = [];
     return rec;
   }
-  function generateHeatmapFromRecording(recId) {
-    const recordings = load(KEYS.RECORDINGS, []);
-    const rec = recordings.find(r => r.id === recId) || recordings[0];
-    if (!rec) { alert('No recording found'); return; }
-    const overlay = $('#ed-heatmap-overlay');
-    const canvas = overlay;
-    const ctx = canvas.getContext('2d');
-    // assume overlay matches canvas size
-    const events = rec.events.filter(e => e.type === 'click' || e.type === 'mousedown');
-    // clear
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    // draw radial spots accumulating alpha
-    events.forEach(ev => {
-      const grd = ctx.createRadialGradient(ev.x, ev.y, 0, ev.x, ev.y, 40);
+  function renderRecordingsList() {
+    const out = document.getElementById('recordings-list') || (document.querySelector('.module-editor') && document.querySelector('.module-editor').querySelector('#recordings-list'));
+    if (!out) return;
+    const recs = loadLS('editor:recordings', []);
+    out.innerHTML = recs.map(r => `<div class="component-card"><div>${r.name}</div><div class="muted">${new Date(r.createdAt).toLocaleString()}</div><div><button data-id="${r.id}" class="btn small rec-heat">Heat</button></div></div>`).join('');
+    qsa('.rec-heat', out).forEach(btn => btn.addEventListener('click', () => {
+      generateHeatmap(btn.dataset.id);
+    }));
+  }
+  function generateHeatmap(recId) {
+    const recs = loadLS('editor:recordings', []);
+    const rec = recs.find(r => r.id === recId) || recs[0];
+    if (!rec) return alert('No recordings');
+    const clicks = rec.events.filter(e => e.type === 'click' || e.type === 'mousedown');
+    const overlay = document.getElementById('ed-heatmap-overlay') || document.querySelector('.heatmap-overlay');
+    if (!overlay) return;
+    overlay.width = overlay.clientWidth || overlay.width;
+    overlay.height = overlay.clientHeight || overlay.height;
+    const ctx = overlay.getContext('2d');
+    ctx.clearRect(0,0,overlay.width, overlay.height);
+    clicks.forEach(c => {
+      const grd = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, 40);
       grd.addColorStop(0, 'rgba(255,0,0,0.18)');
       grd.addColorStop(1, 'rgba(255,0,0,0)');
       ctx.fillStyle = grd;
-      ctx.fillRect(ev.x-40, ev.y-40, 80, 80);
+      ctx.fillRect(c.x - 40, c.y - 40, 80, 80);
     });
-    // apply blur (simple) by composite
-    // leave as is for demo
   }
 
-  // Background removal (heuristic flood fill) - simplified version
-  async function removeBackgroundActiveImage(tolerance=32) {
-    if (!fabricCanvas) throw new Error('canvas not ready');
+  // Background removal heuristic
+  async function removeBackgroundActiveImage(tolerance = 32) {
     const active = fabricCanvas.getActiveObject();
-    if (!active || active.type !== 'image') { alert('Selecciona una imagen'); return; }
+    if (!active || active.type !== 'image') { alert('Selecciona una imagen primero'); return; }
     let imgEl = active._element;
     if (!imgEl) {
       const url = active.toDataURL();
-      imgEl = await new Promise((res, rej) => { const im = new Image(); im.crossOrigin='anonymous'; im.onload = ()=>res(im); im.onerror = rej; im.src = url; });
+      imgEl = await new Promise((res, rej) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.onload = () => res(im); im.onerror = rej; im.src = url; });
     }
-    // draw to temp canvas, getImageData, flood-fill edges by color tolerance -> set alpha=0
-    const temp = document.createElement('canvas'); temp.width = imgEl.naturalWidth || imgEl.width; temp.height = imgEl.naturalHeight || imgEl.height;
-    const ctx = temp.getContext('2d'); ctx.drawImage(imgEl,0,0);
-    const imageData = ctx.getImageData(0,0,temp.width,temp.height);
-    // flood fill from edges -> simple BFS (use same algorithm as earlier)
+    const tmp = document.createElement('canvas'); tmp.width = imgEl.naturalWidth || imgEl.width; tmp.height = imgEl.naturalHeight || imgEl.height;
+    const ctx = tmp.getContext('2d'); ctx.drawImage(imgEl, 0, 0);
+    const imageData = ctx.getImageData(0,0,tmp.width,tmp.height);
     const w = imageData.width, h = imageData.height, data = imageData.data;
     const visited = new Uint8Array(w*h);
     const queue = [];
-    function pushIf(i){ if(!visited[i]){ visited[i]=1; queue.push(i); } }
-    for(let x=0;x<w;x++){ pushIf(x); pushIf((h-1)*w + x); }
-    for(let y=0;y<h;y++){ pushIf(y*w); pushIf(y*w + (w-1)); }
-    const off0 = 0; const baseR = data[off0], baseG = data[off0+1], baseB = data[off0+2];
-    while(queue.length){
+    function push(i) { if (!visited[i]) { visited[i] = 1; queue.push(i); } }
+    for (let x=0;x<w;x++){ push(x); push((h-1)*w + x); }
+    for (let y=0;y<h;y++){ push(y*w); push(y*w + (w-1)); }
+    const baseOff = 0, baseR = data[baseOff], baseG = data[baseOff+1], baseB = data[baseOff+2];
+    while (queue.length) {
       const idx = queue.shift();
-      const px = idx % w, py = Math.floor(idx / w);
-      const off = idx*4;
+      const px = idx % w; const py = Math.floor(idx / w); const off = idx*4;
       const r = data[off], g = data[off+1], b = data[off+2];
-      if (Math.abs(r-baseR)<=tolerance && Math.abs(g-baseG)<=tolerance && Math.abs(b-baseB)<=tolerance) {
+      if (Math.abs(r-baseR) <= tolerance && Math.abs(g-baseG) <= tolerance && Math.abs(b-baseB) <= tolerance) {
         data[off+3] = 0;
-        if (px>0) pushIf(idx-1);
-        if (px<w-1) pushIf(idx+1);
-        if (py>0) pushIf(idx-w);
-        if (py<h-1) pushIf(idx+w);
+        if (px>0) push(idx-1); if (px<w-1) push(idx+1); if (py>0) push(idx-w); if (py<h-1) push(idx+w);
       }
     }
-    ctx.putImageData(imageData,0,0);
-    const outUrl = temp.toDataURL('image/png');
-    fabric.Image.fromURL(outUrl, function(newImg){
+    ctx.putImageData(imageData, 0, 0);
+    const outUrl = tmp.toDataURL('image/png');
+    fabric.Image.fromURL(outUrl, newImg => {
       newImg.set({ left: active.left, top: active.top, scaleX: active.scaleX, scaleY: active.scaleY });
       fabricCanvas.remove(active);
       fabricCanvas.add(newImg);
       fabricCanvas.setActiveObject(newImg);
-      fabricCanvas.requestRenderAll();
-      emit('image.backgroundRemoved', { id: newImg.__objectId || null });
-    }, { crossOrigin:'anonymous' });
+      pushHistory();
+      alert('Fondo eliminado (resultado aproximado)');
+    }, { crossOrigin: 'anonymous' });
   }
 
-  // Plugins registry (icons / imagebank / ai)
-  function registerPlugin(plugin) {
-    // plugin = { id, name, init:fn(editorAPI), ui:fn() }
-    pluginRegistry[plugin.id] = plugin;
-    if (plugin.init && typeof plugin.init === 'function') plugin.init(editorAPI);
-    renderPluginList();
-  }
-  function renderPluginList() {
-    const out = $('#plugins-list'); if (!out) return;
-    out.innerHTML = Object.values(pluginRegistry).map(p => `<div>${p.name}</div>`).join('') || '<div class="muted">No plugins</div>';
-  }
-  // Demo icon plugin
-  function loadDemoIconPlugin() {
-    const plugin = {
-      id: 'icons-demo',
-      name: 'Icon Bank (demo)',
-      init(api) { this.api = api; },
-      ui() {
-        return `<div>Icons loaded</div>`;
-      },
-      fetchIcons() {
-        // return a few SVG icons (inline)
-        return [{ id:'i-heart', svg:'<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7-4.35-9-6.66C0.74 11.65 2.11 7 6 7c1.66 0 3 .99 3.75 2.36C10.99 7.99 12.34 7 14 7c3.89 0 5.26 4.65 3 7.34C19 16.65 12 21 12 21z"/></svg>'}];
+  // Wire UI after fabric available and canvas present
+  function wireModuleUI() {
+    bind($('#btn-add-rect'), 'click', () => {
+      const r = new fabric.Rect({ left: 60, top: 40, width: 160, height: 100, fill: state.tokens.primary });
+      r.__objectId = uid('o'); fabricCanvas.add(r).setActiveObject(r); pushHistory();
+    });
+
+    bind($('#btn-add-text'), 'click', () => {
+      const t = new fabric.Textbox('Texto', { left: 80, top: 160, width: 240, fontSize: 18, fill: '#111' });
+      t.__objectId = uid('o'); fabricCanvas.add(t).setActiveObject(t); pushHistory();
+    });
+
+    const imgIn = $('#editor-image-input');
+    bind($('#btn-upload-image'), 'click', () => imgIn && imgIn.click());
+    bind(imgIn, 'change', (e) => {
+      const f = e.target.files && e.target.files[0]; if (!f) return;
+      if (window.createImageBitmap) {
+        createImageBitmap(f).then(bitmap => {
+          const tmp = document.createElement('canvas'); tmp.width = bitmap.width; tmp.height = bitmap.height; tmp.getContext('2d').drawImage(bitmap,0,0);
+          const url = tmp.toDataURL('image/png');
+          fabric.Image.fromURL(url, img => { img.__objectId = uid('o'); img.set({ left: 120, top: 120 }); fabricCanvas.add(img).setActiveObject(img); pushHistory(); }, { crossOrigin:'anonymous' });
+        }).catch(() => {
+          const url = URL.createObjectURL(f);
+          fabric.Image.fromURL(url, img => { img.__objectId = uid('o'); img.set({ left:120, top:120 }); fabricCanvas.add(img).setActiveObject(img); pushHistory(); URL.revokeObjectURL(url); }, { crossOrigin:'anonymous' });
+        });
+      } else {
+        const url = URL.createObjectURL(f);
+        fabric.Image.fromURL(url, img => { img.__objectId = uid('o'); img.set({ left:120, top:120 }); fabricCanvas.add(img).setActiveObject(img); pushHistory(); URL.revokeObjectURL(url); }, { crossOrigin:'anonymous' });
       }
-    };
-    registerPlugin(plugin);
+      e.target.value = '';
+    });
+
+    bind($('#ed-zoom'), 'input', (e) => { const z = parseFloat(e.target.value); fabricCanvas.setZoom(z); fabricCanvas.requestRenderAll(); });
+    bind($('#ed-undo'), 'click', undo); bind($('#ed-redo'), 'click', redo);
+
+    bind($('#ed-toggle-grid'), 'click', () => {
+      const existing = fabricCanvas.getObjects().filter(o => o.__isGridLine);
+      if (existing.length) { existing.forEach(l => fabricCanvas.remove(l)); fabricCanvas.requestRenderAll(); return; }
+      const step = 20;
+      for (let i = 0; i < fabricCanvas.getWidth(); i += step) { const line = new fabric.Line([i,0,i,fabricCanvas.getHeight()], { stroke:'#eee', selectable:false, evented:false }); line.__isGridLine = true; fabricCanvas.add(line); }
+      for (let j = 0; j < fabricCanvas.getHeight(); j += step) { const line = new fabric.Line([0,j,fabricCanvas.getWidth(),j], { stroke:'#eee', selectable:false, evented:false }); line.__isGridLine = true; fabricCanvas.add(line); }
+      fabricCanvas.requestRenderAll();
+    });
+
+    bind($('#ed-tool-component'), 'click', () => {
+      const id = createComponentFromSelection(prompt('Nombre del componente') || 'Component'); if (id) alert('Componente creado: ' + id);
+    });
+    bind($('#ed-tool-instance'), 'click', () => { if (!state.components.length) return alert('No hay componentes'); insertComponentInstance(state.components[0].id, { left: 140, top: 140 }); });
+
+    bind($('#btn-remove-bg'), 'click', () => removeBackgroundActiveImage(parseInt($('#token-primary').dataset?.tol || 32, 10) || 32));
+    bind($('#tokens-save'), 'click', () => { state.tokens.primary = $('#token-primary').value; state.tokens.font = $('#token-font').value; saveLS('editor:tokens', state.tokens); alert('Tokens guardados'); });
+
+    fabricCanvas.on('selection:created', () => { renderLayers(); refreshInspector(); });
+    fabricCanvas.on('selection:updated', () => { renderLayers(); refreshInspector(); });
+    fabricCanvas.on('selection:cleared', () => { refreshInspector(); });
+    fabricCanvas.on('object:added', () => { renderLayers(); pushHistory(); });
+    fabricCanvas.on('object:removed', () => { renderLayers(); pushHistory(); });
+    fabricCanvas.on('object:modified', () => { renderLayers(); pushHistory(); });
+
+    bind($('#comment-add'), 'click', () => {
+      const text = $('#comment-box').value.trim(); if (!text) return;
+      const sel = fabricCanvas.getActiveObject(); const objectId = sel ? sel.__objectId : null;
+      const list = loadLS('editor:comments', []); list.unshift({ id: uid('c'), objectId, author: 'You', text, ts: nowIso() }); saveLS('editor:comments', list); renderComments(); $('#comment-box').value = '';
+    });
+
+    bind($('#rec-start'), 'click', () => { startRecording(); alert('Recording started'); });
+    bind($('#rec-stop'), 'click', () => { const r = stopRecording(); alert('Recording stopped: ' + (r && r.name)); });
+    bind($('#rec-heat'), 'click', () => { const recs = loadLS('editor:recordings', []); if (!recs.length) return alert('No recordings'); generateHeatmap(recs[0].id); });
+
+    bind($('#ed-btn-save'), 'click', () => {
+      const json = fabricCanvas.toJSON(['__objectId','__componentId','__isInstance','__overrides']);
+      const name = prompt('Nombre del proyecto') || 'project';
+      saveLS('editor:project:' + name, { json, meta: { savedAt: nowIso() } });
+      alert('Guardado local: ' + name);
+    });
+
+    bind($('#ed-btn-export-png'), 'click', () => {
+      const data = fabricCanvas.toDataURL({ format: 'png', multiplier: 2 });
+      const a = document.createElement('a'); a.href = data; a.download = 'canvas.png'; document.body.appendChild(a); a.click(); a.remove();
+    });
+
+    renderComponentsList(); renderRecordingsList(); renderComments(); renderLayers();
   }
 
-  // Collaboration (WebSocket stub): basic presence + ops forwarding
-  function initRealtime() {
-    if (!CONFIG.wsUrl) return null;
-    try {
-      ws = new WebSocket(CONFIG.wsUrl);
-      ws.onopen = () => console.info('WS connected');
-      ws.onmessage = (m) => {
-        try { const msg = JSON.parse(m.data); handleRemoteMessage(msg); } catch(e){ console.warn('ws msg parse', e); }
-      };
-      ws.onclose = ()=> console.info('WS closed');
-      return ws;
-    } catch(e){ console.warn('WS init failed', e); return null; }
-  }
-  function handleRemoteMessage(msg) {
-    // handle ops like 'op-add-object', 'op-cursor'
-    if (!msg || !msg.type) return;
-    if (msg.type === 'cursor') {
-      // show remote cursor (not implemented fully)
+  // Public API
+  window.editorAPI = window.editorAPI || {};
+  window.editorAPI.init = async function init(params = {}) {
+    if (mounted) return true;
+    await ensureFabricAvailable();
+
+    // find or create canvas
+    const { canvasEl, wrap } = findOrCreateCanvas();
+    if (!canvasEl || !wrap) {
+      console.error('Editor init failed: canvas or wrap missing even after fallback');
+      throw new Error('Editor HTML missing canvas elements');
     }
-  }
-  function broadcastOp(op) {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(op));
-    }
-  }
 
-  // Editor lifecycle: init / destroy
-  const editorInternal = {};
-  async function init(params={}) {
-    if (mounted) return;
-    await ensureFabric();
-    // set up fabric canvas
-    const canvasEl = $('#ed-canvas');
-    const wrap = $('#ed-canvas-wrap');
-    if (!canvasEl || !wrap) throw new Error('Editor HTML missing canvas elements');
-    // size canvas to wrapper
-    const rect = wrap.getBoundingClientRect();
-    canvasEl.width = rect.width; canvasEl.height = rect.height;
-    const overlay = $('#ed-heatmap-overlay'); overlay.width = rect.width; overlay.height = rect.height;
+    if (!canvasEl.id) canvasEl.id = uid('canvas');
 
-    fabricCanvas = new fabric.Canvas('ed-canvas', { backgroundColor:'#fff', preserveObjectStacking:true });
-    // basic events wiring
-    fabricCanvas.on('selection:created', onSelectionChanged);
-    fabricCanvas.on('selection:updated', onSelectionChanged);
-    fabricCanvas.on('selection:cleared', onSelectionChanged);
-    fabricCanvas.on('object:modified', (e)=> { emit('object.modified', e.target); broadcastOp({ type:'modify', id: e.target.__objectId || null }); });
-    fabricCanvas.on('mouse:down', (e) => { if (e.target && e.target.__hotspot) { emit('proto.click', e.target.__hotspot); } });
+    fabricCanvas = new fabric.Canvas(canvasEl.id, { selection: true, preserveObjectStacking: true, backgroundColor: '#ffffff' });
 
-    // bind UI controls
-    $('#ed-tool-rect')?.addEventListener('click', ()=> addRectangle());
-    $('#ed-tool-text')?.addEventListener('click', ()=> addTextBox());
-    $('#ed-tool-image')?.addEventListener('click', ()=> $('#ed-image-input').click());
-    $('#ed-image-input')?.addEventListener('change', (ev)=> { const f = ev.target.files && ev.target.files[0]; if(f) addImageFromFile(f); ev.target.value=''; });
+    // restore saved
+    const comps = loadLS('editor:components', []); if (comps && comps.length) state.components = comps;
+    const tokens = loadLS('editor:tokens', null); if (tokens) state.tokens = tokens;
 
-    $('#ed-tool-component')?.addEventListener('click', ()=> {
-      const name = prompt('Component name') || null;
-      const id = createComponentFromSelection(name);
-      if (id) alert('Component created: ' + id);
-    });
-    $('#ed-tool-instance')?.addEventListener('click', ()=> {
-      const comps = load(KEYS.COMPONENTS);
-      if (!comps.length) return alert('No components');
-      insertComponentInstance(comps[0].id, { left: 120, top: 120 });
-    });
-
-    $('#tokens-save')?.addEventListener('click', ()=> {
-      const t = { primary: $('#token-primary').value, accent: $('#token-accent').value, font: $('#token-font').value };
-      setTokens(t); alert('Tokens saved');
-    });
-    $('#ed-btn-export-css')?.addEventListener('click', ()=> exportTokensAsCSS());
-    $('#ed-btn-play-proto')?.addEventListener('click', ()=> { const stop = playPrototype(); editorInternal._protoStop = stop; });
-    $('#proto-stop')?.addEventListener('click', ()=> { if (editorInternal._protoStop) editorInternal._protoStop(); });
-
-    $('#comment-add')?.addEventListener('click', ()=> {
-      const txt = $('#comment-box').value.trim(); if (!txt) return;
-      const sel = fabricCanvas.getActiveObject(); const objId = sel && sel.__objectId ? sel.__objectId : null;
-      addComment(objId || null, 'You', txt); $('#comment-box').value=''; renderComments();
-    });
-
-    $('#rec-start')?.addEventListener('click', ()=> { startRecording('rec_'+Date.now()); alert('Recording started'); });
-    $('#rec-stop')?.addEventListener('click', ()=> { const r = stopRecording(); alert('Recording stopped: ' + r.name); });
-    $('#heatgen')?.addEventListener('click', ()=> {
-      const recs = load(KEYS.RECORDINGS, []);
-      if (!recs.length) return alert('No recordings');
-      generateHeatmapFromRecording(recs[0].id);
-      alert('Heatmap generated (demo)');
-    });
-
-    $('#ed-tool-bg-rem')?.addEventListener('click', ()=> {
-      const tol = parseInt($('#token-accent').dataset?.tol || 32,10) || 32;
-      removeBackgroundActiveImage(tol).catch(e=>alert('BG removal failed: '+e.message));
-    });
-
-    $('#plugin-load-icons')?.addEventListener('click', ()=> loadDemoIconPlugin());
-
-    // ui initial state
-    applyTokensToUI(getTokens());
-    renderComponentsList();
-    renderComments();
-    const recordings = load(KEYS.RECORDINGS, []);
-    document.getElementById('recordings-list').innerHTML = recordings.map(r => `<div>${r.name} • ${new Date(r.createdAt).toLocaleString()}</div>`).join('');
-
-    // init collaboration if configured
-    if (CONFIG.wsUrl) initRealtime();
+    // wire UI
+    wireModuleUI();
 
     mounted = true;
     return true;
-  }
-
-  function destroy() {
-    if (!mounted) return;
-    try { fabricCanvas && fabricCanvas.dispose && fabricCanvas.dispose(); } catch(e){}
-    mounted = false;
-    // remove module DOM
-    const el = document.getElementById('app-root')?.querySelector('.editor-module');
-    if (el) el.remove();
-  }
-
-  // Simple add primitives
-  function addRectangle() {
-    const r = new fabric.Rect({ left: 80, top: 80, width: 160, height: 100, fill: getTokens().primary });
-    r.__objectId = uid('o');
-    fabricCanvas.add(r).setActiveObject(r);
-    emit('object.added', r);
-    return r;
-  }
-  function addTextBox() {
-    const t = new fabric.Textbox('Text', { left: 60, top: 160, width: 200, fontSize: 16, fill: '#111' });
-    t.__objectId = uid('o');
-    fabricCanvas.add(t).setActiveObject(t);
-    emit('object.added', t);
-    return t;
-  }
-  async function addImageFromFile(file) {
-    if (!file) return;
-    try {
-      if (window.createImageBitmap) {
-        const bitmap = await createImageBitmap(file);
-        const c = document.createElement('canvas'); c.width = bitmap.width; c.height = bitmap.height; c.getContext('2d').drawImage(bitmap,0,0);
-        const url = c.toDataURL('image/png');
-        fabric.Image.fromURL(url, img => { img.set({ left:100, top:100 }); img.__objectId = uid('o'); fabricCanvas.add(img).setActiveObject(img); }, { crossOrigin:'anonymous' });
-        return;
-      }
-      const blobUrl = URL.createObjectURL(file);
-      fabric.Image.fromURL(blobUrl, img => { img.set({ left:100, top:100 }); img.__objectId = uid('o'); fabricCanvas.add(img).setActiveObject(img); URL.revokeObjectURL(blobUrl); }, { crossOrigin:'anonymous' });
-    } catch(e) { console.error('addImage error', e); alert('Image upload failed'); }
-  }
-
-  // Render components list UI
-  function renderComponentsList() {
-    const out = $('#components-list');
-    if (!out) return;
-    const comps = load(KEYS.COMPONENTS, []);
-    out.innerHTML = comps.map(c => `<div class="component-card"><div>${c.name}</div><div><button data-id="${c.id}" class="btn small comp-insert">Insert</button></div></div>`).join('') || '<div class="muted">No components</div>';
-    qsa('.comp-insert').forEach(btn => btn.addEventListener('click', (e)=> insertComponentInstance(btn.dataset.id, { left: 140, top: 140 })));
-  }
-
-  // Expose editorAPI
-  const editorAPI = {
-    init, destroy,
-    createComponentFromSelection, insertComponentInstance, updateComponent,
-    getTokens, setTokens, exportTokensAsCSS,
-    registerPlugin, loadDemoIconPlugin,
-    addComment, renderComments,
-    startRecording, stopRecording, generateHeatmapFromRecording,
-    removeBackgroundActiveImage,
-    broadcastOp,
-    _internal: { fabricCanvas }
   };
-  window.editorAPI = Object.assign(window.editorAPI || {}, editorAPI);
 
-  // small internal object for handlers
-  window.editorInternal = editorInternal;
+  window.editorAPI.destroy = function destroy() {
+    if (!mounted) return;
+    try {
+      unbindAll();
+      fabricCanvas && fabricCanvas.dispose && fabricCanvas.dispose();
+    } catch (e) { console.warn(e); }
+    mounted = false;
+    const root = document.getElementById('app-root')?.querySelector('.module-editor') || document.querySelector('.module-editor');
+    if (root && root.parentElement) root.remove();
+  };
+
+  // integration helpers
+  window.editorAPI.createComponentFromSelection = function(name) {
+    const sel = fabricCanvas.getActiveObject();
+    if (!sel) return null;
+    let json;
+    if (sel.type === 'activeSelection') json = { objects: sel.getObjects().map(o => o.toObject(['__objectId','__componentId','__isInstance'])) };
+    else json = { objects: [ sel.toObject(['__objectId','__componentId','__isInstance']) ] };
+    const id = uid('comp'); state.components.unshift({ id, name: name || 'Component', json }); saveLS('editor:components', state.components); renderComponentsList(); return id;
+  };
+  window.editorAPI.insertComponentInstance = insertComponentInstance;
+  window.editorAPI.removeBackgroundActiveImage = removeBackgroundActiveImage;
+  window.editorAPI.renderComments = renderComments;
+  window.editorAPI.generateHeatmap = generateHeatmap;
+
+  // debug
+  window.__editor_internal = { state, fabricCanvas };
 
 })();
