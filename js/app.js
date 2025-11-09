@@ -1,12 +1,14 @@
-// app.js — router minimal y init global (robusto)
 (function () {
   function $id(id){ return document.getElementById(id); }
   const routes = {
     '/contacts': () => showView('view-contacts','Contactos'),
     '/companies': () => showView('view-companies','Empresas'),
-    '/deals': () => showView('view-deals','Deals'),
+    '/deals': () => showView('view-deals','Ventas'),
     '/communications': () => showView('view-communications','Comunicaciones'),
     '/dashboard': () => showView('view-dashboard','Dashboard'),
+    '/editor': () => showView('view-editor','Editor'),
+    '/analytics': () => showView('view-analytics','Analítica'),
+    '/settings': () => showView('view-settings','Ajustes'),
     '': () => showView('view-contacts','Contactos')
   };
 
