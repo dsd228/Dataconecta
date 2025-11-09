@@ -1,40 +1,150 @@
 <!-- modules/crm.html -->
-<div class="module-crm">
-  <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <h2>CRM — Contactos</h2>
-    <div>
-      <button id="crm-btn-new" class="btn">Nuevo</button>
-      <button id="crm-btn-export" class="btn">Exportar</button>
+<div class="crm-module">
+  <header class="crm-header">
+    <h2>CRM — Gestión completa</h2>
+    <div class="crm-header-actions">
+      <button id="crm-new-contact" class="btn">Nuevo contacto</button>
+      <button id="crm-import" class="btn">Importar</button>
+      <button id="crm-export" class="btn">Exportar</button>
+      <button id="crm-open-campaigns" class="btn">Campañas</button>
     </div>
   </header>
 
-  <section style="display:flex;gap:12px">
-    <aside style="width:320px;background:#fff;border-radius:8px;padding:12px;color:#111">
-      <input id="crm-search" placeholder="Buscar contactos..." style="width:100%;padding:8px;margin-bottom:8px" />
-      <div id="crm-contacts-list" style="max-height:520px;overflow:auto"></div>
+  <section class="crm-body">
+    <aside class="crm-left">
+      <div class="panel search-panel">
+        <input id="crm-search" placeholder="Buscar por nombre, email, teléfono..." />
+        <select id="crm-filter-stage">
+          <option value="">Todas las etapas</option>
+          <option value="lead">Lead</option>
+          <option value="contacted">Contactado</option>
+          <option value="negotiation">Negociación</option>
+          <option value="closed_won">Cerrado (ganado)</option>
+        </select>
+        <select id="crm-filter-country"><option value="">País</option></select>
+        <input id="crm-filter-tag" placeholder="Filtrar por tag" />
+        <button id="crm-apply-seg" class="btn small">Aplicar segmento</button>
+        <button id="crm-clear-seg" class="btn small">Limpiar</button>
+      </div>
+
+      <div class="panel list-panel">
+        <h4>Contactos</h4>
+        <div id="crm-contacts-list" class="contacts-list"></div>
+      </div>
+
+      <div class="panel segments-panel">
+        <h4>Segmentos rápidos</h4>
+        <button class="btn tiny" data-seg="opened_not_bought">Leads que abrieron mail y no compraron</button>
+        <button class="btn tiny" data-seg="high_value">Clientes > €1000</button>
+        <button class="btn tiny" data-seg="from_ads">Origen: Ads</button>
+      </div>
     </aside>
 
-    <main style="flex:1;background:#fff;border-radius:8px;padding:12px;color:#111">
-      <div id="crm-detail">
-        <h3 id="crm-detail-name">Selecciona un contacto</h3>
-        <div id="crm-detail-meta"></div>
-        <hr/>
-        <h4>Interacciones</h4>
-        <div id="crm-detail-interactions"></div>
-      </div>
-      <div id="crm-form" style="display:none">
-        <h3 id="crm-form-title">Crear / Editar</h3>
-        <form id="crm-form-el">
-          <label>Nombre <input id="crm-form-name" required /></label><br/>
-          <label>Email <input id="crm-form-email" type="email" /></label><br/>
-          <label>Teléfono <input id="crm-form-phone" /></label><br/>
-          <label>Empresa <input id="crm-form-company" /></label><br/>
-          <div style="margin-top:8px">
-            <button id="crm-form-save" class="btn">Guardar</button>
-            <button id="crm-form-cancel" class="btn">Cancelar</button>
+    <main class="crm-center">
+      <div id="crm-detail" class="panel detail-panel">
+        <div class="detail-header">
+          <div>
+            <h3 id="detail-name">Seleccioná un contacto</h3>
+            <div id="detail-meta" class="muted"></div>
           </div>
-        </form>
+          <div class="detail-actions">
+            <button id="detail-edit" class="btn small">Editar</button>
+            <button id="detail-email" class="btn small">Enviar email</button>
+            <button id="detail-log-call" class="btn small">Registrar llamada</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-tab="interactions">Interacciones</button>
+          <button class="tab" data-tab="deals">Deals</button>
+          <button class="tab" data-tab="tasks">Tareas</button>
+          <button class="tab" data-tab="timeline">Timeline</button>
+        </div>
+
+        <div id="tab-interactions" class="tab-content">
+          <div id="interactions-list" class="interactions-list"></div>
+          <form id="interaction-form" class="interaction-form">
+            <select id="interaction-type">
+              <option value="email.sent">Email</option>
+              <option value="call">Llamada</option>
+              <option value="meeting">Reunión</option>
+              <option value="form">Formulario</option>
+              <option value="chat">Chat</option>
+            </select>
+            <input id="interaction-note" placeholder="Nota..." />
+            <button class="btn small" type="submit">Agregar interacción</button>
+          </form>
+        </div>
+
+        <div id="tab-deals" class="tab-content hidden">
+          <div class="pipeline" id="pipeline-board">
+            <div class="pipeline-column" data-stage="new"><h5>Nuevo</h5><div class="column-body" id="col-new"></div></div>
+            <div class="pipeline-column" data-stage="contacted"><h5>Contactado</h5><div class="column-body" id="col-contacted"></div></div>
+            <div class="pipeline-column" data-stage="negotiation"><h5>Negociación</h5><div class="column-body" id="col-negotiation"></div></div>
+            <div class="pipeline-column" data-stage="closed_won"><h5>Cerrado - Ganado</h5><div class="column-body" id="col-closed_won"></div></div>
+            <div class="pipeline-column" data-stage="closed_lost"><h5>Cerrado - Perdido</h5><div class="column-body" id="col-closed_lost"></div></div>
+          </div>
+          <div class="pipeline-actions">
+            <button id="deal-new" class="btn small">Nuevo deal</button>
+            <div id="forecast" class="muted">Forecast: €0</div>
+          </div>
+        </div>
+
+        <div id="tab-tasks" class="tab-content hidden">
+          <div id="tasks-list"></div>
+          <button id="task-new" class="btn small">Nueva tarea</button>
+        </div>
+
+        <div id="tab-timeline" class="tab-content hidden">
+          <div id="crm-timeline"></div>
+        </div>
       </div>
+
+      <div class="panel composer-panel">
+        <h4>Plantillas & Envío</h4>
+        <select id="template-select"></select>
+        <button id="template-new" class="btn small">Nueva plantilla</button>
+        <div style="margin-top:8px">
+          <textarea id="email-body" rows="4" placeholder="Cuerpo del email ({{name}})"></textarea>
+        </div>
+        <div style="margin-top:8px">
+          <button id="send-email" class="btn">Enviar (simulado)</button>
+        </div>
+      </div>
+
     </main>
+
+    <aside class="crm-right">
+      <div class="panel chat-panel">
+        <h4>Chat (widget demo)</h4>
+        <div id="chat-window" class="chat-window"></div>
+        <input id="chat-input" placeholder="Escribe un mensaje..." />
+        <button id="chat-send" class="btn small">Enviar</button>
+      </div>
+
+      <div class="panel tickets-panel">
+        <h4>Tickets</h4>
+        <div id="tickets-list"></div>
+        <button id="ticket-new" class="btn small">Crear ticket</button>
+      </div>
+
+      <div class="panel kb-panel">
+        <h4>Base de conocimientos</h4>
+        <div id="kb-list"></div>
+        <button id="kb-new" class="btn small">Nuevo artículo</button>
+      </div>
+    </aside>
   </section>
+
+  <!-- Hidden modals / helpers -->
+  <div id="modal-root" class="modal hidden" role="dialog" aria-hidden="true">
+    <div class="modal-panel">
+      <h3 id="modal-title">Modal</h3>
+      <div id="modal-body"></div>
+      <div class="modal-actions">
+        <button id="m-save" class="btn">Guardar</button>
+        <button id="m-cancel" class="btn">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
