@@ -1,98 +1,285 @@
-// modules/analytics.js
-// Lightweight analytics module exposing analyticsAPI.init/destroy
-// Integrates with global analyticsAPI when present, otherwise provides minimal local functions
-
+/* js/analytics.js
+   Dashboard Analítica ampliado — incluye:
+   - Recolección de eventos y API trackEvent / identify / alias
+   - Informes: adquisición, retención, comportamiento
+   - Predicciones simples y detección de tendencias (IA ligera on-device)
+   - Conversiones y embudos configurables
+   - Integraciones: stubs para Google Ads, BigQuery, Looker Studio
+   - Privacidad: modo cookieless, anonimización PII, políticas de retención y purge
+   - Mantiene mock API/localStorage y posibilidad de backend real
+*/
 (function () {
-  let mounted = false;
-  let dom = {};
-
-  function $(id){ return document.getElementById(id); }
-
-  function bindUI() {
-    dom.trackBtn = $('an-track');
-    dom.trackBtn.addEventListener('click', onTrack);
-
-    dom.refresh = $('an-refresh');
-    dom.refresh.addEventListener('click', refreshAll);
-
-    dom.export = $('an-export');
-    dom.export.addEventListener('click', () => {
-      if (window.analyticsAPI && typeof window.analyticsAPI.exportEventsCSV === 'function') {
-        window.analyticsAPI.exportEventsCSV();
-      } else {
-        alert('Export no disponible, no analyticsAPI.');
-      }
-    });
-
-    dom.cookieless = $('an-cookieless');
-    dom.retention = $('an-retention');
-    dom.retention.addEventListener('change', () => {
-      const d = parseInt(dom.retention.value || 0, 10);
-      window.analyticsAPI?.setRetentionDays?.(d);
-      alert('Retención ajustada: ' + d + ' días');
-    });
-
-    // initial state
-    if (window.analyticsAPI && window.analyticsAPI._getConfig) {
-      const cfg = window.analyticsAPI._getConfig();
-      dom.cookieless.checked = cfg.privacy?.cookieless ?? true;
-      dom.retention.value = cfg.privacy?.retentionDays ?? 365;
+  // CONFIG
+  const config = {
+    realBackend: false,
+    baseUrl: '',
+    sampleSizeDays: 90,
+    integrations: {
+      googleAds: { enabled: false, config: {} },
+      bigQuery: { enabled: false, config: {} },
+      lookerStudio: { enabled: false, config: {} }
+    },
+    privacy: {
+      cookieless: true,
+      retentionDays: 365,
+      anonymizePII: true
     }
-  }
+  };
 
-  function onTrack(){
-    const name = $('an-event-name').value.trim() || 'manual_event';
-    let params = {};
-    try { params = JSON.parse($('an-event-params').value || '{}'); } catch(e){ alert('Parámetros JSON inválidos'); return; }
-    const user = $('an-event-user').value.trim() || null;
-    if (window.analyticsAPI && typeof window.analyticsAPI.trackEvent === 'function') {
-      window.analyticsAPI.trackEvent(name, params, user);
-      alert('Evento trackeado: ' + name);
-      refreshAll();
+  // Helpers
+  const qs = (s) => document.querySelector(s);
+  const genId = (p = 'id') => p + '_' + Math.random().toString(36).slice(2, 9);
+  const nowIso = () => new Date().toISOString();
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const toDateKey = (iso) => iso.slice(0, 10);
+
+  // STORAGE KEYS
+  const EVENTS_KEY = 'analytics:events_v2';
+  const USERS_KEY = 'analytics:users_v2';
+  const SETTINGS_KEY = 'analytics:settings_v2';
+
+  // Load/Save
+  function save(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.warn('save failed', e); } }
+  function load(key, fallback = []) { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : fallback; } catch (e) { return fallback; } }
+
+  // MAIN DATA
+  let events = load(EVENTS_KEY, []); // each event: { id, name, timestamp, userId, params }
+  let users = load(USERS_KEY, {});    // map userId -> profile
+  let settings = load(SETTINGS_KEY, config.privacy);
+
+  // Persist privacy settings
+  function persistSettings() { save(SETTINGS_KEY, settings); }
+
+  // PRIVACY API
+  function setCookieless(enabled) {
+    settings.cookieless = !!enabled;
+    persistSettings();
+  }
+  function setRetentionDays(days) {
+    settings.retentionDays = Math.max(0, parseInt(days || 0, 10));
+    persistSettings();
+    purgeOldEvents();
+  }
+  function setAnonymizePII(enabled) {
+    settings.anonymizePII = !!enabled;
+    persistSettings();
+  }
+  function anonymizeEvent(e) {
+    if (!settings.anonymizePII) return e;
+    const copy = Object.assign({}, e);
+    // remove or redact common PII fields in params
+    if (copy.params) {
+      const p = Object.assign({}, copy.params);
+      if (p.email) p.email = 'redacted@example.com';
+      if (p.phone) p.phone = 'redacted';
+      if (p.name) p.name = 'redacted';
+      copy.params = p;
+    }
+    if (copy.userId && copy.userId.startsWith('anon_')) {
+      // already anonymous
     } else {
-      alert('analyticsAPI.trackEvent no disponible');
+      copy.userId = 'anon_' + (copy.userId ? copy.userId.slice(0,6) : genId('u').slice(0,6));
     }
+    return copy;
+  }
+  function purgeOldEvents() {
+    if (!settings.retentionDays || settings.retentionDays <= 0) return;
+    const cutoff = Date.now() - (settings.retentionDays * 24 * 3600 * 1000);
+    events = events.filter(ev => new Date(ev.timestamp).getTime() >= cutoff);
+    save(EVENTS_KEY, events);
   }
 
-  async function refreshAll() {
-    if (!window.analyticsAPI) return;
-    const f = { from: new Date(Date.now() - 30*24*3600*1000).toISOString(), to: new Date().toISOString() };
-    try {
-      const overview = await window.analyticsAPI.apiGet('/api/analytics/overview', f);
-      $('an-kpi-income').textContent = overview.income ? '€' + Math.round(overview.income) : '€0';
-      $('an-kpi-leads').textContent = overview.leads || 0;
-      $('an-kpi-conv').textContent = (Math.round((overview.conv || 0) * 10000)/100) + '%';
-
-      const ts = await window.analyticsAPI.apiGet('/api/analytics/timeseries', Object.assign({}, f, { metric: 'income' }));
-      // detect trends
-      const series = ts.labels.map((l,i) => ({ label: l, value: ts.values[i] || 0 }));
-      const trends = window.analyticsAPI.detectTrends ? window.analyticsAPI.detectTrends(series) : [];
-      $('an-trends').textContent = JSON.stringify(trends, null, 2);
-
-      const top = await window.analyticsAPI.apiGet('/api/analytics/top-sources', f);
-      const topEl = $('an-top-events'); topEl.innerHTML = '';
-      (top.items || []).slice(0,8).forEach(it => { const d=document.createElement('div'); d.textContent = `${it.source}: €${Math.round(it.value)}`; topEl.appendChild(d); });
-
-    } catch (err) { console.error(err); }
+  // EVENT COLLECTION API
+  function trackEvent(name, params = {}, userId = null) {
+    const ev = {
+      id: genId('ev'),
+      name: String(name),
+      timestamp: nowIso(),
+      userId: userId || null,
+      params: params || {}
+    };
+    const stored = settings.anonymizePII ? anonymizeEvent(ev) : ev;
+    events.push(stored);
+    save(EVENTS_KEY, events);
+    // optional integration forwarders
+    if (config.integrations.googleAds.enabled) forwardToGoogleAds(stored);
+    if (config.integrations.bigQuery.enabled) forwardToBigQuery([stored]);
+    // emit to UI modules if present
+    if (window.analyticsInternal && typeof window.analyticsInternal.onEvent === 'function') {
+      window.analyticsInternal.onEvent(stored);
+    }
+    return stored;
   }
 
-  window.analyticsModuleAPI = window.analyticsModuleAPI || {};
-  window.analyticsModuleAPI.init = async function init(params = {}) {
-    if (mounted) return;
-    bindUI();
-    mounted = true;
-    await refreshAll();
+  function identify(userId, profile = {}) {
+    if (!userId) userId = genId('u');
+    users[userId] = Object.assign(users[userId] || {}, profile, { updatedAt: nowIso() });
+    save(USERS_KEY, users);
+    return users[userId];
+  }
+  function alias(prevId, newId) {
+    // unify user ids
+    if (!prevId || !newId) return false;
+    users[newId] = Object.assign({}, users[prevId] || {}, users[newId] || {}, { mergedFrom: prevId, updatedAt: nowIso() });
+    delete users[prevId];
+    // update events
+    events.forEach(ev => { if (ev.userId === prevId) ev.userId = newId; });
+    save(EVENTS_KEY, events);
+    save(USERS_KEY, users);
     return true;
-  };
+  }
 
-  window.analyticsModuleAPI.destroy = function destroy() {
-    if (!mounted) return;
-    try {
-      dom.trackBtn.removeEventListener('click', onTrack);
-      dom.refresh.removeEventListener('click', refreshAll);
-      dom.export.removeEventListener('click', () => {});
-    } catch (e) {}
-    mounted = false;
-    document.getElementById('app-root')?.querySelector('.module-analytics')?.remove();
-  };
-})();
+  // Simple in-memory query + mock api for compatibility with previous module
+  async function apiGet(path, params = {}) {
+    // path routing for analytics module (local)
+    const from = params.from ? new Date(params.from) : new Date(Date.now() - 30*24*3600*1000);
+    const to = params.to ? new Date(params.to) : new Date();
+    const source = params.source || '';
+    const segment = params.segment || '';
+
+    // helper to filter events by time and optional filters
+    function filterEvents(evList) {
+      return evList.filter(ev => {
+        const t = new Date(ev.timestamp);
+        if (t < from || t > to) return false;
+        if (source && ev.params && ev.params.source !== source) return false;
+        if (segment && ev.params && ev.params.segment !== segment) return false;
+        return true;
+      });
+    }
+
+    // endpoints
+    if (path === '/api/analytics/overview') {
+      const filtered = filterEvents(events);
+      const income = filtered.reduce((s, e) => s + (e.params && e.params.amount ? Number(e.params.amount) : 0), 0);
+      const leads = filtered.filter(e => e.name === 'lead' || (e.params && e.params.stage === 'lead')).length;
+      const visits = filtered.filter(e => e.name === 'page_view' || e.name === 'visit').length;
+      const conv = visits ? (leads / visits) : 0;
+      // M/M mock: compute last 30 days vs previous 30 days
+      const last30From = new Date(to.getTime() - 30*24*3600*1000);
+      const prev30From = new Date(last30From.getTime() - 30*24*3600*1000);
+      const last = events.filter(e => new Date(e.timestamp) >= last30From && new Date(e.timestamp) <= to);
+      const prev = events.filter(e => new Date(e.timestamp) >= prev30From && new Date(e.timestamp) < last30From);
+      const incomeLast = last.reduce((s, e) => s + (e.params && e.params.amount ? Number(e.params.amount) : 0), 0);
+      const incomePrev = prev.reduce((s, e) => s + (e.params && e.params.amount ? Number(e.params.amount) : 0), 0);
+      const mom = incomePrev ? ((incomeLast - incomePrev) / incomePrev * 100) : 0;
+      return { income, leads, conv, mom };
+    }
+
+    if (path === '/api/analytics/timeseries') {
+      const metric = params.metric || 'income'; // income|leads|visits|events
+      const filtered = filterEvents(events);
+      const buckets = {};
+      for (let d = new Date(from); d <= to; d.setDate(d.getDate()+1)) buckets[toDateKey(d.toISOString())] = 0;
+      filtered.forEach(ev => {
+        const k = toDateKey(ev.timestamp);
+        if (!(k in buckets)) buckets[k] = 0;
+        if (metric === 'income') buckets[k] += Number(ev.params && ev.params.amount ? ev.params.amount : 0);
+        if (metric === 'leads' && (ev.name === 'lead' || ev.params && ev.params.stage === 'lead')) buckets[k] += 1;
+        if (metric === 'visits' && (ev.name === 'page_view' || ev.name === 'visit')) buckets[k] += 1;
+        if (metric === 'events') buckets[k] += 1;
+      });
+      const labels = Object.keys(buckets).sort();
+      return { labels, values: labels.map(l => buckets[l]) };
+    }
+
+    if (path === '/api/analytics/top-sources') {
+      const filtered = filterEvents(events);
+      const map = {};
+      filtered.forEach(ev => {
+        const s = ev.params && ev.params.source ? ev.params.source : (ev.name === 'page_view' && ev.params && ev.params.referrer ? 'referral' : 'unknown');
+        map[s] = (map[s]||0) + Number(ev.params && ev.params.amount ? ev.params.amount : 0);
+      });
+      const items = Object.keys(map).map(k => ({ source: k, value: map[k] })).sort((a,b) => b.value - a.value);
+      return { items };
+    }
+
+    if (path === '/api/analytics/funnel') {
+      // params.funnel = ['visit','lead','opportunity','won'] or default
+      const funnel = params.funnel || ['visit','lead','opportunity','won'];
+      const filtered = filterEvents(events);
+      const counts = funnel.map(step => {
+        return filtered.filter(ev => ev.name === step || (ev.params && ev.params.stage === step)).length;
+      });
+      return { funnel: funnel.map((s, i) => ({ step: s, count: counts[i] })) };
+    }
+
+    if (path === '/api/analytics/activity') {
+      const filtered = filterEvents(events);
+      const sorted = filtered.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      return { items: sorted.slice(0, 200) };
+    }
+
+    if (path === '/api/analytics/cohort') {
+      // cohort by first lead date
+      const firstLeadByUser = {};
+      events.filter(e => e.name === 'lead' || (e.params && e.params.stage === 'lead')).forEach(e => {
+        if (!e.userId) return;
+        if (!firstLeadByUser[e.userId]) firstLeadByUser[e.userId] = toDateKey(e.timestamp);
+      });
+      const cohorts = {};
+      Object.values(firstLeadByUser).forEach(d => cohorts[d] = (cohorts[d] || 0) + 1);
+      return { cohorts };
+    }
+
+    // fallback
+    return { items: filterEvents(events) };
+  }
+
+  // USER ANALYTICS REPORTS
+  function acquisitionReport({ from, to, groupBy = 'source' } = {}) {
+    // returns counts by source or campaign
+    const res = {};
+    const fromD = from ? new Date(from) : new Date(Date.now() - 30*24*3600*1000);
+    const toD = to ? new Date(to) : new Date();
+    events.forEach(ev => {
+      const t = new Date(ev.timestamp);
+      if (t < fromD || t > toD) return;
+      const key = (ev.params && ev.params[groupBy]) || (groupBy === 'source' ? (ev.params && ev.params.source) || 'direct' : 'unknown');
+      res[key] = (res[key] || 0) + 1;
+    });
+    return Object.entries(res).map(([k,v]) => ({ key: k, value: v })).sort((a,b)=>b.value-a.value);
+  }
+
+  function retentionReport({ windowDays = 30 } = {}) {
+    // simplistic retention: users active on day0 and returning in following weeks
+    const cutoff = Date.now() - windowDays * 24 * 3600 * 1000;
+    const recentEvents = events.filter(e => new Date(e.timestamp).getTime() >= cutoff);
+    const usersSet = {};
+    recentEvents.forEach(e => { if (e.userId) usersSet[e.userId] = usersSet[e.userId] || []; usersSet[e.userId].push(e.timestamp); });
+    // retention per day count
+    const retention = {};
+    Object.keys(usersSet).forEach(uid => {
+      const first = new Date(usersSet[uid].sort()[0]).toISOString().slice(0,10);
+      retention[first] = (retention[first] || 0) + 1;
+    });
+    return retention;
+  }
+
+  function behaviorReport({ topN = 20 } = {}) {
+    // most common events
+    const map = {};
+    events.forEach(e => map[e.name] = (map[e.name]||0) + 1);
+    return Object.entries(map).map(([k,v]) => ({ event: k, count: v })).sort((a,b)=>b.count-a.count).slice(0, topN);
+  }
+
+  // PREDICTIONS & TRENDS (lightweight)
+  function detectTrends(metricSeries = [], lookback = 7) {
+    // metricSeries: [{label, value}, ...] chronological
+    // simple approach: compute moving average and z-score to flag spikes/trends
+    const values = metricSeries.map(x => x.value);
+    const trends = [];
+    for (let i = lookback; i < values.length; i++) {
+      const window = values.slice(i - lookback, i);
+      const avg = window.reduce((s, v) => s + v, 0) / window.length;
+      const variance = window.reduce((s, v) => s + Math.pow(v - avg, 2), 0) / window.length;
+      const sd = Math.sqrt(variance);
+      const current = values[i];
+      const z = sd === 0 ? 0 : (current - avg) / sd;
+      trends.push({ index: i, label: metricSeries[i].label, value: current, z });
+    }
+    // return points where |z| > 2 as significant
+    return trends.filter(t => Math.abs(t.z) >= 2);
+  }
+
+  // CONVERSION TRACKING & F...
