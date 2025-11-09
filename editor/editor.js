@@ -1,41 +1,6 @@
-// editor/editor.js (entry module)
-// Coordinates loading Fabric.js, wiring state, storage, ui and plugins.
-// Uses ES modules; run in modern browsers (GitHub Pages).
-import { storage } from './storage.js';
-import { createState } from './state.js';
-import { initUI } from './ui.js';
-import * as plugins from './plugins/index.js';
-
-async function loadScript(src, timeout=8000) {
-  return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) {
-      const start = Date.now();
-      (function poll(){ if (window.fabric) return resolve(); if (Date.now()-start>3000) return reject(new Error('Fabric present but not initialized')); setTimeout(poll,80); })();
-      return;
-    }
-    const s = document.createElement('script');
-    s.src = src; s.async = true;
-    let done=false;
-    s.onload = () => { if(!done){ done=true; resolve(); } };
-    s.onerror = (e) => { if(!done){ done=true; reject(new Error('Failed to load '+src)); } };
-    document.head.appendChild(s);
-    setTimeout(()=>{ if(!done){ done=true; reject(new Error('Timeout loading '+src)); } }, timeout);
-  });
-}
-
-async function ensureFabric() {
-  if (window.fabric) return window.fabric;
-  const cdns = [
-    'https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js'
-  ];
-  for (const src of cdns) {
-    try { await loadScript(src); if (window.fabric) return window.fabric; } catch(e){ console.warn('cdn fail', src, e); }
-  }
-  // local fallback path within repo for GitHub Pages
-  try { await loadScript('/modules/vendor/fabric.min.js'); if (window.fabric) return window.fabric; } catch(e){ console.warn('local fallback fail', e); }
-  throw new Error('Fabric.js could not be loaded from CDN or local fallback');
-}
+// REPLACE the start() initialization block in editor/editor.js with the following robust version.
+// It finds canvas/wrap using multiple possible IDs and container contexts so the editor works
+// whether loaded as /editor/index.html or injected as modules/editor.html inside the app shell.
 
 async function start() {
   try {
@@ -46,20 +11,74 @@ async function start() {
     return;
   }
 
-  const canvasEl = document.getElementById('canvas');
-  const wrap = document.getElementById('canvas-wrap');
-  if (!canvasEl || !wrap) {
-    console.error('missing canvas or canvas-wrap');
-    throw new Error('Faltan #canvas o #canvas-wrap en el HTML del módulo editor.');
+  // Helper: find canvas and wrapper robustly in many contexts (module or standalone)
+  function findCanvasElements() {
+    const canvasIds = ['#canvas', '#ed-canvas', '#editor-canvas'];
+    const wrapIds = ['#canvas-wrap', '#ed-canvas-wrap', '#editor-canvas-wrap', '#ed-canvas-wrap'];
+    // First, try top-level IDs
+    let canvasEl = null, wrap = null;
+    for (const id of canvasIds) {
+      const el = document.querySelector(id);
+      if (el) { canvasEl = el; break; }
+    }
+    for (const id of wrapIds) {
+      const el = document.querySelector(id);
+      if (el) { wrap = el; break; }
+    }
+    // If not found, try searching inside module container (.module-editor) injected by loader
+    if ((!canvasEl || !wrap) && document.querySelector('.module-editor')) {
+      const root = document.querySelector('.module-editor');
+      for (const id of canvasIds) {
+        const el = root.querySelector(id);
+        if (el) { canvasEl = canvasEl || el; }
+      }
+      for (const id of wrapIds) {
+        const el = root.querySelector(id);
+        if (el) { wrap = wrap || el; }
+      }
+      // if wrap missing, maybe canvas is direct child of module root
+      if (!wrap && canvasEl && canvasEl.parentElement) wrap = canvasEl.parentElement;
+      // fallback: find any canvas under module root
+      if (!canvasEl) canvasEl = root.querySelector('canvas');
+    }
+
+    // As last resort, locate the first canvas in the document and use document.body as wrap
+    if (!canvasEl) canvasEl = document.querySelector('canvas');
+    if (!wrap && canvasEl) wrap = canvasEl.parentElement || document.body;
+
+    return { canvasEl, wrap };
   }
 
+  const elems = findCanvasElements();
+  const canvasEl = elems.canvasEl;
+  const wrap = elems.wrap;
+
+  // Diagnostic logging to help debugging if something still missing
+  if (!canvasEl || !wrap) {
+    console.error('Editor initialization failed: missing canvas or canvas-wrap in module HTML.');
+    console.error('findCanvasElements() results:', {
+      canvasIdFound: !!canvasEl,
+      canvasTag: canvasEl ? (canvasEl.id || canvasEl.tagName) : null,
+      wrapFound: !!wrap,
+      wrapId: wrap ? (wrap.id || wrap.className || wrap.tagName) : null,
+      moduleRootPresent: !!document.querySelector('.module-editor'),
+      appRootPresent: !!document.getElementById('app-root')
+    });
+    throw new Error('Editor HTML missing canvas elements. Asegúrate que tu HTML incluye un <canvas id="canvas"> dentro de un contenedor #canvas-wrap o que hay un <canvas> dentro de .module-editor.');
+  }
+
+  // proceed to initialize Fabric canvas using the actual canvas element id
+  const canvasId = canvasEl.id || (canvasEl.getAttribute && canvasEl.getAttribute('id')) || ('canvas_' + Math.random().toString(36).slice(2,8));
+  // if canvas element has no id, ensure it has one for Fabric constructor
+  if (!canvasEl.id) canvasEl.id = canvasId;
+
   // initialize Fabric canvas
-  const canvas = new fabric.Canvas('canvas', { selection: true, preserveObjectStacking: true, backgroundColor: '#ffffff' });
+  const canvas = new fabric.Canvas(canvasEl.id, { selection: true, preserveObjectStacking: true, backgroundColor: '#ffffff' });
 
   // state manager
   const stateManager = createState({ canvas });
 
-  // expose minimal editor API for other modules
+  // expose minimal editor API for other modules (unchanged)
   window.editorAPI = Object.assign(window.editorAPI || {}, {
     createComponentFromSelection: (name) => {
       const sel = canvas.getActiveObject();
@@ -97,15 +116,12 @@ async function start() {
     },
 
     playPrototype: () => {
-      // simple play: alert and allow clicks on hotspot objects
       return stateManager.state.prototypeLinks;
     },
 
     removeBackgroundActiveImage: async (tolerance=32) => {
-      // basic delegation: implement small floodfill here or call other helper
       const active = canvas.getActiveObject();
       if (!active || active.type !== 'image') throw new Error('Select an image first');
-      // delegate to a helper defined in editor/editor.js (for now call window.editorAPI internal)
       if (typeof window.editorAPI._bgRemove === 'function') return window.editorAPI._bgRemove(active, tolerance);
       throw new Error('BG removal not implemented');
     }
@@ -135,13 +151,11 @@ async function start() {
 
   // background removal helper implementation (exposed)
   window.editorAPI._bgRemove = async (activeImage, tolerance=32) => {
-    // Use same heuristic flood-fill approach as earlier modules
     let imgEl = activeImage._element;
     if (!imgEl) {
       const url = activeImage.toDataURL();
       imgEl = await new Promise((res, rej) => { const im = new Image(); im.crossOrigin='anonymous'; im.onload = ()=>res(im); im.onerror = rej; im.src = url; });
     }
-    // create imageData
     const tmp = document.createElement('canvas'); tmp.width = imgEl.naturalWidth || imgEl.width; tmp.height = imgEl.naturalHeight || imgEl.height;
     const ctx = tmp.getContext('2d'); ctx.drawImage(imgEl, 0, 0);
     const imageData = ctx.getImageData(0,0,tmp.width,tmp.height);
@@ -174,15 +188,6 @@ async function start() {
     return true;
   };
 
-  // expose some methods to window for debugging
   window.__editor = { canvas, stateManager, ui };
-
   console.info('Editor started');
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  start().catch(err => {
-    console.error('editor start error', err);
-    alert('Editor failed to start: ' + err.message);
-  });
-});
