@@ -571,6 +571,16 @@
         alert('Lienzo guardado en localStorage');
       }
     });
+     // Bind simple para el botón Quitar fondo (usa editorAPI si está disponible)
+document.getElementById('btn-remove-bg')?.addEventListener('click', async () => {
+  const tolInput = document.getElementById('bg-tolerance');
+  const tol = tolInput ? parseInt(tolInput.value, 10) || 32 : 32;
+  if (window.editorAPI && typeof window.editorAPI.removeBackgroundActiveImage === 'function') {
+    await window.editorAPI.removeBackgroundActiveImage(tol);
+  } else {
+    alert('Función de quitar fondo no disponible. Asegúrate de usar el js/editor.js completo que expone editorAPI.removeBackgroundActiveImage.');
+  }
+});
     bind('btn-load-json', () => { const f = document.getElementById('editor-file-json'); if (f) f.click(); });
     const fileJson = document.getElementById('editor-file-json');
     if (fileJson) fileJson.addEventListener('change', (e) => {
