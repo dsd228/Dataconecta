@@ -1,0 +1,40 @@
+<!-- modules/crm.html -->
+<div class="module-crm">
+  <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h2>CRM — Contactos</h2>
+    <div>
+      <button id="crm-btn-new" class="btn">Nuevo</button>
+      <button id="crm-btn-export" class="btn">Exportar</button>
+    </div>
+  </header>
+
+  <section style="display:flex;gap:12px">
+    <aside style="width:320px;background:#fff;border-radius:8px;padding:12px;color:#111">
+      <input id="crm-search" placeholder="Buscar contactos..." style="width:100%;padding:8px;margin-bottom:8px" />
+      <div id="crm-contacts-list" style="max-height:520px;overflow:auto"></div>
+    </aside>
+
+    <main style="flex:1;background:#fff;border-radius:8px;padding:12px;color:#111">
+      <div id="crm-detail">
+        <h3 id="crm-detail-name">Selecciona un contacto</h3>
+        <div id="crm-detail-meta"></div>
+        <hr/>
+        <h4>Interacciones</h4>
+        <div id="crm-detail-interactions"></div>
+      </div>
+      <div id="crm-form" style="display:none">
+        <h3 id="crm-form-title">Crear / Editar</h3>
+        <form id="crm-form-el">
+          <label>Nombre <input id="crm-form-name" required /></label><br/>
+          <label>Email <input id="crm-form-email" type="email" /></label><br/>
+          <label>Teléfono <input id="crm-form-phone" /></label><br/>
+          <label>Empresa <input id="crm-form-company" /></label><br/>
+          <div style="margin-top:8px">
+            <button id="crm-form-save" class="btn">Guardar</button>
+            <button id="crm-form-cancel" class="btn">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </section>
+</div>
