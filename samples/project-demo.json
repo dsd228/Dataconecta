@@ -1,0 +1,9 @@
+{
+  "meta": { "name": "demo-project", "createdAt": "2025-11-09T00:00:00Z" },
+  "pages": [
+    { "id": "page_1", "name": "Home", "width": 1024, "height": 768, "json": {} },
+    { "id": "page_2", "name": "Checkout", "width": 1024, "height": 768, "json": {} }
+  ],
+  "components": [],
+  "tokens": { "primary": "#4f46e5", "font": "Inter, system-ui" }
+}
