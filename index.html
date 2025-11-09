@@ -18,6 +18,7 @@
   <script src="js/deals.js" defer></script>
   <script src="js/communications.js" defer></script>
   <script src="js/analytics-full.js" defer></script>
+  <script src="js/editor.js" defer></script>
 </head>
 <body style="font-family: 'Inter', sans-serif;">
   <aside class="sidebar">
@@ -28,6 +29,7 @@
       <a href="#/companies" data-route><i class="fas fa-building"></i> Empresas</a>
       <a href="#/deals" data-route><i class="fas fa-rocket"></i> Ventas</a>
       <a href="#/communications" data-route><i class="fas fa-envelope"></i> Comunicación</a>
+      <a href="#/editor" data-route><i class="fas fa-edit"></i> Editor</a>
       <a href="#/analytics" data-route><i class="fas fa-chart-bar"></i> Analítica</a>
       <a href="#/settings" data-route><i class="fas fa-cog"></i> Ajustes</a>
     </nav>
@@ -159,6 +161,15 @@
         </div>
       </div>
 
+      <!-- Editor (nuevo módulo) -->
+      <div id="view-editor" class="view-panel hidden">
+        <div class="panel">
+          <h3><i class="fas fa-edit"></i> Editor</h3>
+          <!-- Aquí se carga el contenido dinámico del editor. El archivo js/editor.js se encarga. -->
+          <div id="editor-panel"></div>
+        </div>
+      </div>
+
       <!-- Dashboard -->
       <div id="view-dashboard" class="view-panel hidden">
         <div class="panel">
@@ -168,12 +179,13 @@
         </div>
       </div>
 
-      <!-- Análisis -->
+      <!-- Analítica (nuevo módulo) -->
       <div id="view-analytics" class="view-panel hidden">
         <div class="panel">
-          <h3>Analítica</h3>
-          <!-- puedes agregar paneles/kpis/canvas aquí si tienes analítica personalizada -->
+          <h3><i class="fas fa-chart-bar"></i> Analítica avanzada</h3>
+          <!-- Panel o dashboard analítico gestionado por js/analytics-full.js -->
           <div id="analytics-panel"></div>
+          <canvas id="analytics-chart" height="180"></canvas>
         </div>
       </div>
 
